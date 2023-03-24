@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">User Profile</string>
-    <string name="avatar">Avatar</string>
-    <string name="full_name">Full Name</string>
-    <string name="nickname">Nick Name</string>
-    <string name="menu_item">Menu Item</string>
-</resources>
