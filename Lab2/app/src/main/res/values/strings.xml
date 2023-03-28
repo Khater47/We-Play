@@ -1,7 +1,20 @@
 <resources>
+
     <string name="app_name">User Profile</string>
+
+    <!--User Profile string ShowProfileActivity-->
     <string name="avatar">Avatar</string>
     <string name="full_name">Full Name</string>
     <string name="nickname">Nick Name</string>
-    <string name="menu_item">Menu Item</string>
+    <string name="custom_nickname"></string>
+    <string name="description">Description</string>
+    <string name="custom_description"></string>
+    <string name="location">Location</string>
+    <string name="custom_location"></string>
+    <string name="personal_info">Personal info</string>
+    <string name="toolbar_title_user_profile">User Profile</string>
+
+    <!--User Profile Edit string EditProfileActivity-->
+
+
 </resources>
