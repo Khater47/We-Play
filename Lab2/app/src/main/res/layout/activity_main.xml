@@ -30,50 +30,50 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <TextView
-                android:id="@+id/nickname"
+                android:id="@+id/username_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:drawablePadding="5dp"
-                android:text="@string/nickname"
+                android:text="@string/label_username"
                 app:drawableStartCompat="@drawable/outline_alternate_email_16" />
 
             <TextView
-                android:id="@+id/custom_nickname"
+                android:id="@+id/custom_username_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_nickname" />
+                android:text="@string/username" />
 
             <TextView
-                android:id="@+id/description"
+                android:id="@+id/description_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:drawablePadding="5dp"
-                android:text="@string/description"
+                android:text="@string/label_description"
                 app:drawableStartCompat="@drawable/outline_description_16" />
 
             <TextView
-                android:id="@+id/custom_description"
+                android:id="@+id/custom_description_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/custom_description" />
+                android:text="@string/description" />
 
             <TextView
-                android:id="@+id/location"
+                android:id="@+id/location_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="5dp"
-                android:text="@string/location"
+                android:text="@string/label_location"
                 app:drawableStartCompat="@drawable/outline_location_on_16" />
 
             <TextView
-                android:id="@+id/custom_location"
+                android:id="@+id/custom_location_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="5dp"
                 android:drawablePadding="5dp"
-                android:text="@string/custom_location" />
+                android:text="@string/location" />
 
 
 
