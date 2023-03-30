@@ -8,116 +8,124 @@
 
     <include layout="@layout/toolbar" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/avatar_user_profile"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:contentDescription="@string/avatar"
-                android:padding="5dp"
-                android:src="@drawable/profile"
-                android:title="@string/avatar"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.3"
-                app:shapeAppearance="@style/circular"
-                />
-
-            <TextView
-                android:id="@+id/full_name_user_profile"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/full_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/avatar_user_profile" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="16dp"
-            android:layout_weight="2"
-            android:paddingTop="20dp"
-            android:orientation="vertical">
+            >
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
 
 
-            <TextView
-                android:id="@+id/user_info"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="5dp"
-                android:text="@string/personal_info"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                />
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/avatar_user_profile"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:contentDescription="@string/avatar"
+                    android:padding="5dp"
+                    android:src="@drawable/profile"
+                    android:title="@string/avatar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.3"
+                    app:shapeAppearance="@style/circular"
+                    />
 
-            <TextView
-                android:id="@+id/username_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:paddingBottom="5dp"
-                android:text="@string/label_username"
-                />
+                <TextView
+                    android:id="@+id/full_name_user_profile"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/full_name"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/avatar_user_profile" />
 
-            <TextView
-                android:id="@+id/custom_username_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/username" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/description_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:paddingBottom="5dp"
-                android:text="@string/label_description"
-                />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="2"
+                android:paddingTop="20dp"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/custom_description_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/description" />
 
-            <TextView
-                android:id="@+id/location_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:text="@string/label_location"
-                />
+                <TextView
+                    android:id="@+id/user_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:text="@string/personal_info"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    />
 
-            <TextView
-                android:id="@+id/custom_location_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:paddingBottom="5dp"
-                android:text="@string/location" />
+                <TextView
+                    android:id="@+id/username_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/label_username"
+                    />
 
+                <TextView
+                    android:id="@+id/custom_username_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/username" />
+
+                <TextView
+                    android:id="@+id/description_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/label_description"
+                    />
+
+                <TextView
+                    android:id="@+id/custom_description_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/description" />
+
+                <TextView
+                    android:id="@+id/location_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:text="@string/label_location"
+                    />
+
+                <TextView
+                    android:id="@+id/custom_location_user_profile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="5dp"
+                    android:text="@string/location" />
+
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+    </ScrollView>
+
+
 
 </LinearLayout>
