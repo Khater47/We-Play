@@ -22,12 +22,13 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_profile)
 
         setUp() //hide fullName and edit button
-        setUpCamera() //setUp onClick on profile picture for camera
+        //setUpCamera() //setUp onClick on profile picture for camera
 
         loadShowProfileActivity() //load showProfileActivity and pass data
 
     }
 
+    /*
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -39,7 +40,7 @@ class EditProfileActivity : AppCompatActivity() {
             avatar.setImageBitmap(picture)
         }
     }
-
+    */
 
     //load showProfileActivity and pass data
     fun loadShowProfileActivity(){
