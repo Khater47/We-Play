@@ -2,5 +2,6 @@
 <resources>
     <dimen name="size_32dp">32dp</dimen>
     <dimen name="size_24dp">24dp</dimen>
+    <dimen name="size_16dp">16dp</dimen>
 
 </resources>

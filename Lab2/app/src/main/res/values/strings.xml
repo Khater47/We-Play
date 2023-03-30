@@ -18,7 +18,8 @@
     <string name="label_username">Username</string>
     <string name="label_description">Description</string>
     <string name="label_location">Location</string>
-
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
 
 
 </resources>

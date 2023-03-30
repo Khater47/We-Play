@@ -1,20 +1,22 @@
 package com.example.lab1
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.Build
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import com.google.android.material.textfield.TextInputEditText
+import androidx.activity.result.contract.ActivityResultContracts
+import android.view.LayoutInflater
+import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
 class EditProfileActivity : AppCompatActivity() {
-    val CAMERA_ACTION_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,25 +24,11 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_profile)
 
         setUp() //hide fullName and edit button
-        //setUpCamera() //setUp onClick on profile picture for camera
-
+        takePicture()
         loadShowProfileActivity() //load showProfileActivity and pass data
 
     }
 
-    /*
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if(requestCode==CAMERA_ACTION_CODE && resultCode== RESULT_OK && data!=null){
-            val bundle:Bundle? = data.extras
-            val picture = bundle?.getParcelable("data",Bitmap::class.java)
-            val avatar:ImageView = findViewById(R.id.avatar_user_profile)
-            avatar.setImageBitmap(picture)
-        }
-    }
-    */
 
     //load showProfileActivity and pass data
     fun loadShowProfileActivity(){
@@ -60,6 +48,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     //get user input from text field
     fun getInfo():Array<String>{
+
         val editFullName:TextInputEditText = findViewById(R.id.edit_full_name)
         val editUsername:TextInputEditText = findViewById(R.id.edit_username)
         val editDescription:TextInputEditText = findViewById(R.id.edit_description)
@@ -71,6 +60,7 @@ class EditProfileActivity : AppCompatActivity() {
             editDescription.text.toString(),
             editLocation.text.toString()
         )
+
 
         return userInfo
 
@@ -90,19 +80,60 @@ class EditProfileActivity : AppCompatActivity() {
 
     }
 
-    //image onClick -> show camera
-    fun setUpCamera(){
+    fun takePicture() {
         val avatar:ImageView = findViewById(R.id.avatar_user_profile)
         avatar.setOnClickListener {
-            val intent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
 
-            if (intent.resolveActivity(packageManager)!=null){
-                startActivityIfNeeded(intent,CAMERA_ACTION_CODE)
-            }
-            else {
-                Toast.makeText(this,"There is no app that support this action",Toast.LENGTH_SHORT).show()
+            val imageDialog = BottomSheetDialog(this)
+            val bottomSheetView = LayoutInflater.from(this).inflate(R.layout.take_picture, null)
+
+            // set the click listeners for the camera and gallery options
+            bottomSheetView.findViewById<TextView>(R.id.camera_btn).setOnClickListener {
+                // handle camera option click
+                val cameraIntent = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+                cameraActivityResultLauncher.launch(cameraIntent)
+                imageDialog.dismiss()
             }
 
+            bottomSheetView.findViewById<TextView>(R.id.gallery_btn).setOnClickListener {
+                // handle gallery option click
+                val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                val mimeTypes = arrayOf("image/*")
+                pickIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                galleryActivityLauncher.launch(pickIntent)
+
+                imageDialog.dismiss()
+            }
+
+            // set the view for the BottomSheetDialog and show it
+            imageDialog.setContentView(bottomSheetView)
+            imageDialog.show()
+        }
+    }
+
+    private val cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val bundle: Bundle? = result.data?.extras
+
+            val profilePicture: ImageView = findViewById(R.id.avatar_user_profile)
+            val picture = bundle?.getParcelable<Bitmap>("data")
+
+            val size = profilePicture.width
+            val resizePicture = Bitmap.createScaledBitmap(picture as Bitmap, size, size, true)
+
+            profilePicture.setImageBitmap(resizePicture)
+
+        }
+    }
+
+    val galleryActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+            val selectedImageUri: Uri? = result.data?.data
+            // Handle the selected image URI here
+            val profilePicture: ImageView = findViewById(R.id.avatar_user_profile)
+
+
+            profilePicture.setImageURI(selectedImageUri)
         }
     }
 

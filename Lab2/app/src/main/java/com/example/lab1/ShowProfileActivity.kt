@@ -33,6 +33,12 @@ class ShowProfileActivity : AppCompatActivity() {
 
             val user = User(userInfo[0].toString(),userInfo[1].toString(),userInfo[2].toString(),userInfo[3].toString())
 
+            fullName.text = user.fullName
+            userName.text = user.username
+            description.text = user.description
+            location.text = user.location
+
+
             vm.addUser(user)
 
             vm.users.observe(this){
