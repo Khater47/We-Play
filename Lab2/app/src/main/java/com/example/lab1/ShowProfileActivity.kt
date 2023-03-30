@@ -1,13 +1,15 @@
 package com.example.lab1
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
-
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class ShowProfileActivity : AppCompatActivity() {
     private val vm  by viewModels<ShowProfileViewModel>()
 
@@ -21,7 +23,7 @@ class ShowProfileActivity : AppCompatActivity() {
         loadEditProfileActivity()
     }
 
-    fun initProfile(){
+    private fun initProfile(){
         val userInfo = intent.getStringArrayExtra("userInfo")
 
         if(userInfo!=null){
@@ -52,7 +54,7 @@ class ShowProfileActivity : AppCompatActivity() {
         }
 
     }
-    fun loadEditProfileActivity(){
+    private fun loadEditProfileActivity(){
         val editIcon: ImageView = findViewById(R.id.edit_icon_user_profile)
         editIcon.setOnClickListener {
             //load edit profile activity

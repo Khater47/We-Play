@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:id="@+id/dialogPictureLayout"
     android:padding="16dp">
 
 
@@ -12,20 +14,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/camera"
-        android:drawableStart="@drawable/outline_photo_camera_24"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:paddingBottom="@dimen/size_24dp"
         android:drawablePadding="10dp"
-        />
+        app:drawableStartCompat="@drawable/outline_photo_camera_24" />
 
     <TextView
         android:id="@+id/gallery_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableStart="@drawable/outline_photo_library_24"
         android:drawablePadding="10dp"
         android:text="@string/gallery"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:paddingBottom="@dimen/size_24dp"
-    />
+        app:drawableStartCompat="@drawable/outline_photo_library_24" />
 </LinearLayout>

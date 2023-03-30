@@ -1,25 +1,27 @@
 <resources>
 
-    <string name="app_name"></string>
+    <string name="appName">Court Reservation</string>
 
-    <!--User Profile string ShowProfileActivity-->
-    <string name="avatar">Avatar</string>
-    <string name="full_name">Full Name</string>
-    <string name="username"></string>
-    <string name="description"></string>
-    <string name="location"></string>
-    <string name="personal_info">Personal info</string>
-    <string name="toolbar_title_user_profile">User Profile</string>
+    <!--ShowProfileActivity-->
+    <string name="profilePicture">Profile Picture</string>
+    <string name="fullName">FullName</string>
+    <string name="username">Username</string>
+    <string name="description">Description</string>
+    <string name="location">Location</string>
+    <string name="personalInfo">Personal Info</string>
+    <string name="toolbarUserProfile">User Profile</string>
 
 
 
-    <!--User Profile Edit string EditProfileActivity-->
-    <string name="label_full_name">Full Name</string>
-    <string name="label_username">Username</string>
-    <string name="label_description">Description</string>
-    <string name="label_location">Location</string>
+    <!--EditProfileActivity-->
+    <string name="labelFullName">Full Name</string>
+    <string name="labelUsername">Username</string>
+    <string name="labelDescription">Description</string>
+    <string name="labelPosition">Location</string>
     <string name="camera">Camera</string>
     <string name="gallery">Gallery</string>
+    <string name="descriptionEditUserProfile">Edit User Profile</string>
+    <string name="descriptionShowProfile">Show Profile</string>
 
 
 </resources>

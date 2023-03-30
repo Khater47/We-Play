@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,11 +9,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:baselineAligned="false"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
@@ -29,10 +30,10 @@
                     android:id="@+id/avatar_user_profile"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:contentDescription="@string/avatar"
+                    android:contentDescription="@string/profilePicture"
                     android:padding="5dp"
                     android:src="@drawable/profile"
-                    android:title="@string/avatar"
+                    android:title="@string/profilePicture"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +47,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/full_name"
+                    android:text="@string/fullName"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -69,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="5dp"
-                    android:text="@string/personal_info"
+                    android:text="@string/personalInfo"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     />
 
@@ -79,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:paddingBottom="5dp"
-                    android:text="@string/label_username"
+                    android:text="@string/labelUsername"
                     />
 
                 <TextView
@@ -94,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:paddingBottom="5dp"
-                    android:text="@string/label_description"
+                    android:text="@string/labelDescription"
                     />
 
                 <TextView
@@ -108,7 +109,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
-                    android:text="@string/label_location"
+                    android:text="@string/labelPosition"
                     />
 
                 <TextView
