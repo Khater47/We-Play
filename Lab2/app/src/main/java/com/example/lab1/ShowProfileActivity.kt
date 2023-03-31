@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class ShowProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
