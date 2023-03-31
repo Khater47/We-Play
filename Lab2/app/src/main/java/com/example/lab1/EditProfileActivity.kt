@@ -1,5 +1,6 @@
 package com.example.lab1
 
+//import androidx.activity.viewModels
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -9,13 +10,13 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.MediaStore
-import android.view.View
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
-import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -26,54 +27,85 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var profilePicture: ImageView
+    private lateinit var editFullName:TextInputEditText;
+    private lateinit var editUsername:TextInputEditText;
+    private lateinit var editDescription:TextInputEditText;
+    private lateinit var editLocation:TextInputEditText;
+
+    private var user:ArrayList<String>? = arrayListOf()
+
+    //private val vm  by viewModels<ShowProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_edit_profile)
 
-        profilePicture = findViewById(R.id.avatar_user_profile)
-
-        //delete editIcon in toolbar
-        val editIcon:ImageView = findViewById(R.id.edit_icon_user_profile)
-        editIcon.visibility = View.GONE
+        setUp() //initialize lateinit var
 
         takePicture()
-        loadShowProfileActivity() //load showProfileActivity and pass data
+        //loadShowProfileActivity() //load showProfileActivity and pass data
 
-    }
-
-    //load showProfileActivity and pass data
-    private fun loadShowProfileActivity(){
-        val arrowBack:ImageView  = findViewById(R.id.arrow_back_user_profile)
-        arrowBack.visibility = View.VISIBLE
-
-        arrowBack.setOnClickListener {
-            val userInfo = getInfo() //get user info from text field
-
-            //pass data from edit profile activity to show profile activity
-            val intent = Intent(this, ShowProfileActivity::class.java)
-            intent.putExtra("userInfo",userInfo)
-            startActivity(intent)
+        if(savedInstanceState!=null){
+            user = savedInstanceState.getStringArrayList("user")
+            setEditText()
         }
+    }
+
+    private fun setUp(){
+        profilePicture = findViewById(R.id.avatar_user_profile)
+
+        editFullName = findViewById(R.id.edit_full_name)
+         editUsername = findViewById(R.id.edit_username)
+         editDescription = findViewById(R.id.edit_description)
+         editLocation = findViewById(R.id.edit_location)
 
     }
 
-    /**get user input from text field*/
-    private fun getInfo(): Array<String> {
+    private fun setEditText(){
+        editFullName.setText(user?.get(0) ?:"")
+        editUsername.setText(user?.get(1) ?:"")
+        editDescription.setText(user?.get(2) ?:"")
+        editLocation.setText(user?.get(3) ?:"")
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
 
-        val editFullName: TextInputEditText = findViewById(R.id.edit_full_name)
-        val editUsername: TextInputEditText = findViewById(R.id.edit_username)
-        val editDescription: TextInputEditText = findViewById(R.id.edit_description)
-        val editLocation: TextInputEditText = findViewById(R.id.edit_location)
+        super.onSaveInstanceState(outState)
 
-        return arrayOf(
-            editFullName.text.toString(),
-            editUsername.text.toString(),
-            editDescription.text.toString(),
-            editLocation.text.toString()
-        )
+        val fullName = editFullName.text.toString()
+        val username = editUsername.text.toString()
+        val description = editDescription.text.toString()
+        val location = editLocation.text.toString()
 
+        outState.putStringArrayList("user", arrayListOf(fullName,username,description,location))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.edit_profile_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.save_button -> {
+
+                val array:Array<String> = arrayOf(
+                    editFullName.text.toString(),
+                    editUsername.text.toString(),
+                    editDescription.text.toString(),
+                    editLocation.text.toString(),
+                    )
+                //pass data from edit profile activity to show profile activity
+                val intent = Intent(this, ShowProfileActivity::class.java)
+                intent.putExtra("user",array)
+                startActivity(intent)
+
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     /**Dialog for selected picture from gallery/camera*/

@@ -3,15 +3,17 @@ package com.example.lab1
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.ImageView
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+//import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.viewModels
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class ShowProfileActivity : AppCompatActivity() {
-    private val vm  by viewModels<ShowProfileViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,13 +22,31 @@ class ShowProfileActivity : AppCompatActivity() {
 
         initProfile()
 
-        loadEditProfileActivity()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.show_profile_menu, menu)
+        return true
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Handle item selection
+        return when (item.itemId) {
+            R.id.edit_button -> {
+
+                val intent = Intent(this, EditProfileActivity::class.java)
+                startActivity(intent)
+
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
     private fun initProfile(){
-        val userInfo = intent.getStringArrayExtra("userInfo")
+        val userInfo = intent.getStringArrayExtra("user")
 
         if(userInfo!=null){
+
 
             val fullName: TextView = findViewById(R.id.full_name_user_profile)
             val userName: TextView = findViewById(R.id.custom_username_user_profile)
@@ -41,6 +61,21 @@ class ShowProfileActivity : AppCompatActivity() {
             location.text = user.location
 
 
+
+        }
+        else
+            Toast.makeText(this,"NULL",Toast.LENGTH_SHORT).show()
+
+    }
+
+
+}
+
+
+/*
+    <include layout="@layout/toolbar" />
+
+
             vm.addUser(user)
 
             vm.users.observe(this){
@@ -50,11 +85,7 @@ class ShowProfileActivity : AppCompatActivity() {
                 location.text = user.location
             }
 
-
-        }
-
-    }
-    private fun loadEditProfileActivity(){
+             private fun loadEditProfileActivity(){
         val editIcon: ImageView = findViewById(R.id.edit_icon_user_profile)
         editIcon.setOnClickListener {
             //load edit profile activity
@@ -63,5 +94,4 @@ class ShowProfileActivity : AppCompatActivity() {
         }
 
     }
-
-}
+            */

@@ -18,8 +18,8 @@
     <string name="labelUsername">Username</string>
     <string name="labelDescription">Description</string>
     <string name="labelPosition">Location</string>
-    <string name="camera">Camera</string>
-    <string name="gallery">Gallery</string>
+    <string name="camera">Use the camera to take a picture</string>
+    <string name="gallery">Select an image from the phone gallery</string>
     <string name="descriptionEditUserProfile">Edit User Profile</string>
     <string name="descriptionShowProfile">Show Profile</string>
 

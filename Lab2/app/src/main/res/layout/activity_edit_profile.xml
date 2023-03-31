@@ -1,62 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
 
-    <include layout="@layout/toolbar" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
         <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+            android:paddingTop="@dimen/size_16dp"
         >
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        >
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/card_profile_picture"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3"
-            app:cardCornerRadius="5dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@android:color/transparent"
-            >
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/avatar_user_profile"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/profilePicture"
-                android:padding="5dp"
-                android:src="@drawable/profile"
-                android:title="@string/profilePicture"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                app:strokeWidth="1sp"
-                app:strokeColor="@color/black"
-                app:shapeAppearance="@style/circular" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
 
-        </androidx.cardview.widget.CardView>
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/avatar_user_profile"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/profilePicture"
+                    android:padding="5dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/profile"
+                    android:title="@string/profilePicture"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.3"
+                    app:shapeAppearance="@style/circular">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.imageview.ShapeableImageView>
+
+                <ImageButton
+                    android:id="@+id/imageButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="99dp"
+                    android:layout_marginBottom="107dp"
+                    android:backgroundTint="@color/white"
+                    android:contentDescription="Select Image"
+                    android:tooltipText="Select Image"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/avatar_user_profile"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/outline_photo_camera_24" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -97,7 +99,7 @@
                 android:id="@+id/edit_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColorHint="#757575" />
+                />
 
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -146,6 +148,5 @@
 
     </LinearLayout>
 
-    </ScrollView>
+</ScrollView>
 
-</LinearLayout>

@@ -1,18 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -63,6 +59,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="2"
+                android:paddingLeft="@dimen/size_10dp"
+                android:paddingTop="@dimen/size_10dp"
                 android:background="@drawable/rounded_shape"
                 android:orientation="vertical">
 
@@ -71,46 +69,55 @@
                     android:id="@+id/user_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
                     android:text="@string/personalInfo"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <TextView
                     android:id="@+id/username_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
-                    android:paddingBottom="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
                     android:text="@string/labelUsername"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableStartCompat="@drawable/outline_alternate_email_16" />
 
                 <TextView
                     android:id="@+id/custom_username_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/username" />
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/username"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView
                     android:id="@+id/description_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
-                    android:paddingBottom="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
                     android:text="@string/labelDescription"
-                    app:drawableStartCompat="@drawable/outline_description_16" />
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableStartCompat="@drawable/outline_description_16"
+                    />
 
                 <TextView
                     android:id="@+id/custom_description_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/description" />
+                    android:paddingBottom="@dimen/size_32dp"
+                    android:text="@string/description"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView
                     android:id="@+id/location_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
                     android:text="@string/labelPosition"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableStartCompat="@drawable/outline_location_on_16" />
 
                 <TextView
@@ -118,13 +125,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
-                    android:paddingBottom="5dp"
-                    android:text="@string/location" />
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/location"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
-</LinearLayout>
+</ScrollView>
