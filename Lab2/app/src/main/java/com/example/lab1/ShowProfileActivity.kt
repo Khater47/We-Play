@@ -1,15 +1,12 @@
 package com.example.lab1
 
+import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-//import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 
 class ShowProfileActivity : AppCompatActivity() {
@@ -42,55 +39,25 @@ class ShowProfileActivity : AppCompatActivity() {
         }
     }
     private fun initProfile(){
-        val userInfo = intent.getStringArrayExtra("user")
 
-        if(userInfo!=null){
+        val fullName: TextView = findViewById(R.id.full_name_user_profile)
+        val userName: TextView = findViewById(R.id.custom_username_user_profile)
+        val description: TextView = findViewById(R.id.custom_description_user_profile)
+        val location: TextView = findViewById(R.id.custom_location_user_profile)
 
+        val sharedPref = getSharedPreferences("userFile",Context.MODE_PRIVATE)
+        if(sharedPref!=null){
 
-            val fullName: TextView = findViewById(R.id.full_name_user_profile)
-            val userName: TextView = findViewById(R.id.custom_username_user_profile)
-            val description: TextView = findViewById(R.id.custom_description_user_profile)
-            val location: TextView = findViewById(R.id.custom_location_user_profile)
-
-            val user = User(userInfo[0].toString(),userInfo[1].toString(),userInfo[2].toString(),userInfo[3].toString())
-
-            fullName.text = user.fullName
-            userName.text = user.username
-            description.text = user.description
-            location.text = user.location
-
-
+            fullName.text = sharedPref.getString("fullName",getString(R.string.fullName))
+            userName.text = sharedPref.getString("username",getString(R.string.username))
+            description.text = sharedPref.getString("description",getString(R.string.description))
+            location.text = sharedPref.getString("location",getString(R.string.location))
 
         }
-        else
-            Toast.makeText(this,"NULL",Toast.LENGTH_SHORT).show()
+
+
 
     }
 
 
 }
-
-
-/*
-    <include layout="@layout/toolbar" />
-
-
-            vm.addUser(user)
-
-            vm.users.observe(this){
-                fullName.text = user.fullName
-                userName.text = user.username
-                description.text = user.description
-                location.text = user.location
-            }
-
-             private fun loadEditProfileActivity(){
-        val editIcon: ImageView = findViewById(R.id.edit_icon_user_profile)
-        editIcon.setOnClickListener {
-            //load edit profile activity
-            val intent = Intent(this, EditProfileActivity::class.java)
-            startActivity(intent)
-        }
-
-    }
-            */

@@ -3,6 +3,7 @@ package com.example.lab1
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -21,10 +22,8 @@ import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.LinearLayout
-import androidx.core.app.ActivityCompat
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.IOException
-import java.util.jar.Manifest
 
 
 class EditProfileActivity : AppCompatActivity() {
@@ -36,7 +35,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var editLocation:TextInputEditText;
 
     private var user:ArrayList<String>? = arrayListOf()
-
+    private var imageUri:Uri? = null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class EditProfileActivity : AppCompatActivity() {
             setEditText()
         }
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
                 || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_DENIED){
 
@@ -98,15 +97,17 @@ class EditProfileActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.save_button -> {
 
-                val array:Array<String> = arrayOf(
-                    editFullName.text.toString(),
-                    editUsername.text.toString(),
-                    editDescription.text.toString(),
-                    editLocation.text.toString(),
-                    )
-                //pass data from edit profile activity to show profile activity
+                val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
+
+                val editor = sharedPref.edit()
+                editor.putString("fullName", editFullName.text.toString())
+                editor.putString("username", editUsername.text.toString())
+                editor.putString("description", editDescription.text.toString())
+                editor.putString("location", editLocation.text.toString())
+                editor.apply()
+
+
                 val intent = Intent(this, ShowProfileActivity::class.java)
-                intent.putExtra("user",array)
                 startActivity(intent)
 
                 true
@@ -126,7 +127,7 @@ class EditProfileActivity : AppCompatActivity() {
             // handle camera option click
 
 
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
                 if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
                     val permission = arrayOf(android.Manifest.permission.CAMERA)
                     requestPermissions( permission, 112)
@@ -163,7 +164,6 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    private var imageUri:Uri? = null;
     private fun openCamera(){
 
         val values:ContentValues = ContentValues()
