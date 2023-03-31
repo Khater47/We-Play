@@ -3,7 +3,6 @@ package com.example.lab1
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.Cursor
@@ -23,6 +22,9 @@ import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import android.content.Context
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -47,6 +49,7 @@ class EditProfileActivity : AppCompatActivity() {
         if(savedInstanceState!=null){
             user = savedInstanceState.getStringArrayList("user")
             setEditText()
+            loadImageFromInternalStorage()
         }
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
@@ -157,10 +160,12 @@ class EditProfileActivity : AppCompatActivity() {
     private val galleryActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
 
-            val selectedImageUri: Uri? = result.data?.data
+            imageUri = result.data?.data
             // Handle the selected image URI here
 
-            profilePicture.setImageURI(selectedImageUri)
+            profilePicture.setImageURI(imageUri)
+
+            saveImageOnInternalStorage()
         }
     }
 
@@ -184,6 +189,8 @@ class EditProfileActivity : AppCompatActivity() {
             val rotated = rotateBitmap(inputImage)
             profilePicture.setImageBitmap(rotated)
 
+            saveImageOnInternalStorage()
+
         }
     }
 
@@ -205,7 +212,7 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     @SuppressLint("Range")
-    fun rotateBitmap(input:Bitmap?): Bitmap? {
+    private fun rotateBitmap(input:Bitmap?): Bitmap? {
         val orientationColumn:Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
         val cur: Cursor? = imageUri?.let { contentResolver.query(it,orientationColumn,null,null,null) }
         var orientation=-1
@@ -218,5 +225,32 @@ class EditProfileActivity : AppCompatActivity() {
         val cropped =
             input?.let { Bitmap.createBitmap(it,0,0,input.width,input.height,rotationMatrix,true) }
         return cropped
+    }
+
+    private fun saveImageOnInternalStorage(){
+
+        val directory = filesDir
+        val imageFile = File(directory, getString(R.string.imageName))
+
+        val bitmap = uriToBitmap(imageUri)
+        val outputStream = FileOutputStream(imageFile)
+        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
+    }
+
+    private fun loadImageFromInternalStorage(){
+
+        val picture:ImageView = findViewById(R.id.avatar_user_profile)
+
+        val fileName = getString(R.string.imageName)
+        val directory = filesDir // directory privata dell'app
+
+        val imageFile = File(directory, fileName)
+
+        if(imageFile!=null){
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+            picture.setImageBitmap(bitmap)
+        }
     }
 }

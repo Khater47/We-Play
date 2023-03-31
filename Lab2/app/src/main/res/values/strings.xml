@@ -11,6 +11,8 @@
     <string name="personalInfo">Personal Info</string>
     <string name="toolbarUserProfile">User Profile</string>
 
+    <!--Image Name for internal storage -->
+    <string name="imageName">profilePicture</string>
 
 
     <!--EditProfileActivity-->

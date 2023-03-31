@@ -2,12 +2,16 @@ package com.example.lab1
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.io.*
 
 class ShowProfileActivity : AppCompatActivity() {
 
@@ -46,6 +50,8 @@ class ShowProfileActivity : AppCompatActivity() {
         val location: TextView = findViewById(R.id.custom_location_user_profile)
 
         val sharedPref = getSharedPreferences("userFile",Context.MODE_PRIVATE)
+
+        //Load User Info
         if(sharedPref!=null){
 
             fullName.text = sharedPref.getString("fullName",getString(R.string.fullName))
@@ -55,9 +61,26 @@ class ShowProfileActivity : AppCompatActivity() {
 
         }
 
+        //Load User Profile Picture
+        loadImageFromInternalStorage()
 
 
     }
 
+    private fun loadImageFromInternalStorage(){
+
+        val picture:ImageView = findViewById(R.id.avatar_user_profile)
+
+        val fileName = getString(R.string.imageName)
+        val directory = filesDir // directory privata dell'app
+
+        val imageFile = File(directory, fileName)
+
+        if(imageFile!=null){
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+            picture.setImageBitmap(bitmap)
+        }
+    }
 
 }
+

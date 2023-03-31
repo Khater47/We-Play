@@ -28,6 +28,7 @@
                 android:layout_height="150dp"
                 android:contentDescription="@string/profilePicture"
                 android:padding="5dp"
+                android:scaleType="fitXY"
                 android:src="@drawable/profile"
                 android:title="@string/profilePicture"
                 app:layout_constraintBottom_toBottomOf="parent"
