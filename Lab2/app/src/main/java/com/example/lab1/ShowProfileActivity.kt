@@ -22,10 +22,13 @@ class ShowProfileActivity : AppCompatActivity() {
 
     }
 
+    //create edit button on toolBar
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.show_profile_menu,menu)
         return true
     }
+
+    //handle edit button click, intent = EditActivityProfile
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
         return when (item.itemId) {
@@ -39,12 +42,14 @@ class ShowProfileActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+    //load User Info
     private fun initProfile(){
 
         val fullName: TextView = findViewById(R.id.full_name_user_profile)
         val nickname: TextView = findViewById(R.id.custom_nickname_user_profile)
         val description: TextView = findViewById(R.id.custom_description_user_profile)
-        val email: TextView = findViewById(R.id.custom_email_user_profile)
+        val email: TextView = findViewById(R.id.email_user_profile)
         val phoneNumber: TextView = findViewById(R.id.custom_phone_number_user_profile)
 
         val sharedPref = getSharedPreferences("userFile",Context.MODE_PRIVATE)
@@ -66,6 +71,7 @@ class ShowProfileActivity : AppCompatActivity() {
 
     }
 
+    //load image from internal storage
     private fun loadImageFromInternalStorage(){
 
         val picture:ImageView = findViewById(R.id.avatar_user_profile)

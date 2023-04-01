@@ -2,7 +2,6 @@
 <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -48,6 +47,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/avatar_user_profile" />
 
+                <TextView
+                    android:id="@+id/email_user_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/email"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/full_name_user_profile" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -85,25 +97,6 @@
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/size_15dp"
                     android:text="@string/nickname"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-                <TextView
-                    android:id="@+id/email_user_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:paddingBottom="@dimen/size_15dp"
-                    android:text="@string/labelEmail"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    app:drawableStartCompat="@drawable/outline_email_16" />
-
-                <TextView
-                    android:id="@+id/custom_email_user_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawablePadding="5dp"
-                    android:paddingBottom="@dimen/size_15dp"
-                    android:text="@string/email"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView

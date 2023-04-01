@@ -1,19 +1,19 @@
 <resources>
 
-    <string name="appName">User Profile</string>
+    <string name="appName">Profile</string>
 
     <!--ShowProfileActivity-->
     <string name="profilePicture">Profile Picture</string>
 
-    <string name="fullName">FullName</string>
-    <string name="nickname">Nickname</string>
-    <string name="email">Email</string>
-    <string name="phoneNumber">Phone Number</string>
-    <string name="description">Description</string>
+    <string name="fullName">Mario Rossi</string>
+    <string name="nickname">mario</string>
+    <string name="email">mariorossi@gmail.com</string>
+    <string name="phoneNumber">1234567890</string>
+    <string name="description">student, location</string>
 
 
     <string name="personalInfo">Personal Info</string>
-    <string name="toolbarUserProfile">User Profile</string>
+    <string name="toolbarEditProfile">Edit Profile</string>
     <string name="editMenuProfile">edit menu profile</string>
 
 
@@ -22,9 +22,9 @@
 
     <!--EditProfileActivity-->
     <string name="labelFullName">Full Name</string>
+    <string name="labelEmail">Email</string>
     <string name="labelNickname">Nickname</string>
     <string name="labelDescription">Description</string>
-    <string name="labelEmail">Email</string>
     <string name="labelPhoneNumber">Phone Number</string>
 
     <string name="camera">Take a picture from camera</string>

@@ -22,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Context
+import androidx.core.net.toUri
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -47,16 +48,17 @@ class EditProfileActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_edit_profile)
 
-        setUp() //initialize var and set onClickListener for select picture
+        setUp() //findById all component and set action for arrow and imageButton
 
-
+        //restore info from portrait to landscape
         if(savedInstanceState!=null){
             user = savedInstanceState.getStringArrayList("user")
-            setEditText()
-            loadImageFromInternalStorage()
+
+            restoreInfoOnLandscape()
         }
 
 
+        //check Permission for Gallery and Camera
         if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
             || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_DENIED){
 
@@ -66,6 +68,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     }
 
+    //save user info when click on arrow button (leave edit page)
     private fun saveUserInfo(){
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
@@ -77,38 +80,14 @@ class EditProfileActivity : AppCompatActivity() {
         editor.putString("phoneNumber", editPhoneNumber.text.toString())
         editor.apply()
 
+        saveImageOnInternalStorage()
+
         val intent = Intent(this, ShowProfileActivity::class.java)
         startActivity(intent)
 
     }
-    private fun setUp(){
-        profilePicture = findViewById(R.id.avatar_user_profile)
 
-        //profileButton.setOnClickListener { pictureDialog() }
-        profileButton = findViewById(R.id.image_button)
-
-        editFullName = findViewById(R.id.edit_full_name)
-         editNickname = findViewById(R.id.edit_nickname)
-         editDescription = findViewById(R.id.edit_description)
-         editEmail = findViewById(R.id.edit_email)
-        editPhoneNumber = findViewById(R.id.edit_phoneNumber)
-
-        arrowBack = findViewById(R.id.arrow_back_user_profile)
-        arrowBack.setOnClickListener {
-            saveUserInfo()
-        }
-
-        registerForContextMenu(profileButton)
-
-    }
-    private fun setEditText(){
-        editFullName.setText(user?.get(0) ?:"")
-        editNickname.setText(user?.get(1) ?:"")
-        editDescription.setText(user?.get(2) ?:"")
-        editEmail.setText(user?.get(3) ?:"")
-        editPhoneNumber.setText(user?.get(4) ?:"")
-
-    }
+    //save info before move from portrait to landscape
     override fun onSaveInstanceState(outState: Bundle) {
 
         super.onSaveInstanceState(outState)
@@ -120,9 +99,10 @@ class EditProfileActivity : AppCompatActivity() {
         val phoneNumber = editPhoneNumber.text.toString()
 
 
-        outState.putStringArrayList("user", arrayListOf(fullName,nickname,description,email))
+        outState.putStringArrayList("user", arrayListOf(fullName,nickname,description,email,phoneNumber,imageUri.toString()))
     }
 
+    //create floating menu for image button (2 option, select picture from camera or gallery)
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
 
         super.onCreateContextMenu(menu, v, menuInfo)
@@ -130,6 +110,7 @@ class EditProfileActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.context_menu,menu)
     }
 
+    //handle click on camera/gallery option
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.camera_menu -> {
@@ -139,7 +120,6 @@ class EditProfileActivity : AppCompatActivity() {
                     requestPermissions( permission, 112)
                 }
                 else openCamera()
-
 
                 true
             }
@@ -157,18 +137,20 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    //set image from Gallery
     private val galleryActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
 
             imageUri = result.data?.data
-            // Handle the selected image URI here
 
             profilePicture.setImageURI(imageUri)
 
             saveImageOnInternalStorage()
+
         }
     }
 
+    //launch itent for camera
     private fun openCamera(){
 
         val values = ContentValues()
@@ -181,6 +163,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     }
 
+    //set image from camera
     private val cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
@@ -190,10 +173,10 @@ class EditProfileActivity : AppCompatActivity() {
             profilePicture.setImageBitmap(rotated)
 
             saveImageOnInternalStorage()
-
         }
     }
 
+    //convert Uri to Bitmap
     private fun uriToBitmap(selectedFileUri:Uri?):Bitmap?{
         try{
             val parcelFileDescriptor =
@@ -211,6 +194,7 @@ class EditProfileActivity : AppCompatActivity() {
         return null
     }
 
+    //rotate image when using landscape mode on camera
     @SuppressLint("Range")
     private fun rotateBitmap(input: Bitmap?): Bitmap? {
         val orientationColumn: Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
@@ -236,6 +220,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    //save image on local storage
     private fun saveImageOnInternalStorage(){
 
         val directory = filesDir
@@ -248,6 +233,55 @@ class EditProfileActivity : AppCompatActivity() {
         outputStream.close()
     }
 
+    //find by id all component and set action for arrow and imageButton
+    private fun setUp(){
+        profilePicture = findViewById(R.id.avatar_user_profile)
+
+        //profileButton.setOnClickListener { pictureDialog() }
+        profileButton = findViewById(R.id.image_button)
+
+        editFullName = findViewById(R.id.edit_full_name)
+        editNickname = findViewById(R.id.edit_nickname)
+        editDescription = findViewById(R.id.edit_description)
+        editEmail = findViewById(R.id.edit_email)
+        editPhoneNumber = findViewById(R.id.edit_phoneNumber)
+
+        arrowBack = findViewById(R.id.arrow_back_user_profile)
+        arrowBack.setOnClickListener {
+            saveUserInfo()
+        }
+
+        registerForContextMenu(profileButton)
+
+        loadImageFromInternalStorage()
+
+    }
+
+    //restore user info when pass from portrait to landscape
+    private fun restoreInfoOnLandscape(){
+
+        editFullName.setText(user?.get(0) ?:"")
+        editNickname.setText(user?.get(1) ?:"")
+        editDescription.setText(user?.get(2) ?:"")
+        editEmail.setText(user?.get(3) ?:"")
+        editPhoneNumber.setText(user?.get(4) ?:"")
+
+        /*
+        //select image
+        if(user?.get(5)!=null && user?.get(5)!="null")
+            profilePicture.setImageURI(user?.get(5)?.toUri())
+
+        //show standard image when rotate many times the screen
+        else {
+            val standardImage = BitmapFactory.decodeResource(resources,R.drawable.profile)
+            profilePicture.setImageBitmap(standardImage)
+        }
+        */
+
+
+    }
+
+    //load image from internal storage
     private fun loadImageFromInternalStorage(){
 
         val picture:ImageView = findViewById(R.id.avatar_user_profile)
@@ -257,8 +291,10 @@ class EditProfileActivity : AppCompatActivity() {
 
         val imageFile = File(directory, fileName)
 
-        val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-        picture.setImageBitmap(bitmap)
+        if(imageFile!=null){
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+            picture.setImageBitmap(bitmap)
+        }
 
     }
 }
