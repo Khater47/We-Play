@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import java.io.*
 
@@ -81,9 +82,12 @@ class ShowProfileActivity : AppCompatActivity() {
 
         val imageFile = File(directory, fileName)
 
-        val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-        picture.setImageBitmap(bitmap)
+        if(imageFile!=null) {
+            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+            picture.setImageBitmap(bitmap)
+        }
     }
+
 
 }
 

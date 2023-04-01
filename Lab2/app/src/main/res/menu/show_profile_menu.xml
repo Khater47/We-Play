@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/edit_button"
         android:icon="@drawable/baseline_edit_32"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:title="@string/editMenuProfile" />
 
 </menu>

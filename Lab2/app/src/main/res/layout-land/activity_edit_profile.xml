@@ -51,11 +51,11 @@
                     android:layout_marginStart="105dp"
                     android:layout_marginBottom="150dp"
                     android:contentDescription="@string/imageButtonDescription"
-                    android:drawableStart="@drawable/outline_photo_camera_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:drawableStartCompat="@drawable/outline_photo_camera_24" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

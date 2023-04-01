@@ -23,6 +23,8 @@ import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Context
 import androidx.core.net.toUri
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -72,12 +74,14 @@ class EditProfileActivity : AppCompatActivity() {
     private fun saveUserInfo(){
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
+
         val editor = sharedPref.edit()
         editor.putString("fullName", editFullName.text.toString())
         editor.putString("nickname", editNickname.text.toString())
         editor.putString("description", editDescription.text.toString())
         editor.putString("email", editEmail.text.toString())
         editor.putString("phoneNumber", editPhoneNumber.text.toString())
+
         editor.apply()
 
         saveImageOnInternalStorage()
@@ -86,6 +90,7 @@ class EditProfileActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
+
 
     //save info before move from portrait to landscape
     override fun onSaveInstanceState(outState: Bundle) {
@@ -184,11 +189,11 @@ class EditProfileActivity : AppCompatActivity() {
 
             val fileDescriptor = parcelFileDescriptor?.fileDescriptor
             val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-
             parcelFileDescriptor?.close()
             return image
+
         }
-        catch (e:IOException){
+        catch (e:Exception){
             e.printStackTrace()
         }
         return null
@@ -226,7 +231,12 @@ class EditProfileActivity : AppCompatActivity() {
         val directory = filesDir
         val imageFile = File(directory, getString(R.string.imageName))
 
-        val bitmap = uriToBitmap(imageUri)
+        var bitmap:Bitmap?;
+        if(imageUri!=null)
+            bitmap = uriToBitmap(imageUri)
+        else
+            bitmap = BitmapFactory.decodeResource(this.resources,R.drawable.profile)
+
         val outputStream = FileOutputStream(imageFile)
         bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         outputStream.flush()
@@ -297,4 +307,6 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
     }
+
+
 }
