@@ -12,13 +12,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:baselineAligned="false"
+        android:orientation="horizontal"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_weight="1"
             android:orientation="horizontal">
 
 
@@ -58,8 +59,8 @@
             android:layout_height="match_parent"
             android:layout_marginEnd="16dp"
             android:layout_weight="2"
-            android:paddingTop="20dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingTop="20dp">
 
 
             <TextView
@@ -78,16 +79,54 @@
                 android:paddingBottom="@dimen/size_15dp"
                 android:text="@string/labelNickname"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                app:drawableStartCompat="@drawable/outline_alternate_email_16"
-                />
+                app:drawableStartCompat="@drawable/outline_person_16" />
 
             <TextView
                 android:id="@+id/custom_nickname_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/size_15dp"
+                android:text="@string/nickname"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+
+            <TextView
+                android:id="@+id/email_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingBottom="@dimen/size_15dp"
+                android:text="@string/labelEmail"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="@string/nickname" />
+                app:drawableStartCompat="@drawable/outline_alternate_email_16" />
+
+            <TextView
+                android:id="@+id/custom_email_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingBottom="@dimen/size_15dp"
+                android:text="@string/email"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+            <TextView
+                android:id="@+id/phone_number_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingBottom="@dimen/size_15dp"
+                android:text="@string/labelPhoneNumber"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:drawableStartCompat="@drawable/outline_phone_16" />
+
+            <TextView
+                android:id="@+id/custom_phone_number_user_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                android:paddingBottom="@dimen/size_15dp"
+                android:text="@string/phoneNumber"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <TextView
                 android:id="@+id/description_user_profile"
@@ -95,40 +134,18 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="5dp"
                 android:paddingBottom="@dimen/size_15dp"
-                app:drawableStartCompat="@drawable/outline_description_16"
                 android:text="@string/labelDescription"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                />
+                app:drawableStartCompat="@drawable/outline_description_16" />
 
             <TextView
                 android:id="@+id/custom_description_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/size_15dp"
                 android:text="@string/description"
-                android:paddingBottom="@dimen/size_15dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                />
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
-            <TextView
-                android:id="@+id/location_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:paddingBottom="@dimen/size_15dp"
-                app:drawableStartCompat="@drawable/outline_location_on_16"
-                android:text="@string/labelPosition"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                />
-
-            <TextView
-                android:id="@+id/custom_location_user_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawablePadding="5dp"
-                android:paddingBottom="@dimen/size_15dp"
-                android:text="@string/location"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                />
 
 
         </LinearLayout>

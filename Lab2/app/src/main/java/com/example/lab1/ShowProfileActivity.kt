@@ -44,7 +44,8 @@ class ShowProfileActivity : AppCompatActivity() {
         val fullName: TextView = findViewById(R.id.full_name_user_profile)
         val nickname: TextView = findViewById(R.id.custom_nickname_user_profile)
         val description: TextView = findViewById(R.id.custom_description_user_profile)
-        val location: TextView = findViewById(R.id.custom_location_user_profile)
+        val email: TextView = findViewById(R.id.custom_email_user_profile)
+        val phoneNumber: TextView = findViewById(R.id.custom_phone_number_user_profile)
 
         val sharedPref = getSharedPreferences("userFile",Context.MODE_PRIVATE)
 
@@ -54,7 +55,8 @@ class ShowProfileActivity : AppCompatActivity() {
             fullName.text = sharedPref.getString("fullName",getString(R.string.fullName))
             nickname.text = sharedPref.getString("nickname",getString(R.string.nickname))
             description.text = sharedPref.getString("description",getString(R.string.description))
-            location.text = sharedPref.getString("location",getString(R.string.location))
+            email.text = sharedPref.getString("email",getString(R.string.email))
+            phoneNumber.text = sharedPref.getString("phoneNumber",getString(R.string.phoneNumber))
 
         }
 

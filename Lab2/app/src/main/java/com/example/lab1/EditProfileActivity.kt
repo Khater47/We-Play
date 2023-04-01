@@ -22,7 +22,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Context
-import android.widget.ImageButton
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -34,10 +33,10 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var editFullName:TextInputEditText
     private lateinit var editNickname:TextInputEditText
     private lateinit var editDescription:TextInputEditText
-    private lateinit var editLocation:TextInputEditText
+    private lateinit var editEmail:TextInputEditText
+    private lateinit var editPhoneNumber:TextInputEditText
     private lateinit var arrowBack:ImageView
-    private lateinit var profileButton: ImageButton
-
+    private lateinit var profileButton: TextView
 
 
     private var user:ArrayList<String>? = arrayListOf()
@@ -49,6 +48,7 @@ class EditProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_profile)
 
         setUp() //initialize var and set onClickListener for select picture
+
 
         if(savedInstanceState!=null){
             user = savedInstanceState.getStringArrayList("user")
@@ -73,7 +73,8 @@ class EditProfileActivity : AppCompatActivity() {
         editor.putString("fullName", editFullName.text.toString())
         editor.putString("nickname", editNickname.text.toString())
         editor.putString("description", editDescription.text.toString())
-        editor.putString("location", editLocation.text.toString())
+        editor.putString("email", editEmail.text.toString())
+        editor.putString("phoneNumber", editPhoneNumber.text.toString())
         editor.apply()
 
         val intent = Intent(this, ShowProfileActivity::class.java)
@@ -82,25 +83,31 @@ class EditProfileActivity : AppCompatActivity() {
     }
     private fun setUp(){
         profilePicture = findViewById(R.id.avatar_user_profile)
-        profileButton = findViewById(R.id.image_button)
 
-        profileButton.setOnClickListener { pictureDialog() }
+        //profileButton.setOnClickListener { pictureDialog() }
+        profileButton = findViewById(R.id.image_button)
 
         editFullName = findViewById(R.id.edit_full_name)
          editNickname = findViewById(R.id.edit_nickname)
          editDescription = findViewById(R.id.edit_description)
-         editLocation = findViewById(R.id.edit_location)
+         editEmail = findViewById(R.id.edit_email)
+        editPhoneNumber = findViewById(R.id.edit_phoneNumber)
 
         arrowBack = findViewById(R.id.arrow_back_user_profile)
         arrowBack.setOnClickListener {
             saveUserInfo()
         }
+
+        registerForContextMenu(profileButton)
+
     }
     private fun setEditText(){
         editFullName.setText(user?.get(0) ?:"")
         editNickname.setText(user?.get(1) ?:"")
         editDescription.setText(user?.get(2) ?:"")
-        editLocation.setText(user?.get(3) ?:"")
+        editEmail.setText(user?.get(3) ?:"")
+        editPhoneNumber.setText(user?.get(4) ?:"")
+
     }
     override fun onSaveInstanceState(outState: Bundle) {
 
@@ -109,48 +116,45 @@ class EditProfileActivity : AppCompatActivity() {
         val fullName = editFullName.text.toString()
         val nickname = editNickname.text.toString()
         val description = editDescription.text.toString()
-        val location = editLocation.text.toString()
+        val email = editEmail.text.toString()
+        val phoneNumber = editPhoneNumber.text.toString()
 
-        outState.putStringArrayList("user", arrayListOf(fullName,nickname,description,location))
+
+        outState.putStringArrayList("user", arrayListOf(fullName,nickname,description,email))
     }
 
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
 
-    private fun pictureDialog(){
+        super.onCreateContextMenu(menu, v, menuInfo)
 
-            val imageDialog = BottomSheetDialog(this)
-            val dialogPictureLayout = findViewById<LinearLayout>(R.id.dialogPictureLayout)
-            val bottomSheetView = LayoutInflater.from(this).inflate(R.layout.take_picture, dialogPictureLayout)
+        menuInflater.inflate(R.menu.context_menu,menu)
+    }
 
-            // set the click listeners for the camera and gallery options
-            bottomSheetView.findViewById<TextView>(R.id.camera_btn).setOnClickListener {
-                // handle camera option click
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.camera_menu -> {
+
+                if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
+                    val permission = arrayOf(android.Manifest.permission.CAMERA)
+                    requestPermissions( permission, 112)
+                }
+                else openCamera()
 
 
-
-            if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
-                val permission = arrayOf(android.Manifest.permission.CAMERA)
-                requestPermissions( permission, 112)
+                true
             }
-            else openCamera()
+            R.id.gallery_menu -> {
 
+                val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                val mimeTypes = arrayOf("image/*")
+                galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                galleryActivityResultLauncher.launch(galleryIntent)
 
-            imageDialog.dismiss()
+                true
+            }
 
+            else -> super.onContextItemSelected(item)
         }
-
-        bottomSheetView.findViewById<TextView>(R.id.gallery_btn).setOnClickListener {
-            // handle gallery option click
-            val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            val mimeTypes = arrayOf("image/*")
-            galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            galleryActivityResultLauncher.launch(galleryIntent)
-
-            imageDialog.dismiss()
-        }
-
-        // set the view for the BottomSheetDialog and show it
-        imageDialog.setContentView(bottomSheetView)
-        imageDialog.show()
     }
 
     private val galleryActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/avatar_user_profile"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/profilePicture"
+        android:padding="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/profile"
+        android:title="@string/profilePicture"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.3"
+        app:shapeAppearance="@style/circular" />
+
+
+    <TextView
+        android:id="@+id/image_button"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginBottom="105dp"
+        android:backgroundTint="@color/white"
+        android:contentDescription="@string/imageButtonDescription"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:drawableStartCompat="@drawable/outline_photo_camera_24" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -8,6 +8,7 @@
     >
 
     <include layout="@layout/toolbar"/>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -19,7 +20,8 @@
             android:paddingTop="@dimen/size_16dp"
             >
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -42,33 +44,33 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.3"
-                    app:shapeAppearance="@style/circular">
+                    app:shapeAppearance="@style/circular" />
 
-                </com.google.android.material.imageview.ShapeableImageView>
 
-                <ImageButton
+                <TextView
                     android:id="@+id/image_button"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_marginEnd="82dp"
-                    android:layout_marginBottom="70dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="100dp"
+                    android:layout_marginBottom="105dp"
                     android:backgroundTint="@color/white"
                     android:contentDescription="@string/imageButtonDescription"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/avatar_user_profile"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/outline_photo_camera_24" />
+                    app:drawableStartCompat="@drawable/outline_photo_camera_24" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:layout_weight="2"
                 android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -111,6 +113,47 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/labelEmail"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:endIconMode="clear_text"
+                    >
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_email"
+                        android:inputType="textEmailAddress"
+                        />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/labelPhoneNumber"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    app:endIconMode="clear_text"
+                    >
+
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/edit_phoneNumber"
+                        android:inputType="phone"
+                        />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="@string/labelDescription"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     app:endIconMode="clear_text"
@@ -127,24 +170,6 @@
                 </com.google.android.material.textfield.TextInputLayout>
 
 
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/labelPosition"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    app:endIconMode="clear_text"
-                    >
-
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/edit_location"
-                        />
-
-
-                </com.google.android.material.textfield.TextInputLayout>
 
 
             </LinearLayout>
