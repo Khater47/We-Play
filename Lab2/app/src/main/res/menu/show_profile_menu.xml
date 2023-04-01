@@ -4,6 +4,6 @@
     <item android:id="@+id/edit_button"
         android:icon="@drawable/baseline_edit_32"
         app:showAsAction="ifRoom"
-        android:title="TODO" />
+        android:title="@string/editMenuProfile" />
 
 </menu>

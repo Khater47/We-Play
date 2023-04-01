@@ -71,23 +71,23 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
             <TextView
-                android:id="@+id/username_user_profile"
+                android:id="@+id/nickname_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="5dp"
                 android:paddingBottom="@dimen/size_15dp"
-                android:text="@string/labelUsername"
+                android:text="@string/labelNickname"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:drawableStartCompat="@drawable/outline_alternate_email_16"
                 />
 
             <TextView
-                android:id="@+id/custom_username_user_profile"
+                android:id="@+id/custom_nickname_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/size_15dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:text="@string/username" />
+                android:text="@string/nickname" />
 
             <TextView
                 android:id="@+id/description_user_profile"

@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/holo_blue_light"
+    android:id="@+id/toolbar_show_profile"
+    android:background="@color/purple_500"
     >
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp">
-
         <ImageView
-            android:id="@+id/edit_icon_user_profile"
+            android:id="@+id/arrow_back_user_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:contentDescription="@string/descriptionEditUserProfile"
-            android:src="@drawable/baseline_edit_32"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </ImageView>
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/descriptionShowProfile"
+            android:src="@drawable/outline_arrow_back_32"
+            android:paddingEnd="@dimen/size_16dp"
+            android:paddingStart="@dimen/size_16dp"
+            />
 
         <TextView
             android:id="@+id/toolbar_title"
@@ -31,28 +23,7 @@
             android:text="@string/toolbarUserProfile"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.34"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+           >
 
         </TextView>
-
-        <ImageView
-            android:id="@+id/arrow_back_user_profile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/descriptionShowProfile"
-            android:src="@drawable/outline_arrow_back_32"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-        </ImageView>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</RelativeLayout>
+</androidx.appcompat.widget.Toolbar>

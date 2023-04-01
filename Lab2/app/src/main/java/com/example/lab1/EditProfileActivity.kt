@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -23,6 +22,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.LinearLayout
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Context
+import android.widget.ImageButton
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -31,20 +31,24 @@ import java.io.IOException
 class EditProfileActivity : AppCompatActivity() {
 
     private lateinit var profilePicture: ImageView
-    private lateinit var editFullName:TextInputEditText;
-    private lateinit var editUsername:TextInputEditText;
-    private lateinit var editDescription:TextInputEditText;
-    private lateinit var editLocation:TextInputEditText;
+    private lateinit var editFullName:TextInputEditText
+    private lateinit var editNickname:TextInputEditText
+    private lateinit var editDescription:TextInputEditText
+    private lateinit var editLocation:TextInputEditText
+    private lateinit var arrowBack:ImageView
+    private lateinit var profileButton: ImageButton
+
+
 
     private var user:ArrayList<String>? = arrayListOf()
-    private var imageUri:Uri? = null;
+    private var imageUri:Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_edit_profile)
 
-        setUp() //initialize lateinit var and set onClickListener for select picture
+        setUp() //initialize var and set onClickListener for select picture
 
         if(savedInstanceState!=null){
             user = savedInstanceState.getStringArrayList("user")
@@ -52,30 +56,49 @@ class EditProfileActivity : AppCompatActivity() {
             loadImageFromInternalStorage()
         }
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-            if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
-                || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_DENIED){
 
-                val permission = arrayOf(android.Manifest.permission.CAMERA,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                requestPermissions(permission,112)
-            }
+        if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
+            || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_DENIED){
+
+            val permission = arrayOf(android.Manifest.permission.CAMERA,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            requestPermissions(permission,112)
         }
+
     }
 
+    private fun saveUserInfo(){
+        val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
+
+        val editor = sharedPref.edit()
+        editor.putString("fullName", editFullName.text.toString())
+        editor.putString("nickname", editNickname.text.toString())
+        editor.putString("description", editDescription.text.toString())
+        editor.putString("location", editLocation.text.toString())
+        editor.apply()
+
+        val intent = Intent(this, ShowProfileActivity::class.java)
+        startActivity(intent)
+
+    }
     private fun setUp(){
         profilePicture = findViewById(R.id.avatar_user_profile)
+        profileButton = findViewById(R.id.image_button)
 
-        profilePicture.setOnClickListener { PictureDialog() }
+        profileButton.setOnClickListener { pictureDialog() }
 
         editFullName = findViewById(R.id.edit_full_name)
-         editUsername = findViewById(R.id.edit_username)
+         editNickname = findViewById(R.id.edit_nickname)
          editDescription = findViewById(R.id.edit_description)
          editLocation = findViewById(R.id.edit_location)
 
+        arrowBack = findViewById(R.id.arrow_back_user_profile)
+        arrowBack.setOnClickListener {
+            saveUserInfo()
+        }
     }
     private fun setEditText(){
         editFullName.setText(user?.get(0) ?:"")
-        editUsername.setText(user?.get(1) ?:"")
+        editNickname.setText(user?.get(1) ?:"")
         editDescription.setText(user?.get(2) ?:"")
         editLocation.setText(user?.get(3) ?:"")
     }
@@ -84,62 +107,35 @@ class EditProfileActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
 
         val fullName = editFullName.text.toString()
-        val username = editUsername.text.toString()
+        val nickname = editNickname.text.toString()
         val description = editDescription.text.toString()
         val location = editLocation.text.toString()
 
-        outState.putStringArrayList("user", arrayListOf(fullName,username,description,location))
-    }
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.edit_profile_menu, menu)
-        return true
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
-        return when (item.itemId) {
-            R.id.save_button -> {
-
-                val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
-
-                val editor = sharedPref.edit()
-                editor.putString("fullName", editFullName.text.toString())
-                editor.putString("username", editUsername.text.toString())
-                editor.putString("description", editDescription.text.toString())
-                editor.putString("location", editLocation.text.toString())
-                editor.apply()
-
-
-                val intent = Intent(this, ShowProfileActivity::class.java)
-                startActivity(intent)
-
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        outState.putStringArrayList("user", arrayListOf(fullName,nickname,description,location))
     }
 
-    fun PictureDialog(){
 
-        val imageDialog = BottomSheetDialog(this)
-        val dialogPictureLayout = findViewById<LinearLayout>(R.id.dialogPictureLayout)
-        val bottomSheetView = LayoutInflater.from(this).inflate(R.layout.take_picture, dialogPictureLayout)
+    private fun pictureDialog(){
 
-        // set the click listeners for the camera and gallery options
-        bottomSheetView.findViewById<TextView>(R.id.camera_btn).setOnClickListener {
-            // handle camera option click
+            val imageDialog = BottomSheetDialog(this)
+            val dialogPictureLayout = findViewById<LinearLayout>(R.id.dialogPictureLayout)
+            val bottomSheetView = LayoutInflater.from(this).inflate(R.layout.take_picture, dialogPictureLayout)
+
+            // set the click listeners for the camera and gallery options
+            bottomSheetView.findViewById<TextView>(R.id.camera_btn).setOnClickListener {
+                // handle camera option click
 
 
-            if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
-                if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
-                    val permission = arrayOf(android.Manifest.permission.CAMERA)
-                    requestPermissions( permission, 112)
-                }
-                else openCamera()
+
+            if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
+                val permission = arrayOf(android.Manifest.permission.CAMERA)
+                requestPermissions( permission, 112)
             }
             else openCamera()
 
+
             imageDialog.dismiss()
+
         }
 
         bottomSheetView.findViewById<TextView>(R.id.gallery_btn).setOnClickListener {
@@ -171,7 +167,7 @@ class EditProfileActivity : AppCompatActivity() {
 
     private fun openCamera(){
 
-        val values:ContentValues = ContentValues()
+        val values = ContentValues()
         values.put(MediaStore.Images.Media.TITLE,"New Picture")
         values.put(MediaStore.Images.Media.DESCRIPTION,"From the Camera")
         imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
@@ -212,19 +208,28 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     @SuppressLint("Range")
-    private fun rotateBitmap(input:Bitmap?): Bitmap? {
-        val orientationColumn:Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
-        val cur: Cursor? = imageUri?.let { contentResolver.query(it,orientationColumn,null,null,null) }
-        var orientation=-1
-        if (cur != null && cur.moveToFirst()){
+    private fun rotateBitmap(input: Bitmap?): Bitmap? {
+        val orientationColumn: Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
+        val cur: Cursor? =
+            imageUri?.let { contentResolver.query(it, orientationColumn, null, null, null) }
+        var orientation = -1
+        if (cur != null && cur.moveToFirst()) {
             orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]))
         }
-        Log.d("tryOrientation",orientation.toString()+"")
+        Log.d("tryOrientation", orientation.toString() + "")
         val rotationMatrix = Matrix()
         rotationMatrix.setRotate(orientation.toFloat())
-        val cropped =
-            input?.let { Bitmap.createBitmap(it,0,0,input.width,input.height,rotationMatrix,true) }
-        return cropped
+        return input?.let {
+            Bitmap.createBitmap(
+                it,
+                0,
+                0,
+                input.width,
+                input.height,
+                rotationMatrix,
+                true
+            )
+        }
     }
 
     private fun saveImageOnInternalStorage(){
@@ -234,7 +239,7 @@ class EditProfileActivity : AppCompatActivity() {
 
         val bitmap = uriToBitmap(imageUri)
         val outputStream = FileOutputStream(imageFile)
-        bitmap?.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         outputStream.flush()
         outputStream.close()
     }
@@ -244,13 +249,12 @@ class EditProfileActivity : AppCompatActivity() {
         val picture:ImageView = findViewById(R.id.avatar_user_profile)
 
         val fileName = getString(R.string.imageName)
-        val directory = filesDir // directory privata dell'app
+        val directory = filesDir
 
         val imageFile = File(directory, fileName)
 
-        if(imageFile!=null){
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            picture.setImageBitmap(bitmap)
-        }
+        val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+        picture.setImageBitmap(bitmap)
+
     }
 }

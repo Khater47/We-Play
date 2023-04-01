@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -60,8 +58,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="2"
-                android:paddingLeft="@dimen/size_10dp"
-                android:paddingTop="@dimen/size_10dp"
+                android:padding="@dimen/size_10dp"
                 android:background="@drawable/rounded_shape"
                 android:orientation="vertical">
 
@@ -75,21 +72,21 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <TextView
-                    android:id="@+id/username_user_profile"
+                    android:id="@+id/nickname_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
                     android:paddingBottom="@dimen/size_15dp"
-                    android:text="@string/labelUsername"
+                    android:text="@string/labelNickname"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     app:drawableStartCompat="@drawable/outline_alternate_email_16" />
 
                 <TextView
-                    android:id="@+id/custom_username_user_profile"
+                    android:id="@+id/custom_nickname_user_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/size_15dp"
-                    android:text="@string/username"
+                    android:text="@string/nickname"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView
@@ -135,4 +132,6 @@
 
         </LinearLayout>
 
-</ScrollView>
+    </ScrollView>
+
+

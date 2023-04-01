@@ -2,11 +2,9 @@ package com.example.lab1
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,8 +23,7 @@ class ShowProfileActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.show_profile_menu, menu)
+        menuInflater.inflate(R.menu.show_profile_menu,menu)
         return true
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -45,7 +42,7 @@ class ShowProfileActivity : AppCompatActivity() {
     private fun initProfile(){
 
         val fullName: TextView = findViewById(R.id.full_name_user_profile)
-        val userName: TextView = findViewById(R.id.custom_username_user_profile)
+        val nickname: TextView = findViewById(R.id.custom_nickname_user_profile)
         val description: TextView = findViewById(R.id.custom_description_user_profile)
         val location: TextView = findViewById(R.id.custom_location_user_profile)
 
@@ -55,7 +52,7 @@ class ShowProfileActivity : AppCompatActivity() {
         if(sharedPref!=null){
 
             fullName.text = sharedPref.getString("fullName",getString(R.string.fullName))
-            userName.text = sharedPref.getString("username",getString(R.string.username))
+            nickname.text = sharedPref.getString("nickname",getString(R.string.nickname))
             description.text = sharedPref.getString("description",getString(R.string.description))
             location.text = sharedPref.getString("location",getString(R.string.location))
 
@@ -72,14 +69,12 @@ class ShowProfileActivity : AppCompatActivity() {
         val picture:ImageView = findViewById(R.id.avatar_user_profile)
 
         val fileName = getString(R.string.imageName)
-        val directory = filesDir // directory privata dell'app
+        val directory = filesDir
 
         val imageFile = File(directory, fileName)
 
-        if(imageFile!=null){
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            picture.setImageBitmap(bitmap)
-        }
+        val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+        picture.setImageBitmap(bitmap)
     }
 
 }
