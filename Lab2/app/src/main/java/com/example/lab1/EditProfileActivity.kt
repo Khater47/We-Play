@@ -19,16 +19,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
-import android.widget.LinearLayout
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.content.Context
-import androidx.core.net.toUri
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
+import android.os.Build
+import androidx.annotation.RequiresApi
+import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -74,13 +72,16 @@ class EditProfileActivity : AppCompatActivity() {
     private fun saveUserInfo(){
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
+        var user = JSONObject()
+        user.append("fullName", if (editFullName.text.toString()=="") getString(R.string.fullName) else editFullName.text.toString())
+        user.append("nickname", if(editNickname.text.toString()=="") getString(R.string.nickname) else editNickname.text.toString())
+        user.append("description", if(editDescription.text.toString()=="") getString(R.string.description) else editDescription.text.toString())
+        user.append("email",if(editEmail.text.toString()=="") getString(R.string.email) else editEmail.text.toString())
+        user.append("phoneNumber",if(editPhoneNumber.text.toString()=="") getString(R.string.phoneNumber) else editPhoneNumber.text.toString())
 
         val editor = sharedPref.edit()
-        editor.putString("fullName", editFullName.text.toString())
-        editor.putString("nickname", editNickname.text.toString())
-        editor.putString("description", editDescription.text.toString())
-        editor.putString("email", editEmail.text.toString())
-        editor.putString("phoneNumber", editPhoneNumber.text.toString())
+
+        editor.putString("user",user.toString())
 
         editor.apply()
 
@@ -90,7 +91,6 @@ class EditProfileActivity : AppCompatActivity() {
         startActivity(intent)
 
     }
-
 
     //save info before move from portrait to landscape
     override fun onSaveInstanceState(outState: Bundle) {
@@ -247,7 +247,6 @@ class EditProfileActivity : AppCompatActivity() {
     private fun setUp(){
         profilePicture = findViewById(R.id.avatar_user_profile)
 
-        //profileButton.setOnClickListener { pictureDialog() }
         profileButton = findViewById(R.id.image_button)
 
         editFullName = findViewById(R.id.edit_full_name)

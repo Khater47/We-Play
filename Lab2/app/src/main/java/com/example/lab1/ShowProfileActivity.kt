@@ -3,14 +3,20 @@ package com.example.lab1
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONObject
+import org.json.JSONStringer
 import java.io.*
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 
 class ShowProfileActivity : AppCompatActivity() {
 
@@ -58,11 +64,19 @@ class ShowProfileActivity : AppCompatActivity() {
         //Load User Info
         if(sharedPref!=null){
 
-            fullName.text = sharedPref.getString("fullName",getString(R.string.fullName))
-            nickname.text = sharedPref.getString("nickname",getString(R.string.nickname))
-            description.text = sharedPref.getString("description",getString(R.string.description))
-            email.text = sharedPref.getString("email",getString(R.string.email))
-            phoneNumber.text = sharedPref.getString("phoneNumber",getString(R.string.phoneNumber))
+            val obj = JSONObject(sharedPref.getString("user",null))
+            val objFullName=obj.get("fullName").toString()
+            val objNickname=obj.get("nickname").toString()
+            val objDescription=obj.get("description").toString()
+            val objEmail=obj.get("email").toString()
+            val objPhoneNumber=obj.get("phoneNumber").toString()
+
+            //remove [" "]
+            fullName.text = objFullName.substring(2,objFullName.length-2)
+            nickname.text = objNickname.substring(2,objNickname.length-2)
+            description.text = objDescription.substring(2,objDescription.length-2)
+            email.text = objEmail.substring(2,objEmail.length-2)
+            phoneNumber.text = objPhoneNumber.substring(2,objPhoneNumber.length-2)
 
         }
 
