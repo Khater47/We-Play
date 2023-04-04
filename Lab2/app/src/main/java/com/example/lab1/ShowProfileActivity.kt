@@ -9,11 +9,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
-import org.json.JSONStringer
 import java.io.*
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -37,7 +35,7 @@ class ShowProfileActivity : AppCompatActivity() {
 
     //handle edit button click, intent = EditActivityProfile
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle item selection
+
         return when (item.itemId) {
             R.id.edit_button -> {
 
@@ -64,25 +62,24 @@ class ShowProfileActivity : AppCompatActivity() {
         //Load User Info
         if(sharedPref!=null){
 
-            val obj = JSONObject(sharedPref.getString("user",null))
-            val objFullName=obj.get("fullName").toString()
-            val objNickname=obj.get("nickname").toString()
-            val objDescription=obj.get("description").toString()
-            val objEmail=obj.get("email").toString()
-            val objPhoneNumber=obj.get("phoneNumber").toString()
+            val userString = sharedPref.getString("profile",null)
 
-            //remove [" "]
-            fullName.text = objFullName.substring(2,objFullName.length-2)
-            nickname.text = objNickname.substring(2,objNickname.length-2)
-            description.text = objDescription.substring(2,objDescription.length-2)
-            email.text = objEmail.substring(2,objEmail.length-2)
-            phoneNumber.text = objPhoneNumber.substring(2,objPhoneNumber.length-2)
+            if(userString!=null){
+
+                val user = JSONObject(userString)
+
+                fullName.text = user.get("fullName").toString()
+                nickname.text = user.get("nickname").toString()
+                description.text = user.get("description").toString()
+                email.text = user.get("email").toString()
+                phoneNumber.text = user.get("phoneNumber").toString()
+
+            }
 
         }
 
         //Load User Profile Picture
         loadImageFromInternalStorage()
-
 
     }
 

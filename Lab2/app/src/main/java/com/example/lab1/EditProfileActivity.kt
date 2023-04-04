@@ -54,9 +54,13 @@ class EditProfileActivity : AppCompatActivity() {
         if(savedInstanceState!=null){
             user = savedInstanceState.getStringArrayList("user")
 
-            restoreInfoOnLandscape()
-        }
+            editFullName.setText(user?.get(0) ?:"")
+            editNickname.setText(user?.get(1) ?:"")
+            editDescription.setText(user?.get(2) ?:"")
+            editEmail.setText(user?.get(3) ?:"")
+            editPhoneNumber.setText(user?.get(4) ?:"")
 
+        }
 
         //check Permission for Gallery and Camera
         if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
@@ -65,30 +69,6 @@ class EditProfileActivity : AppCompatActivity() {
             val permission = arrayOf(android.Manifest.permission.CAMERA,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
             requestPermissions(permission,112)
         }
-
-    }
-
-    //save user info when click on arrow button (leave edit page)
-    private fun saveUserInfo(){
-        val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
-
-        var user = JSONObject()
-        user.append("fullName", if (editFullName.text.toString()=="") getString(R.string.fullName) else editFullName.text.toString())
-        user.append("nickname", if(editNickname.text.toString()=="") getString(R.string.nickname) else editNickname.text.toString())
-        user.append("description", if(editDescription.text.toString()=="") getString(R.string.description) else editDescription.text.toString())
-        user.append("email",if(editEmail.text.toString()=="") getString(R.string.email) else editEmail.text.toString())
-        user.append("phoneNumber",if(editPhoneNumber.text.toString()=="") getString(R.string.phoneNumber) else editPhoneNumber.text.toString())
-
-        val editor = sharedPref.edit()
-
-        editor.putString("user",user.toString())
-
-        editor.apply()
-
-        saveImageOnInternalStorage()
-
-        val intent = Intent(this, ShowProfileActivity::class.java)
-        startActivity(intent)
 
     }
 
@@ -140,6 +120,31 @@ class EditProfileActivity : AppCompatActivity() {
 
             else -> super.onContextItemSelected(item)
         }
+    }
+
+    //save user info when click on arrow button (leave edit page)
+    private fun saveUserInfo(){
+        val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
+
+        var user = JSONObject()
+
+        user.put("fullName", if (editFullName.text.toString()=="") getString(R.string.fullName) else editFullName.text.toString())
+        user.put("nickname", if(editNickname.text.toString()=="") getString(R.string.nickname) else editNickname.text.toString())
+        user.put("description", if(editDescription.text.toString()=="") getString(R.string.description) else editDescription.text.toString())
+        user.put("email",if(editEmail.text.toString()=="") getString(R.string.email) else editEmail.text.toString())
+        user.put("phoneNumber",if(editPhoneNumber.text.toString()=="") getString(R.string.phoneNumber) else editPhoneNumber.text.toString())
+
+        val editor = sharedPref.edit()
+
+        editor.putString("profile",user.toString())
+
+        editor.apply()
+
+        saveImageOnInternalStorage()
+
+        val intent = Intent(this, ShowProfileActivity::class.java)
+        startActivity(intent)
+
     }
 
     //set image from Gallery
@@ -263,30 +268,6 @@ class EditProfileActivity : AppCompatActivity() {
         registerForContextMenu(profileButton)
 
         loadImageFromInternalStorage()
-
-    }
-
-    //restore user info when pass from portrait to landscape
-    private fun restoreInfoOnLandscape(){
-
-        editFullName.setText(user?.get(0) ?:"")
-        editNickname.setText(user?.get(1) ?:"")
-        editDescription.setText(user?.get(2) ?:"")
-        editEmail.setText(user?.get(3) ?:"")
-        editPhoneNumber.setText(user?.get(4) ?:"")
-
-        /*
-        //select image
-        if(user?.get(5)!=null && user?.get(5)!="null")
-            profilePicture.setImageURI(user?.get(5)?.toUri())
-
-        //show standard image when rotate many times the screen
-        else {
-            val standardImage = BitmapFactory.decodeResource(resources,R.drawable.profile)
-            profilePicture.setImageBitmap(standardImage)
-        }
-        */
-
 
     }
 
