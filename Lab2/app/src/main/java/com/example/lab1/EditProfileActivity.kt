@@ -237,10 +237,15 @@ class EditProfileActivity : AppCompatActivity() {
         val imageFile = File(directory, getString(R.string.imageName))
 
         var bitmap:Bitmap?;
-        if(imageUri!=null)
+        if(imageUri!=null) //select picture
             bitmap = uriToBitmap(imageUri)
-        else
-            bitmap = BitmapFactory.decodeResource(this.resources,R.drawable.profile)
+
+        else if(imageUri==null && imageFile!=null) //set previous image, if user don't select picture
+            bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+
+        else  //no image, set default image
+          bitmap = BitmapFactory.decodeResource(this.resources,R.drawable.profile)
+
 
         val outputStream = FileOutputStream(imageFile)
         bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
