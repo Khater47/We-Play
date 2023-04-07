@@ -127,18 +127,46 @@ class EditProfileActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
         var user = JSONObject()
+        var prevUser:JSONObject? = null;
 
-        user.put("fullName", if (editFullName.text.toString()=="") getString(R.string.fullName) else editFullName.text.toString())
-        user.put("nickname", if(editNickname.text.toString()=="") getString(R.string.nickname) else editNickname.text.toString())
-        user.put("description", if(editDescription.text.toString()=="") getString(R.string.description) else editDescription.text.toString())
-        user.put("email",if(editEmail.text.toString()=="") getString(R.string.email) else editEmail.text.toString())
-        user.put("phoneNumber",if(editPhoneNumber.text.toString()=="") getString(R.string.phoneNumber) else editPhoneNumber.text.toString())
+        if(sharedPref.getString("profile",null)!=null){
+            prevUser = JSONObject(sharedPref.getString("profile",null))
+        }
+        if(editFullName.text.toString()=="")
+            user.put("fullName",prevUser?.get("fullName")?:"")
+        else
+            user.put("fullName",editFullName.text.toString())
+
+        if(editNickname.text.toString()=="")
+            user.put("nickname",prevUser?.get("nickname")?:"")
+        else
+            user.put("nickname",editNickname.text.toString())
+
+
+        if(editDescription.text.toString()=="")
+            user.put("description",prevUser?.get("description")?:"")
+        else
+            user.put("description",editDescription.text.toString())
+
+
+        if(editEmail.text.toString()=="")
+            user.put("email",prevUser?.get("email")?:"")
+        else
+            user.put("email",editEmail.text.toString())
+
+
+        if(editPhoneNumber.text.toString()=="")
+            user.put("phoneNumber",prevUser?.get("phoneNumber")?:"")
+        else
+            user.put("phoneNumber",editFullName.text.toString())
+
 
         val editor = sharedPref.edit()
 
         editor.putString("profile",user.toString())
 
         editor.apply()
+
 
         saveImageOnInternalStorage()
 
