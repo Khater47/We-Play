@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -93,10 +94,18 @@ class ShowProfileActivity : AppCompatActivity() {
 
         val imageFile = File(directory, fileName)
 
-        if(imageFile!=null) {
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            picture.setImageBitmap(bitmap)
+        if(imageFile!=null && imageFile.exists()) {
+                val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
+                picture.setImageBitmap(bitmap)
+
         }
+
+        //load default image
+        else{
+            val imageProfileDefault = BitmapFactory.decodeResource(resources,R.drawable.profile)
+            picture.setImageBitmap(imageProfileDefault)
+        }
+
     }
 
 

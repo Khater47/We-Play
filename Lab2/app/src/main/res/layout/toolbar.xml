@@ -12,7 +12,6 @@
             android:layout_alignParentEnd="true"
             android:contentDescription="@string/descriptionShowProfile"
             android:src="@drawable/outline_arrow_back_32"
-
             />
 
         <TextView

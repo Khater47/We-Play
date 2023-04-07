@@ -281,9 +281,17 @@ class EditProfileActivity : AppCompatActivity() {
 
         val imageFile = File(directory, fileName)
 
-        if(imageFile!=null){
+        if(imageFile!=null && imageFile.exists()){
+
             val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
             picture.setImageBitmap(bitmap)
+
+        }
+        //load default image
+        else{
+            val imageProfileDefault = BitmapFactory.decodeResource(resources,R.drawable.profile)
+            picture.setImageBitmap(imageProfileDefault)
+
         }
 
     }
