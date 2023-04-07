@@ -1,11 +1,10 @@
-package com.example.lab1
+package com.example.mad
 
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageView
@@ -14,6 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.io.*
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 
@@ -52,11 +52,11 @@ class ShowProfileActivity : AppCompatActivity() {
     //load User Info
     private fun initProfile(){
 
-        val fullName: TextView = findViewById(R.id.full_name_user_profile)
-        val nickname: TextView = findViewById(R.id.custom_nickname_user_profile)
-        val description: TextView = findViewById(R.id.custom_description_user_profile)
-        val email: TextView = findViewById(R.id.email_user_profile)
-        val phoneNumber: TextView = findViewById(R.id.custom_phone_number_user_profile)
+        val fullName: TextView = findViewById(R.id.fullNameUserProfile)
+        val nickname: TextView = findViewById(R.id.customNicknameUserProfile)
+        val description: TextView = findViewById(R.id.customDescriptionUserProfile)
+        val email: TextView = findViewById(R.id.emailUserProfile)
+        val phoneNumber: TextView = findViewById(R.id.customPhoneNumberUserProfile)
 
         val sharedPref = getSharedPreferences("userFile",Context.MODE_PRIVATE)
 
@@ -87,7 +87,7 @@ class ShowProfileActivity : AppCompatActivity() {
     //load image from internal storage
     private fun loadImageFromInternalStorage(){
 
-        val picture:ImageView = findViewById(R.id.avatar_user_profile)
+        val picture:ImageView = findViewById(R.id.userProfilePicture)
 
         val fileName = getString(R.string.imageName)
         val directory = filesDir

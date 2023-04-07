@@ -25,7 +25,7 @@
 
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/avatar_user_profile"
+                    android:id="@+id/userProfilePicture"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:contentDescription="@string/profilePicture"
@@ -41,7 +41,7 @@
                     app:shapeAppearance="@style/circular" />
 
                 <TextView
-                    android:id="@+id/full_name_user_profile"
+                    android:id="@+id/fullNameUserProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginTop="6dp"
@@ -49,10 +49,10 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/avatar_user_profile" />
+                    app:layout_constraintTop_toBottomOf="@+id/userProfilePicture" />
 
                 <TextView
-                    android:id="@+id/email_user_profile"
+                    android:id="@+id/emailUserProfile"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
@@ -62,7 +62,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/full_name_user_profile" />
+                    app:layout_constraintTop_toBottomOf="@+id/fullNameUserProfile" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -79,7 +79,7 @@
 
 
                 <TextView
-                    android:id="@+id/user_info"
+                    android:id="@+id/userInfo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/size_15dp"
@@ -87,7 +87,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 <TextView
-                    android:id="@+id/nickname_user_profile"
+                    android:id="@+id/nicknameUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
@@ -97,7 +97,7 @@
                     app:drawableStartCompat="@drawable/outline_alternate_email_16" />
 
                 <TextView
-                    android:id="@+id/custom_nickname_user_profile"
+                    android:id="@+id/customNicknameUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/size_15dp"
@@ -105,7 +105,7 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
                 <TextView
-                    android:id="@+id/phone_number_user_profile"
+                    android:id="@+id/phoneNumberUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
@@ -115,7 +115,7 @@
                     app:drawableStartCompat="@drawable/outline_phone_16" />
 
                 <TextView
-                    android:id="@+id/custom_phone_number_user_profile"
+                    android:id="@+id/customPhoneNumberUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
@@ -125,7 +125,7 @@
 
 
                 <TextView
-                    android:id="@+id/description_user_profile"
+                    android:id="@+id/descriptionUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="5dp"
@@ -136,7 +136,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/custom_description_user_profile"
+                    android:id="@+id/customDescriptionUserProfile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/size_32dp"

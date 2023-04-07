@@ -1,4 +1,4 @@
-package com.example.lab1
+package com.example.mad
 
 import org.junit.Test
 import org.junit.Assert.*

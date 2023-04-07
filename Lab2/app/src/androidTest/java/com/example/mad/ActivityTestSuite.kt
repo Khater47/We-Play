@@ -1,4 +1,4 @@
-package com.example.lab1
+package com.example.mad
 
 import org.junit.runner.RunWith
 import org.junit.runners.Suite

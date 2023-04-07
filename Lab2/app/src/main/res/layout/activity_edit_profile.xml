@@ -24,19 +24,17 @@
             android:id="@+id/containerScrollViewEditProfileActivity"
             >
 
-            <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/containerEditProfilePicture"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginBottom="16dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:id="@+id/containerEditProfilePicture"
-                >
+                android:orientation="vertical">
 
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/avatar_user_profile"
+                    android:id="@+id/userProfilePicture"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:adjustViewBounds="true"
@@ -54,18 +52,18 @@
 
 
                 <TextView
-                    android:id="@+id/image_button"
+                    android:id="@+id/imageButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="100dp"
                     android:layout_marginBottom="105dp"
                     android:backgroundTint="@color/white"
                     android:contentDescription="@string/imageButtonDescription"
+                    app:drawableStartCompat="@drawable/outline_photo_camera_24"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:drawableStartCompat="@drawable/outline_photo_camera_24" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -91,10 +89,11 @@
 
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_full_name"
+                        android:id="@+id/editFullName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        />
+                        android:background="@color/white"
+                        android:textColorHint="@color/black" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,9 +108,11 @@
 
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/edit_nickname"
+                        android:id="@+id/editNickname"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         />
 
 
@@ -130,8 +131,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_email"
+                        android:id="@+id/editEmail"
                         android:inputType="textEmailAddress"
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         />
 
 
@@ -150,8 +153,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_phoneNumber"
+                        android:id="@+id/editPhoneNumber"
                         android:inputType="phone"
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         />
 
 
@@ -170,7 +175,9 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_description"
+                        android:id="@+id/editDescription"
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         />
 
 

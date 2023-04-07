@@ -1,11 +1,8 @@
-package com.example.lab1
+package com.example.mad
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.widget.ImageView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -23,9 +20,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
 import java.io.File
 import java.io.FileOutputStream
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiObject
-import androidx.test.uiautomator.UiSelector
 
 const val FILENAME = "userFile"
 const val PROFILE = "profile"

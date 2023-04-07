@@ -1,16 +1,11 @@
-package com.example.lab1
+package com.example.mad
 
-import android.R.attr.bitmap
 import android.app.Activity.RESULT_OK
 import android.app.Instrumentation
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.hardware.biometrics.BiometricManager
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.activity.result.ActivityResult
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
@@ -29,7 +24,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
 import org.junit.runner.RunWith
-import kotlin.math.exp
 
 
 const val KEY_IMAGE_DATA="data"

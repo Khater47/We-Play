@@ -28,7 +28,7 @@
 
 
                 <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/avatar_user_profile"
+                    android:id="@+id/userProfilePicture"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:contentDescription="@string/profilePicture"
@@ -45,7 +45,7 @@
                     />
 
                 <TextView
-                    android:id="@+id/image_button"
+                    android:id="@+id/imageButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_marginStart="105dp"
@@ -82,8 +82,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_full_name"
+                        android:id="@+id/editFullName"
                         android:text=""
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         >
 
                     </com.google.android.material.textfield.TextInputEditText>
@@ -103,8 +105,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_nickname"
+                        android:id="@+id/editNickname"
                         android:text=""
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         >
 
                     </com.google.android.material.textfield.TextInputEditText>
@@ -123,9 +127,11 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_email"
+                        android:id="@+id/editEmail"
                         android:inputType="textEmailAddress"
                         android:text=""
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         >
 
                     </com.google.android.material.textfield.TextInputEditText>
@@ -144,8 +150,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_phoneNumber"
+                        android:id="@+id/editPhoneNumber"
                         android:inputType="phone"
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         />
 
 
@@ -164,8 +172,10 @@
                     <com.google.android.material.textfield.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edit_description"
+                        android:id="@+id/editDescription"
                         android:text=""
+                        android:textColorHint="@color/black"
+                        android:background="@color/white"
                         >
 
                     </com.google.android.material.textfield.TextInputEditText>

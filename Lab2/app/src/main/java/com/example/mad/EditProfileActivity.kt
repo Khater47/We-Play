@@ -1,8 +1,7 @@
-package com.example.lab1
+package com.example.mad
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,7 +23,6 @@ import android.content.Context
 import android.graphics.ImageDecoder
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.core.graphics.decodeBitmap
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -129,11 +127,11 @@ class EditProfileActivity : AppCompatActivity() {
     private fun saveUserInfo(){
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
-        var user = JSONObject()
-        var prevUser:JSONObject? = null;
+        val user = JSONObject()
+        var prevUser:JSONObject? = null
 
         if(sharedPref.getString("profile",null)!=null){
-            prevUser = JSONObject(sharedPref.getString("profile",null))
+            prevUser = JSONObject(sharedPref.getString("profile",null) as String)
         }
         if(editFullName.text.toString()=="")
             user.put("fullName",prevUser?.get("fullName")?:"")
@@ -161,7 +159,7 @@ class EditProfileActivity : AppCompatActivity() {
         if(editPhoneNumber.text.toString()=="")
             user.put("phoneNumber",prevUser?.get("phoneNumber")?:"")
         else
-            user.put("phoneNumber",editFullName.text.toString())
+            user.put("phoneNumber",editPhoneNumber.text.toString())
 
 
         val editor = sharedPref.edit()
@@ -268,7 +266,7 @@ class EditProfileActivity : AppCompatActivity() {
         val imageFile = File(directory, getString(R.string.imageName))
 
 
-        var bitmap:Bitmap?;
+        val bitmap:Bitmap?
         if(imageUri!=null) //select picture
         {
             val imageSource = ImageDecoder.createSource(this.contentResolver,imageUri as Uri)
@@ -290,17 +288,17 @@ class EditProfileActivity : AppCompatActivity() {
 
     //find by id all component and set action for arrow and imageButton
     private fun setUp(){
-        profilePicture = findViewById(R.id.avatar_user_profile)
+        profilePicture = findViewById(R.id.userProfilePicture)
 
-        profileButton = findViewById(R.id.image_button)
+        profileButton = findViewById(R.id.imageButton)
 
-        editFullName = findViewById(R.id.edit_full_name)
-        editNickname = findViewById(R.id.edit_nickname)
-        editDescription = findViewById(R.id.edit_description)
-        editEmail = findViewById(R.id.edit_email)
-        editPhoneNumber = findViewById(R.id.edit_phoneNumber)
+        editFullName = findViewById(R.id.editFullName)
+        editNickname = findViewById(R.id.editNickname)
+        editDescription = findViewById(R.id.editDescription)
+        editEmail = findViewById(R.id.editEmail)
+        editPhoneNumber = findViewById(R.id.editPhoneNumber)
 
-        arrowBack = findViewById(R.id.arrow_back_user_profile)
+        arrowBack = findViewById(R.id.arrowBackUserProfile)
         arrowBack.setOnClickListener {
             saveUserInfo()
         }
@@ -314,7 +312,7 @@ class EditProfileActivity : AppCompatActivity() {
     //load image from internal storage
     private fun loadImageFromInternalStorage(){
 
-        val picture:ImageView = findViewById(R.id.avatar_user_profile)
+        val picture:ImageView = findViewById(R.id.userProfilePicture)
 
         val fileName = getString(R.string.imageName)
         val directory = filesDir

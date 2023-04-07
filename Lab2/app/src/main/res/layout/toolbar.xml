@@ -6,7 +6,7 @@
     android:background="@color/purple_500"
     >
         <ImageView
-            android:id="@+id/arrow_back_user_profile"
+            android:id="@+id/arrowBackUserProfile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -15,7 +15,7 @@
             />
 
         <TextView
-            android:id="@+id/toolbar_title"
+            android:id="@+id/toolbarTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/toolbarEditProfile"
