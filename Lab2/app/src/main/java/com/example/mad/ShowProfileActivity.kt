@@ -2,7 +2,6 @@ package com.example.mad
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
@@ -80,34 +79,11 @@ class ShowProfileActivity : AppCompatActivity() {
         }
 
         //Load User Profile Picture
-        loadImageFromInternalStorage()
-
-    }
-
-    //load image from internal storage
-    private fun loadImageFromInternalStorage(){
-
+        val imageBitmap = getImageFromInternalStorage(this)
         val picture:ImageView = findViewById(R.id.userProfilePicture)
-
-        val fileName = getString(R.string.imageName)
-        val directory = filesDir
-
-        val imageFile = File(directory, fileName)
-
-        if(imageFile!=null && imageFile.exists()) {
-                val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-                picture.setImageBitmap(bitmap)
-
-        }
-
-        //load default image
-        else{
-            val imageProfileDefault = BitmapFactory.decodeResource(resources,R.drawable.profile)
-            picture.setImageBitmap(imageProfileDefault)
-        }
+        picture.setImageBitmap(imageBitmap)
 
     }
-
 
 }
 

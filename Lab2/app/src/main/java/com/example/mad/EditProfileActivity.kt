@@ -1,31 +1,25 @@
 package com.example.mad
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Context
-import android.graphics.ImageDecoder
+import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
 import org.json.JSONObject
-import java.io.File
-import java.io.FileOutputStream
+
+const val PERMISSION = 112
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 
@@ -63,12 +57,12 @@ class EditProfileActivity : AppCompatActivity() {
 
         }
 
-        //check Permission for Gallery and Camera
+        //Permission denied => request run time permission for Gallery and Camera
         if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED
             || checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ==PackageManager.PERMISSION_DENIED){
 
             val permission = arrayOf(android.Manifest.permission.CAMERA,android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            requestPermissions(permission,112)
+            requestPermissions(permission,PERMISSION)
         }
 
     }
@@ -103,7 +97,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                 if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
                     val permission = arrayOf(android.Manifest.permission.CAMERA)
-                    requestPermissions( permission, 112)
+                    requestPermissions( permission, PERMISSION)
                 }
                 else openCamera()
 
@@ -128,38 +122,21 @@ class EditProfileActivity : AppCompatActivity() {
         val sharedPref = getSharedPreferences("userFile", Context.MODE_PRIVATE)
 
         val user = JSONObject()
-        var prevUser:JSONObject? = null
 
-        if(sharedPref.getString("profile",null)!=null){
-            prevUser = JSONObject(sharedPref.getString("profile",null) as String)
-        }
-        if(editFullName.text.toString()=="")
-            user.put("fullName",prevUser?.get("fullName")?:"")
-        else
-            user.put("fullName",editFullName.text.toString())
+        var value: String = getEditString(editFullName.text.toString(),sharedPref,"fullName")
+        user.put("fullName",value)
 
-        if(editNickname.text.toString()=="")
-            user.put("nickname",prevUser?.get("nickname")?:"")
-        else
-            user.put("nickname",editNickname.text.toString())
+        value=getEditString(editNickname.text.toString(),sharedPref,"nickname")
+        user.put("nickname",value)
 
+        value=getEditString(editDescription.text.toString(),sharedPref,"description")
+        user.put("description",value)
 
-        if(editDescription.text.toString()=="")
-            user.put("description",prevUser?.get("description")?:"")
-        else
-            user.put("description",editDescription.text.toString())
+        value=getEditString(editEmail.text.toString(),sharedPref,"email")
+        user.put("email",value)
 
-
-        if(editEmail.text.toString()=="")
-            user.put("email",prevUser?.get("email")?:"")
-        else
-            user.put("email",editEmail.text.toString())
-
-
-        if(editPhoneNumber.text.toString()=="")
-            user.put("phoneNumber",prevUser?.get("phoneNumber")?:"")
-        else
-            user.put("phoneNumber",editPhoneNumber.text.toString())
+        value=getEditString(editPhoneNumber.text.toString(),sharedPref,"phoneNumber")
+        user.put("phoneNumber",value)
 
 
         val editor = sharedPref.edit()
@@ -168,15 +145,28 @@ class EditProfileActivity : AppCompatActivity() {
 
         editor.apply()
 
-
-        saveImageOnInternalStorage()
+        saveImageOnInternalStorage(imageUri,this)
 
         val intent = Intent(this, ShowProfileActivity::class.java)
         startActivity(intent)
 
     }
 
-    //set image from Gallery
+    //if editString!="" return editText else return previousUserString
+    private fun getEditString(editString:String,sharedPref:SharedPreferences,key:String):String{
+        var prevUser:JSONObject? = null
+
+        if(sharedPref.getString("profile",null)!=null)
+            prevUser = JSONObject(sharedPref.getString("profile",null) as String)
+
+        return if(editFullName.text.toString()=="")
+            prevUser?.getString(key)?:""
+        else
+            editString
+
+    }
+
+    //set image from Gallery and save image on local storage
     private val galleryActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK && result.data != null) {
 
@@ -184,12 +174,12 @@ class EditProfileActivity : AppCompatActivity() {
 
             profilePicture.setImageURI(imageUri)
 
-            saveImageOnInternalStorage()
+            saveImageOnInternalStorage(imageUri,this)
 
         }
     }
 
-    //launch itent for camera
+    //launch intent for camera
     private fun openCamera(){
 
         val values = ContentValues()
@@ -202,88 +192,18 @@ class EditProfileActivity : AppCompatActivity() {
 
     }
 
-    //set image from camera
+    //set image from camera and save image on local storage
     private val cameraActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
         if (result.resultCode == Activity.RESULT_OK) {
 
-            val inputImage = uriToBitmap(imageUri)
-            val rotated = rotateBitmap(inputImage)
+            val inputImage = uriToBitmap(imageUri,this)
+            val rotated = rotateBitmap(inputImage,imageUri,this)
             profilePicture.setImageBitmap(rotated)
 
-            saveImageOnInternalStorage()
-        }
-    }
-
-    //convert Uri to Bitmap
-    private fun uriToBitmap(selectedFileUri:Uri?):Bitmap?{
-        try{
-            val parcelFileDescriptor =
-                selectedFileUri?.let { contentResolver.openFileDescriptor(it,"r") }
-
-            val fileDescriptor = parcelFileDescriptor?.fileDescriptor
-            val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
-            parcelFileDescriptor?.close()
-            return image
+            saveImageOnInternalStorage(imageUri,this)
 
         }
-        catch (e:Exception){
-            e.printStackTrace()
-        }
-        return null
-    }
-
-    //rotate image when using landscape mode on camera
-    @SuppressLint("Range")
-    private fun rotateBitmap(input: Bitmap?): Bitmap? {
-        val orientationColumn: Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
-        val cur: Cursor? =
-            imageUri?.let { contentResolver.query(it, orientationColumn, null, null, null) }
-        var orientation = -1
-        if (cur != null && cur.moveToFirst()) {
-            orientation = cur.getInt(cur.getColumnIndex(orientationColumn[0]))
-        }
-        Log.d("tryOrientation", orientation.toString() + "")
-        val rotationMatrix = Matrix()
-        rotationMatrix.setRotate(orientation.toFloat())
-        return input?.let {
-            Bitmap.createBitmap(
-                it,
-                0,
-                0,
-                input.width,
-                input.height,
-                rotationMatrix,
-                true
-            )
-        }
-    }
-
-    //save image on local storage
-    private fun saveImageOnInternalStorage(){
-
-        val directory = filesDir
-        val imageFile = File(directory, getString(R.string.imageName))
-
-
-        val bitmap:Bitmap?
-        if(imageUri!=null) //select picture
-        {
-            val imageSource = ImageDecoder.createSource(this.contentResolver,imageUri as Uri)
-            bitmap = ImageDecoder.decodeBitmap(imageSource)
-        }
-
-        else if(imageUri==null && imageFile!=null) //set previous image, if user don't select picture
-            bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-
-        else  //no image, set default image
-          bitmap = BitmapFactory.decodeResource(this.resources,R.drawable.profile)
-
-
-        val outputStream = FileOutputStream(imageFile)
-        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        outputStream.flush()
-        outputStream.close()
     }
 
     //find by id all component and set action for arrow and imageButton
@@ -305,34 +225,11 @@ class EditProfileActivity : AppCompatActivity() {
 
         registerForContextMenu(profileButton)
 
-        loadImageFromInternalStorage()
+        val imageBitmap = getImageFromInternalStorage(this)
+        profilePicture.setImageBitmap(imageBitmap)
 
     }
 
-    //load image from internal storage
-    private fun loadImageFromInternalStorage(){
-
-        val picture:ImageView = findViewById(R.id.userProfilePicture)
-
-        val fileName = getString(R.string.imageName)
-        val directory = filesDir
-
-        val imageFile = File(directory, fileName)
-
-        if(imageFile!=null && imageFile.exists()){
-
-            val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
-            picture.setImageBitmap(bitmap)
-
-        }
-        //load default image
-        else{
-            val imageProfileDefault = BitmapFactory.decodeResource(resources,R.drawable.profile)
-            picture.setImageBitmap(imageProfileDefault)
-
-        }
-
-    }
 
 
 }
