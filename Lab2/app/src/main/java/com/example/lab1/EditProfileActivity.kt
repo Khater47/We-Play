@@ -2,6 +2,7 @@ package com.example.lab1
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -20,8 +21,10 @@ import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
 import androidx.activity.result.contract.ActivityResultContracts
 import android.content.Context
+import android.graphics.ImageDecoder
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.graphics.decodeBitmap
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
@@ -264,9 +267,13 @@ class EditProfileActivity : AppCompatActivity() {
         val directory = filesDir
         val imageFile = File(directory, getString(R.string.imageName))
 
+
         var bitmap:Bitmap?;
         if(imageUri!=null) //select picture
-            bitmap = uriToBitmap(imageUri)
+        {
+            val imageSource = ImageDecoder.createSource(this.contentResolver,imageUri as Uri)
+            bitmap = ImageDecoder.decodeBitmap(imageSource)
+        }
 
         else if(imageUri==null && imageFile!=null) //set previous image, if user don't select picture
             bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)

@@ -60,4 +60,5 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-intents:$androidx_test_espresso"
 
     androidTestImplementation 'com.android.support.test.uiautomator:uiautomator-v18:2.1.3'
+
 }
