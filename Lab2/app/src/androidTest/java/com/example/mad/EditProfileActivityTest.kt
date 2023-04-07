@@ -90,25 +90,25 @@ internal class EditProfileActivityTest{
     fun test_isEditTextInView(){
 
         onView(withId(R.id.editFullName)).check(matches(isDisplayed()))
-        onView(withId(R.id.editFullName)).perform(typeText("Mario Rossi"),click())
+        onView(withId(R.id.editFullName)).perform(click()).perform(typeText("Mario Rossi"))
         onView(withId(R.id.editFullName)).check(matches(withText("Mario Rossi")))
 
 
         onView(withId(R.id.editNickname)).check(matches(isDisplayed()))
-        onView(withId(R.id.editNickname)).perform(typeText("mario"),click())
+        onView(withId(R.id.editNickname)).perform(click()).perform(typeText("mario"))
         onView(withId(R.id.editNickname)).check(matches(withText("mario")))
 
 
         onView(withId(R.id.editEmail)).check(matches(isDisplayed()))
-        onView(withId(R.id.editEmail)).perform(typeText("mariorossi@gmail.com"),click())
+        onView(withId(R.id.editEmail)).perform(scrollTo()).perform(click()).perform(typeText("mariorossi@gmail.com"))
         onView(withId(R.id.editEmail)).check(matches(withText("mariorossi@gmail.com")))
 
         onView(withId(R.id.editPhoneNumber)).check(matches(isDisplayed()))
-        onView(withId(R.id.editPhoneNumber)).perform(typeText("1234567890"),click())
+        onView(withId(R.id.editPhoneNumber)).perform(scrollTo()).perform(click()).perform(typeText("1234567890"))
         onView(withId(R.id.editPhoneNumber)).check(matches(withText("1234567890")))
 
         onView(withId(R.id.editDescription)).check(matches(isDisplayed()))
-        onView(withId(R.id.editDescription)).perform(typeText("student, location"),click())
+        onView(withId(R.id.editDescription)).perform(scrollTo()).perform(click()).perform(typeText("student, location"))
         onView(withId(R.id.editDescription)).check(matches(withText("student, location")))
     }
 

@@ -98,6 +98,7 @@ fun getImageFromInternalStorage(context: Context): Bitmap {
 
         //get selected image
         BitmapFactory.decodeFile(imageFile.absolutePath)
+            ?:BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 
 
     //get default image

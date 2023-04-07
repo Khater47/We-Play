@@ -3,11 +3,11 @@
 
     <item
         android:title="@string/camera"
-        android:id="@+id/camera_menu"
+        android:id="@+id/cameraMenu"
         />
 
     <item
         android:title="@string/gallery"
-        android:id="@+id/gallery_menu"
+        android:id="@+id/galleryMenu"
         />
 </menu>

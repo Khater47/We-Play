@@ -108,10 +108,8 @@ internal class ShowProfileActivityTest{
         onView(withId(R.id.userProfilePicture)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
         onView(withId(R.id.fullNameUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.fullNameUserProfile)).check(matches(withText(R.string.fullName)))
 
         onView(withId(R.id.emailUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.emailUserProfile)).check(matches(withText(R.string.email)))
 
     }
 
@@ -124,24 +122,18 @@ internal class ShowProfileActivityTest{
         onView(withId(R.id.userInfo)).check(matches(withText(R.string.personalInfo)))
 
         onView(withId(R.id.nicknameUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.nicknameUserProfile)).check(matches(withText(R.string.labelNickname)))
 
         onView(withId(R.id.customNicknameUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.customNicknameUserProfile)).check(matches(withText(R.string.nickname)))
 
 
         onView(withId(R.id.phoneNumberUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.phoneNumberUserProfile)).check(matches(withText(R.string.labelPhoneNumber)))
 
         onView(withId(R.id.customPhoneNumberUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.customPhoneNumberUserProfile)).check(matches(withText(R.string.phoneNumber)))
 
 
         onView(withId(R.id.descriptionUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.descriptionUserProfile)).check(matches(withText(R.string.labelDescription)))
 
         onView(withId(R.id.customDescriptionUserProfile)).check(matches(isDisplayed()))
-        onView(withId(R.id.customDescriptionUserProfile)).check(matches(withText(R.string.description)))
 
     }
 

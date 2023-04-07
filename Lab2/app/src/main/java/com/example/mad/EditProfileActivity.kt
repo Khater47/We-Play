@@ -93,7 +93,7 @@ class EditProfileActivity : AppCompatActivity() {
     //handle click on camera/gallery option
     override fun onContextItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.camera_menu -> {
+            R.id.cameraMenu -> {
 
                 if(checkSelfPermission(android.Manifest.permission.CAMERA)==PackageManager.PERMISSION_DENIED){
                     val permission = arrayOf(android.Manifest.permission.CAMERA)
@@ -103,7 +103,7 @@ class EditProfileActivity : AppCompatActivity() {
 
                 true
             }
-            R.id.gallery_menu -> {
+            R.id.galleryMenu -> {
 
                 val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                 val mimeTypes = arrayOf("image/*")
