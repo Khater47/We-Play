@@ -3,6 +3,7 @@ package com.example.mad
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -17,6 +18,8 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.runner.RunWith
 import java.io.File
 import java.io.FileOutputStream
@@ -81,11 +84,11 @@ internal class ShowProfileActivityTest{
             outputStream.flush()
             outputStream.close()
 
+            println(imageFile.totalSpace)
+
         }
 
-
     }
-
 
     @Test
     //load show profile activity and check if scrollView and LinearLayout are showed
@@ -101,14 +104,14 @@ internal class ShowProfileActivityTest{
     fun test_isProfilePictureContainerInView(){
         onView(withId(R.id.containerProfilePicture)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.avatar_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.avatar_user_profile)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+        onView(withId(R.id.userProfilePicture)).check(matches(isDisplayed()))
+        onView(withId(R.id.userProfilePicture)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-        onView(withId(R.id.full_name_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.full_name_user_profile)).check(matches(withText(R.string.fullName)))
+        onView(withId(R.id.fullNameUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.fullNameUserProfile)).check(matches(withText(R.string.fullName)))
 
-        onView(withId(R.id.email_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.email_user_profile)).check(matches(withText(R.string.email)))
+        onView(withId(R.id.emailUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.emailUserProfile)).check(matches(withText(R.string.email)))
 
     }
 
@@ -117,28 +120,28 @@ internal class ShowProfileActivityTest{
     fun test_isProfileInfoContainerInView(){
         onView(withId(R.id.containerInfoUserProfile)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.user_info)).check(matches(isDisplayed()))
-        onView(withId(R.id.user_info)).check(matches(withText(R.string.personalInfo)))
+        onView(withId(R.id.userInfo)).check(matches(isDisplayed()))
+        onView(withId(R.id.userInfo)).check(matches(withText(R.string.personalInfo)))
 
-        onView(withId(R.id.nickname_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.nickname_user_profile)).check(matches(withText(R.string.labelNickname)))
+        onView(withId(R.id.nicknameUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.nicknameUserProfile)).check(matches(withText(R.string.labelNickname)))
 
-        onView(withId(R.id.custom_nickname_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.custom_nickname_user_profile)).check(matches(withText(R.string.nickname)))
-
-
-        onView(withId(R.id.phone_number_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.phone_number_user_profile)).check(matches(withText(R.string.labelPhoneNumber)))
-
-        onView(withId(R.id.custom_phone_number_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.custom_phone_number_user_profile)).check(matches(withText(R.string.phoneNumber)))
+        onView(withId(R.id.customNicknameUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.customNicknameUserProfile)).check(matches(withText(R.string.nickname)))
 
 
-        onView(withId(R.id.description_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.description_user_profile)).check(matches(withText(R.string.labelDescription)))
+        onView(withId(R.id.phoneNumberUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.phoneNumberUserProfile)).check(matches(withText(R.string.labelPhoneNumber)))
 
-        onView(withId(R.id.custom_description_user_profile)).check(matches(isDisplayed()))
-        onView(withId(R.id.custom_description_user_profile)).check(matches(withText(R.string.description)))
+        onView(withId(R.id.customPhoneNumberUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.customPhoneNumberUserProfile)).check(matches(withText(R.string.phoneNumber)))
+
+
+        onView(withId(R.id.descriptionUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.descriptionUserProfile)).check(matches(withText(R.string.labelDescription)))
+
+        onView(withId(R.id.customDescriptionUserProfile)).check(matches(isDisplayed()))
+        onView(withId(R.id.customDescriptionUserProfile)).check(matches(withText(R.string.description)))
 
     }
 
@@ -147,9 +150,9 @@ internal class ShowProfileActivityTest{
     //check edit button click -> load Edit Profile Activity
     fun test_editProfileButton(){
 
-        onView(withId(R.id.edit_button)).check(matches(isDisplayed()))
+        onView(withId(R.id.editButton)).check(matches(isDisplayed()))
 
-        onView(withId(R.id.edit_button)).perform(click())
+        onView(withId(R.id.editButton)).perform(click())
 
         onView(withId(R.id.containerEditProfileActivity)).check(matches(isDisplayed()))
 
@@ -159,6 +162,8 @@ internal class ShowProfileActivityTest{
     @Test
     //check JSON Object profile in sharedPreferences
     fun userObject_isCorrect() {
+
+
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         val sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE)
@@ -175,20 +180,20 @@ internal class ShowProfileActivityTest{
             if(userString!=null){
                 val user = JSONObject(userString)
 
-                assertNotNull(user.get("fullName"))
-                assertTrue(user.get("fullName") is String)
+                assertNotNull(user.getString("fullName"))
+                assertTrue(user.getString("fullName") is String)
 
-                assertNotNull(user.get("nickname"))
-                assertTrue(user.get("nickname") is String)
+                assertNotNull(user.getString("nickname"))
+                assertTrue(user.getString("nickname") is String)
 
-                assertNotNull(user.get("email"))
-                assertTrue(user.get("email") is String)
+                assertNotNull(user.getString("email"))
+                assertTrue(user.getString("email") is String)
 
-                assertNotNull(user.get("description"))
-                assertTrue(user.get("description") is String)
+                assertNotNull(user.getString("description"))
+                assertTrue(user.getString("description") is String)
 
-                assertNotNull(user.get("phoneNumber"))
-                assertTrue(user.get("phoneNumber") is String)
+                assertNotNull(user.getString("phoneNumber"))
+                assertTrue(user.getString("phoneNumber") is String)
 
             }
 

@@ -33,8 +33,8 @@ internal class ShowProfileActivityTestUIAutomator{
             val device = UiDevice.getInstance(getInstrumentation())
 
             //check camera dialog
-            assertViewWithTextIsVisible(device,"ALLOW")
-            assertViewWithTextIsVisible(device, "DENY");
+            assertViewWithTextIsVisible(device, TEXT_ALLOW)
+            assertViewWithTextIsVisible(device, TEXT_DENY);
 
         }
     }

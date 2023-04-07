@@ -12,7 +12,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.example.lab1"
+        applicationId "com.example.mad"
         minSdk 24
         targetSdk 33
         versionCode 1

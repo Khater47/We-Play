@@ -37,7 +37,7 @@ class ShowProfileActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         return when (item.itemId) {
-            R.id.edit_button -> {
+            R.id.editButton -> {
 
                 val intent = Intent(this, EditProfileActivity::class.java)
                 startActivity(intent)

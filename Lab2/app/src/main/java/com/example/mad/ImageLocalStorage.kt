@@ -72,11 +72,9 @@ fun saveImageOnInternalStorage(imageUri:Uri?, context: Context){
     {
         val tempBitmap  = uriToBitmap(imageUri,context)
         rotateBitmap(tempBitmap,imageUri,context)
-        //val imageSource = ImageDecoder.createSource(context.contentResolver,imageUri as Uri)
-        //ImageDecoder.decodeBitmap(imageSource)
     }
 
-    else if(imageUri==null && imageFile!=null) //set previous image, if user don't select picture
+    else if(imageFile.totalSpace>0) //set previous image, if user don't select picture
         BitmapFactory.decodeFile(imageFile.absolutePath)
 
     else  //no image provided, set default image
@@ -100,6 +98,7 @@ fun getImageFromInternalStorage(context: Context): Bitmap {
 
         //get selected image
         BitmapFactory.decodeFile(imageFile.absolutePath)
+
 
     //get default image
     else
