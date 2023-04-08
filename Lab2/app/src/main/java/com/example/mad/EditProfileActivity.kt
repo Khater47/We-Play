@@ -153,13 +153,13 @@ class EditProfileActivity : AppCompatActivity() {
     }
 
     //if editString!="" return editText else return previousUserString
-    private fun getEditString(editString:String,sharedPref:SharedPreferences,key:String):String{
-        var prevUser:JSONObject? = null
+    private fun getEditString(editString:String, sharedPref: SharedPreferences, key:String):String{
+        var prevUser: JSONObject? = null
 
         if(sharedPref.getString("profile",null)!=null)
             prevUser = JSONObject(sharedPref.getString("profile",null) as String)
 
-        return if(editFullName.text.toString()=="")
+        return if(editString=="")
             prevUser?.getString(key)?:""
         else
             editString
