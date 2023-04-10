@@ -1,9 +1,10 @@
 package com.example.mad
 
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.util.Log
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -14,12 +15,10 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import org.json.JSONObject
-import org.junit.BeforeClass
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.runner.RunWith
 import java.io.File
 import java.io.FileOutputStream
@@ -34,61 +33,9 @@ internal class ShowProfileActivityTest{
     @get:Rule
     private val activityScenario = ActivityScenario.launch(ShowProfileActivity::class.java)
 
-    companion object{
-        @BeforeClass
-        fun clearSharedPreferences(){
-            val context = ApplicationProvider.getApplicationContext<Context>()
-            val sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE)
-
-            if(sharedPreferences.getString(PROFILE,null)!=null)
-                sharedPreferences.edit().remove(PROFILE).commit()
-
-            var user = JSONObject()
-
-            user.put("fullName",context.resources.getString(R.string.fullName))
-            user.put("nickname",context.resources.getString(R.string.nickname))
-            user.put("description",context.resources.getString(R.string.description))
-            user.put("email",context.resources.getString(R.string.email))
-            user.put("phoneNumber",context.resources.getString(R.string.phoneNumber))
-
-            val editor = sharedPreferences.edit()
-
-            editor.putString(PROFILE,user.toString())
-
-            editor.apply()
-
-        }
-
-        @BeforeClass
-        fun clearLocalStorage(){
-            val context = InstrumentationRegistry.getInstrumentation().targetContext
-            val files: Array<File> = context.filesDir.listFiles()
-            if (files != null) {
-                for (file in files) {
-                    file.delete()
-                }
-            }
-        }
-
-        @BeforeClass
-        fun saveImageOnLocalStorage(){
-            val context = InstrumentationRegistry.getInstrumentation().targetContext
-
-            val directory = context.filesDir
-            val imageFile = File(directory, context.getString(R.string.imageName))
-
-            val bitmap: Bitmap = BitmapFactory.decodeResource(context.resources,R.drawable.ic_launcher_background)
-
-            val outputStream = FileOutputStream(imageFile)
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-            outputStream.flush()
-            outputStream.close()
-
-            println(imageFile.totalSpace)
-
-        }
-
-    }
+    //----------------------------
+    //PORTRAIT
+    //----------------------------
 
     @Test
     //load show profile activity and check if scrollView and LinearLayout are showed
@@ -137,7 +84,6 @@ internal class ShowProfileActivityTest{
 
     }
 
-
     @Test
     //check edit button click -> load Edit Profile Activity
     fun test_editProfileButton(){
@@ -151,10 +97,101 @@ internal class ShowProfileActivityTest{
     }
 
 
+    //----------------------------
+    //LANDSCAPE
+    //----------------------------
+
+    @Test
+    //load show profile activity and check if scrollView and LinearLayout are showed
+    fun test_isActivityInViewLand(){
+        activityScenario.onActivity {
+           it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        onView(withId(R.id.scrollShowProfileLand)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.contentScrollViewLand)).check(matches(isDisplayed()))
+
+    }
+
+    @Test
+    //load show profile activity in Landscape and check if Constraint Layout contains profilePicture,FullName and Email
+    fun test_isProfilePictureContainerInViewLand(){
+        activityScenario.onActivity {
+            it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        onView(withId(R.id.containerProfilePictureLand)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.userProfilePicture)).check(matches(isDisplayed()))
+        onView(withId(R.id.userProfilePicture)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
+
+        onView(withId(R.id.fullNameUserProfile)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.emailUserProfile)).check(matches(isDisplayed()))
+
+    }
+
+    @Test
+    //load show profile activity in Landscape and check if Linear Layout contains personal info like (email,phoneNumber,nickname)
+    fun test_isProfileInfoContainerInViewLand(){
+        activityScenario.onActivity {
+            it.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        }
+
+        onView(withId(R.id.containerInfoUserProfileLand)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.userInfo)).check(matches(isDisplayed()))
+        onView(withId(R.id.userInfo)).check(matches(withText(R.string.personalInfo)))
+
+        onView(withId(R.id.nicknameUserProfile)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.customNicknameUserProfile)).check(matches(isDisplayed()))
+
+
+        onView(withId(R.id.phoneNumberUserProfile)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.customPhoneNumberUserProfile)).check(matches(isDisplayed()))
+
+
+        onView(withId(R.id.descriptionUserProfile)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.customDescriptionUserProfile)).check(matches(isDisplayed()))
+
+    }
+
+
+    //----------------------------
+    //Check sharePreferences
+    //----------------------------
+
+    @Before
+    fun addUserProfileOnSharedPreferences(){
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val sharedPreferences = context.getSharedPreferences(FILENAME, Context.MODE_PRIVATE)
+
+        if(sharedPreferences.getString(PROFILE,null)!=null)
+            sharedPreferences.edit().remove(PROFILE).commit()
+
+        var user = JSONObject()
+
+        user.put("fullName",context.resources.getString(R.string.fullName))
+        user.put("nickname",context.resources.getString(R.string.nickname))
+        user.put("description",context.resources.getString(R.string.description))
+        user.put("email",context.resources.getString(R.string.email))
+        user.put("phoneNumber",context.resources.getString(R.string.phoneNumber))
+
+        val editor = sharedPreferences.edit()
+
+        editor.putString(PROFILE,user.toString())
+
+        editor.apply()
+
+    }
+
     @Test
     //check JSON Object profile in sharedPreferences
     fun userObject_isCorrect() {
-
 
         val context = ApplicationProvider.getApplicationContext<Context>()
 
@@ -190,6 +227,41 @@ internal class ShowProfileActivityTest{
             }
 
         }
+
+
+    }
+
+    //----------------------------
+    //Check image on local storage
+    //----------------------------
+
+    @Before
+    fun deleteImageOnLocalStorage(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val directory = context.filesDir
+
+        val files: Array<File> = directory.listFiles()
+        if (files != null) {
+            for (file in files) {
+                file.delete()
+            }
+        }
+
+    }
+
+    @Before
+    fun saveImageOnLocalStorage(){
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+
+        val directory = context.filesDir
+        val imageFile = File(directory, context.getString(R.string.imageName))
+
+        val bitmap: Bitmap? = ContextCompat.getDrawable(context,R.drawable.ic_launcher_background)?.toBitmap()
+
+        val outputStream = FileOutputStream(imageFile)
+        bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
 
 
     }

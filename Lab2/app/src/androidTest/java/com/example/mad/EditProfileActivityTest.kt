@@ -3,6 +3,7 @@ package com.example.mad
 import android.app.Activity.RESULT_OK
 import android.app.Instrumentation
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
@@ -20,6 +21,7 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.GrantPermissionRule
 import org.hamcrest.CoreMatchers.allOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.*
@@ -44,16 +46,14 @@ internal class EditProfileActivityTest{
         android.Manifest.permission.WRITE_EXTERNAL_STORAGE
     )
 
-
     @Test
     //load edit profile activity and check the content of toolbar
     fun test_isToolbarInView(){
-        onView(withId(R.id.toolbar_show_profile)).check(matches(isDisplayed()))
+        onView(withId(R.id.toolbarShowProfile)).check(matches(isDisplayed()))
 
         onView(withId(R.id.arrowBackUserProfile)).check(matches(isDisplayed()))
         onView(withId(R.id.arrowBackUserProfile)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
-        //descriptionShowProfile
         onView(withId(R.id.toolbarTitle)).check(matches(isDisplayed()))
         onView(withId(R.id.toolbarTitle)).check(matches(withText(R.string.toolbarEditProfile)))
 
@@ -83,7 +83,6 @@ internal class EditProfileActivityTest{
         onView(withId(R.id.imageButton)).check(matches(withEffectiveVisibility(Visibility.VISIBLE)))
 
     }
-
 
     @Test
     //load edit profile activity and check the edit text for fullName,nickname,email,phoneNumber,description
