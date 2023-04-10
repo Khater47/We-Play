@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scrollShowProfile"
+    >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:id="@+id/contentScrollView"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical"
+                android:id="@+id/containerProfilePicture"
+                >
+
+
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/userProfilePicture"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:contentDescription="@string/profilePicture"
+                    android:padding="5dp"
+                    android:src="@drawable/profile"
+                    android:scaleType="centerCrop"
+                    android:title="@string/profilePicture"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.3"
+                    app:shapeAppearance="@style/circular" />
+
+                <TextView
+                    android:id="@+id/fullNameUserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="6dp"
+                    android:text="@string/fullName"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/userProfilePicture" />
+
+                <TextView
+                    android:id="@+id/emailUserProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/email"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fullNameUserProfile" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:padding="@dimen/size_10dp"
+                android:orientation="vertical"
+                android:id="@+id/containerInfoUserProfile"
+                >
+
+
+                <TextView
+                    android:id="@+id/userInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/personalInfo"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+                <TextView
+                    android:id="@+id/nicknameUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/labelNickname"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableStartCompat="@drawable/outline_alternate_email_16" />
+
+                <TextView
+                    android:id="@+id/customNicknameUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/nickname"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+                <TextView
+                    android:id="@+id/phoneNumberUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/labelPhoneNumber"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableStartCompat="@drawable/outline_phone_16" />
+
+                <TextView
+                    android:id="@+id/customPhoneNumberUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/phoneNumber"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+
+                <TextView
+                    android:id="@+id/descriptionUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawablePadding="5dp"
+                    android:paddingBottom="@dimen/size_15dp"
+                    android:text="@string/labelDescription"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:drawableStartCompat="@drawable/outline_description_16"
+                    />
+
+                <TextView
+                    android:id="@+id/customDescriptionUserProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/size_32dp"
+                    android:text="@string/description"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
