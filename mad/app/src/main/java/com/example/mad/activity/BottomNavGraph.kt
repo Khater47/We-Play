@@ -13,7 +13,7 @@ import com.example.mad.sport.SportScreen
 
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.Profile.route) {
         composable(route=BottomBarScreen.Home.route){
             ReservationScreen()
         }
