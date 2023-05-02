@@ -2,25 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-
     <application
+        android:name=".CourtReservationApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:label="@string/appName"
         android:theme="@style/Theme.Mad"
         tools:targetApi="31">
         <activity
-            android:name=".EditProfileActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
-            android:exported="false" />
-        <activity
-            android:name=".ShowProfileActivity"
-            android:exported="true">
+            android:name=".activity.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Mad">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
