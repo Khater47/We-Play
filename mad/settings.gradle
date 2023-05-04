@@ -3,6 +3,7 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
+
     }
 }
 dependencyResolutionManagement {
@@ -12,6 +13,7 @@ dependencyResolutionManagement {
         mavenCentral()
         //Calendar import
         maven { url "https://jitpack.io" }
+
     }
 }
 rootProject.name = "mad"
