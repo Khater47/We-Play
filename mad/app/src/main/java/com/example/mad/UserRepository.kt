@@ -5,71 +5,83 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(
     private val reservationDao: ReservationDao,
-    private val sportDao: SportDao,
     private val playgroundsDao: PlaygroundsDao,
+    private val profileDao: ProfileDao,
+    private val profileSportDao: ProfileSportDao,
+    private val profileRatingDao: ProfileRatingDao,
+    private val timeSlotDao: TimeSlotDao
 ) {
+
+    //--------------------------------------------
+    //Reservation functions
+    //--------------------------------------------
 
     fun reservations():LiveData<List<Reservation>> = reservationDao.getAll()
     fun reservationsDate():LiveData<List<String>> = reservationDao.getAllDate()
+    fun getReservationByDate(date:String) :LiveData<List<Reservation>> = reservationDao.getReservationByDate(date)
 
-    fun sports():LiveData<List<Sport>> = sportDao.getAll()
-
-    fun playgrounds():LiveData<List<Playgrounds>> = playgroundsDao.getAll()
-
-
-    suspend fun addReservation(reservation: Reservation){
-        reservationDao.addReservation(reservation)
+    suspend fun insertReservation(reservation: Reservation){
+        reservationDao.insertReservation(reservation)
     }
-
-    suspend fun addSport(sport: Sport){
-        sportDao.addSport(sport)
-    }
-
-    suspend fun addPlayground(playgrounds: Playgrounds){
-        playgroundsDao.addPlayground(playgrounds)
-    }
-
-    suspend fun addReservations(reservation: List<Reservation>){
-        reservationDao.addReservations(reservation)
-    }
-
-    suspend fun addSports(sports: List<Sport>){
-        sportDao.addSports(sports)
-    }
-
-    suspend fun addPlaygrounds(playgrounds: List<Playgrounds>){
-        playgroundsDao.addPlaygrounds(playgrounds)
-    }
-
-    fun getReservationByDate(dateText:String) :LiveData<List<Reservation>>{
-        return reservationDao.getReservationByDate(dateText)
-    }
-
-
-    suspend fun updateReservation(reservation: Reservation){
-        reservationDao.updateReservation(reservation)
-    }
-
-    suspend fun updateSport(sport: Sport){
-        sportDao.updateSport(sport)
-    }
-
-    suspend fun updatePlayground(playgrounds: Playgrounds){
-        playgroundsDao.updatePlaygrounds(playgrounds)
-    }
-
 
     suspend fun deleteReservation(reservation: Reservation){
         reservationDao.deleteReservation(reservation)
     }
 
-    suspend fun deleteSport(sport: Sport){
-        sportDao.deleteSport(sport)
+
+    //--------------------------------------------
+    //Playground functions
+    //--------------------------------------------
+    fun playgrounds():LiveData<List<Playgrounds>> = playgroundsDao.getAll()
+
+
+
+    //--------------------------------------------
+    //Profile functions
+    //--------------------------------------------
+    fun getProfileByEmail(email:String):LiveData<Profile> = profileDao.getProfileByEmail(email)
+
+    suspend fun insertProfile(profile: Profile){
+        profileDao.insertProfile(profile)
     }
 
-    suspend fun deletePlayground(playgrounds: Playgrounds){
-        playgroundsDao.deletePlaygrounds(playgrounds)
+    suspend fun deleteProfile(profile: Profile){
+        profileDao.deleteProfile(profile)
     }
+
+
+    //--------------------------------------------
+    //Profile Sport functions
+    //--------------------------------------------
+
+    fun getProfileSportByIdProfile(idProfile:Int):LiveData<ProfileSport> = profileSportDao.getProfileSportByIdProfile(idProfile)
+
+    suspend fun insertProfileSport(profileSport: ProfileSport){
+        profileSportDao.insertProfileSport(profileSport)
+    }
+    suspend fun deleteProfileSport(profileSport: ProfileSport){
+        profileSportDao.deleteProfileSport(profileSport)
+    }
+
+
+    //--------------------------------------------
+    //Profile Rating functions
+    //--------------------------------------------
+
+    fun getProfileRatingByIdProfile(idProfile:Int):LiveData<ProfileRating> = profileRatingDao.getProfileRatingByIdProfile(idProfile)
+
+    suspend fun insertProfileRating(profileRating: ProfileRating){
+        profileRatingDao.insertProfileRating(profileRating)
+    }
+
+    suspend fun deleteProfileRating(profileRating: ProfileRating){
+        profileRatingDao.deleteProfileRating(profileRating)
+    }
+
+    //--------------------------------------------
+    //Time Slot functions
+    //--------------------------------------------
+    fun getTimeSlotByTime(time:String):LiveData<TimeSlot> = timeSlotDao.getTimeSlotByTime(time)
 
 
 }

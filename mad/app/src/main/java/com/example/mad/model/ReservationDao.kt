@@ -4,9 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Insert
-import androidx.room.Update
 import androidx.room.Delete
-import com.example.mad.model.Reservation
+import androidx.room.OnConflictStrategy
 
 
 @Dao
@@ -18,18 +17,11 @@ interface ReservationDao {
     @Query("SELECT date FROM reservations")
     fun getAllDate() : LiveData<List<String>>
 
-    @Insert
-    suspend fun addReservation(reservation: Reservation)
+    @Query("SELECT * FROM reservations WHERE date = :date")
+    fun getReservationByDate(date:String) : LiveData<List<Reservation>>
 
-    @Insert
-    suspend fun addReservations(reservation: List<Reservation>)
-
-    @Query("SELECT * FROM reservations WHERE date = :dateText")
-    fun getReservationByDate(dateText:String) : LiveData<List<Reservation>>
-
-
-    @Update
-    suspend fun updateReservation(reservation: Reservation)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReservation(reservation: Reservation)
 
     @Delete
     suspend fun deleteReservation(reservation: Reservation)

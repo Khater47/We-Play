@@ -1,14 +1,14 @@
 package com.example.mad
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mad.model.Playgrounds
+import com.example.mad.model.Profile
+import com.example.mad.model.ProfileRating
+import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
-import com.example.mad.model.Sport
-import com.example.mad.model.UserDatabase
+import com.example.mad.model.TimeSlot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,83 +17,85 @@ import javax.inject.Inject
 @HiltViewModel
 class UserViewModel @Inject constructor(private val repo:UserRepository): ViewModel(){
 
+
+    //--------------------------------------------
+    //Reservation functions
+    //--------------------------------------------
+
     val reservations:LiveData<List<Reservation>> = repo.reservations()
     val reservationsDate:LiveData<List<String>> = repo.reservationsDate()
-    val sports:LiveData<List<Sport>> = repo.sports()
-    val playgrounds:LiveData<List<Playgrounds>> = repo.playgrounds()
-
-    fun addReservation(reservation: Reservation){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addReservation(reservation)
-        }
-    }
-    fun addPlayground(playgrounds: Playgrounds){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addPlayground(playgrounds)
-        }
-    }
-    fun addSport(sport: Sport){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addSport(sport)
-        }
-    }
-
-
-    fun addReservations(reservation: List<Reservation>){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addReservations(reservation)
-        }
-    }
-    fun addPlaygrounds(playgrounds: List<Playgrounds>){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addPlaygrounds(playgrounds)
-        }
-    }
-
-    fun addSports(sports: List<Sport>){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.addSports(sports)
-        }
-    }
-
     fun getReservationByDate(dateText:String):LiveData<List<Reservation>> {
-             return repo.getReservationByDate(dateText)
+        return repo.getReservationByDate(dateText)
     }
-
-    fun updateReservation(reservation: Reservation){
+    fun insertReservation(reservation: Reservation){
         viewModelScope.launch(Dispatchers.IO) {
-            repo.updateReservation(reservation)
+            repo.insertReservation(reservation)
         }
     }
-
-    fun updatePlayground(playgrounds: Playgrounds){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.updatePlayground(playgrounds)
-        }
-    }
-
-    fun updateSport(sport: Sport){
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.updateSport(sport)
-        }
-    }
-
-
     fun deleteReservation(reservation: Reservation){
         viewModelScope.launch(Dispatchers.IO) {
             repo.deleteReservation(reservation)
         }
     }
 
-    fun deletePlayground(playgrounds: Playgrounds){
+
+
+    //--------------------------------------------
+    //Playground functions
+    //--------------------------------------------
+    val playgrounds:LiveData<List<Playgrounds>> = repo.playgrounds()
+
+    //--------------------------------------------
+    //Profile functions
+    //--------------------------------------------
+    fun getProfileByEmail(email:String):LiveData<Profile> = repo.getProfileByEmail(email)
+    fun insertProfile(profile: Profile){
         viewModelScope.launch(Dispatchers.IO) {
-            repo.deletePlayground(playgrounds)
+            repo.insertProfile(profile)
+        }
+    }
+    fun deleteProfile(profile: Profile){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.deleteProfile(profile)
         }
     }
 
-    fun deleteSport(sport: Sport){
+    //--------------------------------------------
+    //Profile Sport functions
+    //--------------------------------------------
+    fun getProfileSportByIdProfile(idProfile:Int):LiveData<ProfileSport> = repo.getProfileSportByIdProfile(idProfile)
+    fun insertProfileSport(profileSport: ProfileSport){
         viewModelScope.launch(Dispatchers.IO) {
-            repo.deleteSport(sport)
+            repo.insertProfileSport(profileSport)
         }
     }
+    fun deleteProfileSport(profileSport: ProfileSport){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.deleteProfileSport(profileSport)
+        }
+    }
+
+
+    //--------------------------------------------
+    //Profile Rating functions
+    //--------------------------------------------
+    fun getProfileRatingByIdProfile(idProfile:Int):LiveData<ProfileRating> = repo.getProfileRatingByIdProfile(idProfile)
+    fun insertProfileRating(profileRating: ProfileRating){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.insertProfileRating(profileRating)
+        }
+    }
+    fun deleteProfileRating(profileRating: ProfileRating){
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.deleteProfileRating(profileRating)
+        }
+    }
+
+
+    //--------------------------------------------
+    //Time Slot functions
+    //--------------------------------------------
+
+    fun getTimeSlotByTime(time:String):LiveData<TimeSlot> = repo.getTimeSlotByTime(time)
+
 }

@@ -8,9 +8,10 @@ import androidx.room.PrimaryKey
 data class Reservation(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val title: String,
-    val playgrounds:String,
     val date: String,
-    val time:String,
-    val location:String
+    val equipment:Int,
+    val idPlayground: Int,
+    val idStartTimeSlot: Int,
+    val idEndTimeSlot: Int,
+    val idProfile:String,
 )
