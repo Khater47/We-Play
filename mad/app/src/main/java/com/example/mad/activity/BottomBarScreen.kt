@@ -2,9 +2,9 @@ package com.example.mad.activity
 
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sports
 import androidx.compose.ui.graphics.vector.ImageVector
 
@@ -23,6 +23,12 @@ sealed class BottomBarScreen(
         route = "profile",
         title="Profile",
         icon= Icons.Default.Person
+    )
+
+    object Reservation:BottomBarScreen(
+        route = "reservations",
+        title="Reservation",
+        icon= Icons.Default.CalendarMonth
     )
 
     object Sport:BottomBarScreen(

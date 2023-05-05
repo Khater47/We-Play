@@ -30,6 +30,7 @@ fun MainScreen() {
 fun BottomBar(navController: NavHostController) {
     val screens = listOf(
         BottomBarScreen.Home,
+        BottomBarScreen.Reservation,
         BottomBarScreen.Sport,
         BottomBarScreen.Profile,
     )
