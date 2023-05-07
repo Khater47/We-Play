@@ -12,6 +12,7 @@ import com.example.mad.profileRating.ProfileRatingScreen
 import com.example.mad.reservation.ReservationScreen
 import com.example.mad.profileSport.ProfileSportScreen
 import com.example.mad.rentField.RentFieldScreen
+import com.example.mad.sport.SportScreen
 
 
 @Composable
@@ -36,6 +37,9 @@ fun BottomNavGraph(navController: NavHostController) {
         }
         composable(route=BottomBarScreen.RentField.route){
             RentFieldScreen()
+        }
+        composable(route=BottomBarScreen.Sport.route){
+            SportScreen()
         }
 
     }

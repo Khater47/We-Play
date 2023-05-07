@@ -12,6 +12,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +31,8 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sports
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -38,6 +42,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 
@@ -48,17 +53,17 @@ fun HomeScreen(navController: NavController) {
     val configuration = LocalConfiguration.current
 
     Scaffold(
-        topBar = { TopAppBarProfile() }
+        topBar = { TopAppBarHome() }
     ) {
         Box(Modifier.padding(it)) {
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitProfile(navController)
+                    PortraitHome(navController)
                 }
 
                 else -> {
-                    LandscapeProfile(navController)
+                    LandscapeHome(navController)
                 }
             }
         }
@@ -67,7 +72,7 @@ fun HomeScreen(navController: NavController) {
 
 
 @Composable
-fun PortraitProfile(navController: NavController) {
+fun PortraitHome(navController: NavController) {
 
     Column(
         Modifier
@@ -77,13 +82,12 @@ fun PortraitProfile(navController: NavController) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(start=10.dp,end=10.dp)
+                .padding(start = 10.dp, end = 10.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CardUserPreferences()
-
+            CardUserPreferences(navController)
         }
 
         Column(
@@ -104,7 +108,7 @@ fun PortraitProfile(navController: NavController) {
 }
 
 @Composable
-fun LandscapeProfile(navController: NavController) {
+fun LandscapeHome(navController: NavController) {
 
     val searchIcon = Icons.Default.Search
     val searchImage = R.drawable.field
@@ -125,21 +129,22 @@ fun LandscapeProfile(navController: NavController) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top=10.dp,start=30.dp,end=30.dp),
+                .padding(top = 10.dp, start = 30.dp, end = 30.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            CardUserPreferences()
+            CardUserPreferences(navController)
         }
 
-        Row(Modifier.padding(top=10.dp,start=30.dp,end=30.dp, bottom = 10.dp),
+        Row(
+            Modifier.padding(top = 10.dp, start = 30.dp, end = 30.dp, bottom = 10.dp),
             horizontalArrangement = Arrangement.SpaceAround
-            ){
+        ) {
             Column(
                 Modifier
                     .weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                CardNavigationPage(searchIcon,searchImage,textSearch,navController)
+                CardNavigationPage(searchIcon, searchImage, textSearch, navController)
             }
 
             Column(
@@ -147,7 +152,7 @@ fun LandscapeProfile(navController: NavController) {
                     .weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                CardNavigationPage(rateIcon,ratingImage,textRating,navController)
+                CardNavigationPage(rateIcon, ratingImage, textRating, navController)
             }
         }
 
@@ -166,13 +171,13 @@ fun CardContainerNavigationPage(navController: NavController) {
     val textSearch = "Book field"
     val textRating = "Rate field"
 
-    Row() {
+    Row {
         Column(
             Modifier
                 .weight(1f)
                 .padding(10.dp)
         ) {
-            CardNavigationPage(searchIcon,searchImage,textSearch,navController)
+            CardNavigationPage(searchIcon, searchImage, textSearch, navController)
         }
 
         Column(
@@ -180,27 +185,55 @@ fun CardContainerNavigationPage(navController: NavController) {
                 .weight(1f)
                 .padding(10.dp)
         ) {
-            CardNavigationPage(rateIcon,ratingImage,textRating,navController)
+            CardNavigationPage(rateIcon, ratingImage, textRating, navController)
         }
 
     }
 }
 
 @Composable
-fun CardNavigationPage(searchIcon:ImageVector,imageCard:Int,textCard:String,navController: NavController) {
+fun CardNavigationPage(
+    searchIcon: ImageVector,
+    imageCard: Int,
+    textCard: String,
+    navController: NavController
+) {
 
-    val route = if(textCard.contains("Search")) BottomBarScreen.RentField.route else  BottomBarScreen.ProfileRating.route
+    val route =
+        if (imageCard == R.drawable.field) BottomBarScreen.RentField.route else BottomBarScreen.ProfileRating.route
+
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val rippleIndication = rememberRipple(bounded = true)
+
 
     Card(
         Modifier
-            .border(BorderStroke(1.dp, Color.LightGray)),
+            .border(BorderStroke(1.dp, Color.LightGray))
+            .clickable(
+                interactionSource = interactionSource,
+                indication = rippleIndication,
+                onClick = {
+                    navController.navigate(route) {
+                        //Pop up to the start destination of the graph to avoid
+                        //building up a large stack of destinations on the back stack as users select items
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        //Avoid multiple copies of the same destination when reselecting the same item
+                        launchSingleTop = true
+                        //Restore state when reselecting a previously selected item
+                        restoreState = true
+                    }
+                }
+            ),
         elevation = 10.dp,
         shape = RoundedCornerShape(16.dp),
 
         ) {
 
         Column {
-            ImageCard(searchIcon,imageCard)
+            ImageCard(searchIcon, imageCard, navController)
 
             TextCard(textCard)
 
@@ -212,7 +245,7 @@ fun CardNavigationPage(searchIcon:ImageVector,imageCard:Int,textCard:String,navC
 
 
 @Composable
-fun TopAppBarProfile() {
+fun TopAppBarHome() {
 
 
     TopAppBar(
@@ -232,7 +265,7 @@ fun TopAppBarProfile() {
 
 
 @Composable
-fun CardUserPreferences() {
+fun CardUserPreferences(navController: NavController) {
 
     val context = LocalContext.current
 
@@ -282,7 +315,7 @@ fun CardUserPreferences() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = {
-                    Toast.makeText(context,"Go to sport preferences",Toast.LENGTH_SHORT).show()
+                    navController.navigate(BottomBarScreen.ProfileSport.route)
                 }) {
                     Icon(Icons.Default.ArrowForward, "Edit", Modifier.size(28.dp))
                 }
@@ -297,7 +330,8 @@ fun CardUserPreferences() {
 
 
 @Composable
-fun ImageCard(icon: ImageVector, image: Int) {
+fun ImageCard(icon: ImageVector, image: Int, navController: NavController) {
+
 
     Box(
         Modifier.height(104.dp)
@@ -329,6 +363,7 @@ fun ImageCard(icon: ImageVector, image: Int) {
                     Modifier.size(25.dp),
                     tint = Color.White
                 )
+
             }
         }
     }

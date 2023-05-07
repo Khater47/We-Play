@@ -49,5 +49,11 @@ sealed class BottomBarScreen(
         icon= Icons.Default.CarRental
     )
 
+    object Sport:BottomBarScreen(
+        route = "sport",
+        title="Select Sport",
+        icon= Icons.Default.Sports
+    )
+
 
 }
