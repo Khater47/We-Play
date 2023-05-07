@@ -1,4 +1,5 @@
-package com.example.mad.sport
+package com.example.mad.rentField
+
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,10 +13,10 @@ import com.example.mad.ui.theme.MadTheme
 
 
 @Composable
-fun SportScreen() {
+fun RentFieldScreen() {
     Box(Modifier.fillMaxSize()) {
         Text(
-            text = "SportScreen",
+            text = "Profile Sport Screen",
             modifier = Modifier.align(Alignment.Center),
             style = MaterialTheme.typography.h4
         )
@@ -26,6 +27,6 @@ fun SportScreen() {
 @Composable
 fun DefaultPreview() {
     MadTheme {
-        SportScreen()
+        RentFieldScreen()
     }
 }

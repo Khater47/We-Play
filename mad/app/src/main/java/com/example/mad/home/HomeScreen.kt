@@ -1,6 +1,11 @@
 package com.example.mad.home
 
 
+/*TODO:
+   Add Animation for click card
+   Insert navigation when click card
+*/
+
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -23,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Sports
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -31,10 +37,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
+
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
 
     val configuration = LocalConfiguration.current
 
@@ -45,38 +54,20 @@ fun HomeScreen() {
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitProfile()
+                    PortraitProfile(navController)
                 }
 
                 else -> {
-                    LandscapeProfile()
+                    LandscapeProfile(navController)
                 }
             }
         }
     }
 }
 
-@Composable
-fun TopAppBarProfile() {
-
-
-    TopAppBar(
-        title = {
-            Text(
-                text = "Home Page",
-                fontSize = 24.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {},
-        actions = {}
-
-    )
-}
 
 @Composable
-fun PortraitProfile() {
+fun PortraitProfile(navController: NavController) {
 
     Column(
         Modifier
@@ -86,6 +77,7 @@ fun PortraitProfile() {
         Column(
             Modifier
                 .fillMaxWidth()
+                .padding(start=10.dp,end=10.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -97,14 +89,13 @@ fun PortraitProfile() {
         Column(
             Modifier
                 .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth()
                 .padding(16.dp)
                 .weight(2f)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Center
         ) {
 
-            CardContainerNavigationPage()
+            CardContainerNavigationPage(navController)
 
         }
     }
@@ -113,48 +104,141 @@ fun PortraitProfile() {
 }
 
 @Composable
-fun LandscapeProfile() {
+fun LandscapeProfile(navController: NavController) {
+
+    val searchIcon = Icons.Default.Search
+    val searchImage = R.drawable.field
+    val rateIcon = Icons.Default.ThumbUp
+    val ratingImage = R.drawable.field_rating
+    val textSearch = "Book field"
+    val textRating = "Rate field"
+
 
     Column(
         Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
+        horizontalAlignment = Alignment.CenterHorizontally,
+
         ) {
+
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(1f).padding(top=5.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(top=10.dp,start=30.dp,end=30.dp),
             verticalArrangement = Arrangement.Center
         ) {
             CardUserPreferences()
         }
 
+        Row(Modifier.padding(top=10.dp,start=30.dp,end=30.dp, bottom = 10.dp),
+            horizontalArrangement = Arrangement.SpaceAround
+            ){
+            Column(
+                Modifier
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                CardNavigationPage(searchIcon,searchImage,textSearch,navController)
+            }
+
+            Column(
+                Modifier
+                    .weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                CardNavigationPage(rateIcon,ratingImage,textRating,navController)
+            }
+        }
+
+
+    }
+}
+
+
+@Composable
+fun CardContainerNavigationPage(navController: NavController) {
+
+    val searchIcon = Icons.Default.Search
+    val searchImage = R.drawable.field
+    val rateIcon = Icons.Default.ThumbUp
+    val ratingImage = R.drawable.field_rating
+    val textSearch = "Book field"
+    val textRating = "Rate field"
+
+    Row() {
         Column(
             Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .fillMaxWidth()
-                .padding(16.dp)
-                .weight(2f)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center
+                .weight(1f)
+                .padding(10.dp)
+        ) {
+            CardNavigationPage(searchIcon,searchImage,textSearch,navController)
+        }
+
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(10.dp)
+        ) {
+            CardNavigationPage(rateIcon,ratingImage,textRating,navController)
+        }
+
+    }
+}
+
+@Composable
+fun CardNavigationPage(searchIcon:ImageVector,imageCard:Int,textCard:String,navController: NavController) {
+
+    val route = if(textCard.contains("Search")) BottomBarScreen.RentField.route else  BottomBarScreen.ProfileRating.route
+
+    Card(
+        Modifier
+            .border(BorderStroke(1.dp, Color.LightGray)),
+        elevation = 10.dp,
+        shape = RoundedCornerShape(16.dp),
+
         ) {
 
-            CardContainerNavigationPage()
+        Column {
+            ImageCard(searchIcon,imageCard)
+
+            TextCard(textCard)
 
         }
-    }
 
+
+    }
 }
+
+
+@Composable
+fun TopAppBarProfile() {
+
+
+    TopAppBar(
+        title = {
+            Text(
+                text = "Court Reservation Application",
+                fontSize = 24.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {},
+        actions = {}
+
+    )
+}
+
 
 @Composable
 fun CardUserPreferences() {
 
     val context = LocalContext.current
 
-
     Card(
         Modifier
-            .width(350.dp)
+            .fillMaxWidth()
             .height(100.dp),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(1.dp, Color.LightGray),
@@ -198,7 +282,7 @@ fun CardUserPreferences() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = {
-                    Toast.makeText(context, "Go to Edit Sport Profile", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,"Go to sport preferences",Toast.LENGTH_SHORT).show()
                 }) {
                     Icon(Icons.Default.ArrowForward, "Edit", Modifier.size(28.dp))
                 }
@@ -213,53 +297,7 @@ fun CardUserPreferences() {
 
 
 @Composable
-fun CardContainerNavigationPage() {
-
-    Row() {
-        Column(
-            Modifier
-                .weight(1f)
-                .padding(10.dp)
-        ) {
-            CardNavigationPage()
-        }
-        Column(
-            Modifier
-                .weight(1f)
-                .padding(10.dp)
-        ) {
-            CardNavigationPage()
-
-        }
-    }
-}
-
-@Composable
-fun CardNavigationPage() {
-
-    Card(
-        Modifier
-            .fillMaxSize()
-            .border(BorderStroke(1.dp, Color.LightGray)),
-        elevation = 10.dp,
-        shape = RoundedCornerShape(16.dp),
-
-        ) {
-
-        Column() {
-            ImageCard(Icons.Default.Search,R.drawable.field)
-
-            TextCard("Prenota un campo")
-
-        }
-
-
-    }
-}
-
-
-@Composable
-fun ImageCard(icon: ImageVector,image:Int) {
+fun ImageCard(icon: ImageVector, image: Int) {
 
     Box(
         Modifier.height(104.dp)
@@ -300,45 +338,36 @@ fun ImageCard(icon: ImageVector,image:Int) {
 @Composable
 fun TextCard(headerText: String) {
 
-    val configuration = LocalConfiguration.current
-
-    when (configuration.orientation) {
-        Configuration.ORIENTATION_PORTRAIT -> {
-            Column(
-                Modifier
-                    .padding(10.dp)
-                    .fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = headerText,
-                    fontSize = 13.sp,
-                    maxLines = 1,
-                )
-            }
-        }
-
-        else -> {
-            Column(
-                Modifier
-                    .padding(10.dp)
-                    .fillMaxSize(),
-            ) {
-                Text(
-                    text = headerText,
-                    fontSize = 16.sp,
-                    maxLines = 1,
-                )
-            }
-        }
+    Column(
+        Modifier
+            .padding(10.dp)
+            .fillMaxSize(),
+    ) {
+        Text(
+            text = headerText,
+            fontSize = 16.sp,
+            maxLines = 1,
+        )
     }
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        HomeScreen()
-    }
-}
+//Landscape Preview
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        HomeScreen()
+//    }
+//}
+
+//Portrait Preview
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        HomeScreen()
+//    }
+//}
