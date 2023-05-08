@@ -3,12 +3,8 @@ package com.example.mad.profile
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,20 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Phone
-import androidx.compose.material.icons.filled.SportsBaseball
-import androidx.compose.material.icons.filled.SportsBasketball
-import androidx.compose.material.icons.filled.SportsCricket
-import androidx.compose.material.icons.filled.SportsFootball
-import androidx.compose.material.icons.filled.SportsGolf
-import androidx.compose.material.icons.filled.SportsGymnastics
-import androidx.compose.material.icons.filled.SportsSoccer
-import androidx.compose.material.icons.filled.SportsTennis
-import androidx.compose.material.icons.filled.SportsVolleyball
 import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material3.ElevatedFilterChip
-import androidx.compose.material3.ElevatedSuggestionChip
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -47,16 +31,17 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.mad.R
-import com.example.mad.utils.getIconSport
+import com.example.mad.activity.BottomBarScreen
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(navController:NavHostController) {
 
     val configuration = LocalConfiguration.current
 
     Scaffold(
-        topBar = { TopAppBarProfile() }
+        topBar = { TopAppBarProfile(navController) }
     ) {
         Box(Modifier.padding(it)) {
 
@@ -74,7 +59,7 @@ fun ProfileScreen() {
 }
 
 @Composable
-fun TopAppBarProfile() {
+fun TopAppBarProfile(navController:NavHostController) {
 
     val context = LocalContext.current
 
@@ -90,7 +75,7 @@ fun TopAppBarProfile() {
         navigationIcon = {},
         actions = {
             IconButton(onClick = {
-                Toast.makeText(context, "Load Edit Profile", Toast.LENGTH_SHORT).show()
+                navController.navigate(BottomBarScreen.ProfileEdit.route)
             }) {
                 Icon(Icons.Default.Edit, "Edit", Modifier.size(28.dp))
             }
@@ -101,18 +86,6 @@ fun TopAppBarProfile() {
 
 @Composable
 fun PortraitProfile() {
-
-    val sports = listOf<String>(
-        "Soccer",
-        "Baseball",
-        "Basketball",
-        "Cricket",
-        "Football",
-        "Golf",
-        "Gymnastic",
-        "Tennis",
-        "Volleyball"
-    )
 
     Column(
         Modifier
@@ -139,30 +112,10 @@ fun PortraitProfile() {
                     .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
                     .padding(16.dp)
             ) { UserInfo() }
-
-            LazyRow{
-                items(sports, itemContent = {
-                    item -> ChipSport(text = item, icon = getIconSport(item))
-                })
-            }
-
-            Spacer(Modifier.padding(50.dp))
         }
 
     }
 
-
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ChipSport(text:String,icon:ImageVector){
-
-    ElevatedSuggestionChip(onClick = {},
-        label={Text(text)},
-        icon={Icon(icon,contentDescription = "iconSport")}
-    )
 
 }
 
@@ -190,7 +143,7 @@ fun LandscapeProfile() {
 
 }
 
-//Image,FullName,Email
+//Image,FullName
 @Composable
 fun ImageProfile() {
 
@@ -207,7 +160,7 @@ fun ImageProfile() {
     Text(text = "Mario Rossi", fontSize = 20.sp, modifier = Modifier.padding(vertical = 10.dp))
 }
 
-//Nickname,PhoneNumber,Description
+//Email,Nickname,PhoneNumber,Description
 @Composable
 fun UserInfo() {
 
@@ -215,23 +168,22 @@ fun UserInfo() {
     val modifierText = Modifier.padding(vertical = 15.dp)
 
     Text(text = "Personal Info", modifier = modifierText, style = body, fontSize = 20.sp)
+
+    ProfileInfo("mariorossi@gmail.com", Icons.Outlined.Email)
     Divider()
 
-    LabelText("mariorossi@gmail.com", Icons.Outlined.Email)
+    ProfileInfo("mario", Icons.Outlined.AlternateEmail)
     Divider()
 
-    LabelText("mario", Icons.Outlined.AlternateEmail)
+    ProfileInfo("1234567890", Icons.Default.Phone)
     Divider()
 
-    LabelText("1234567890", Icons.Default.Phone)
-    Divider()
-
-    LabelText("student", Icons.Default.Description)
+    ProfileInfo("student", Icons.Default.Description)
 
 }
 
 @Composable
-fun LabelText(text: String, icon: ImageVector) {
+fun ProfileInfo(text: String, icon: ImageVector) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -252,13 +204,13 @@ fun LabelText(text: String, icon: ImageVector) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        ProfileScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        ProfileScreen()
+//    }
+//}
 
 //Landscape Preview
 //

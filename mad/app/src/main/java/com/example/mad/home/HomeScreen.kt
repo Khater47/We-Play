@@ -7,7 +7,6 @@ package com.example.mad.home
 */
 
 import android.content.res.Configuration
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -41,14 +40,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 
 
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavHostController) {
 
     val configuration = LocalConfiguration.current
 
@@ -72,7 +71,7 @@ fun HomeScreen(navController: NavController) {
 
 
 @Composable
-fun PortraitHome(navController: NavController) {
+fun PortraitHome(navController: NavHostController) {
 
     Column(
         Modifier
@@ -108,7 +107,7 @@ fun PortraitHome(navController: NavController) {
 }
 
 @Composable
-fun LandscapeHome(navController: NavController) {
+fun LandscapeHome(navController: NavHostController) {
 
     val searchIcon = Icons.Default.Search
     val searchImage = R.drawable.field
@@ -162,7 +161,7 @@ fun LandscapeHome(navController: NavController) {
 
 
 @Composable
-fun CardContainerNavigationPage(navController: NavController) {
+fun CardContainerNavigationPage(navController: NavHostController) {
 
     val searchIcon = Icons.Default.Search
     val searchImage = R.drawable.field
@@ -196,7 +195,7 @@ fun CardNavigationPage(
     searchIcon: ImageVector,
     imageCard: Int,
     textCard: String,
-    navController: NavController
+    navController: NavHostController
 ) {
 
     val route =
@@ -265,7 +264,7 @@ fun TopAppBarHome() {
 
 
 @Composable
-fun CardUserPreferences(navController: NavController) {
+fun CardUserPreferences(navController: NavHostController) {
 
     val context = LocalContext.current
 
@@ -330,8 +329,7 @@ fun CardUserPreferences(navController: NavController) {
 
 
 @Composable
-fun ImageCard(icon: ImageVector, image: Int, navController: NavController) {
-
+fun ImageCard(icon: ImageVector, image: Int, navController: NavHostController) {
 
     Box(
         Modifier.height(104.dp)

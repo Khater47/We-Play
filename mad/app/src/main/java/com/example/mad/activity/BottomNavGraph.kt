@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.mad.home.HomeScreen
 import com.example.mad.profile.ProfileScreen
+import com.example.mad.profileEdit.ProfileEditScreen
 import com.example.mad.profileRating.ProfileRatingScreen
 import com.example.mad.reservation.ReservationScreen
 import com.example.mad.profileSport.ProfileSportScreen
@@ -17,7 +18,6 @@ import com.example.mad.sport.SportScreen
 
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
-
 
     NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
         composable(route=BottomBarScreen.Home.route){
@@ -29,11 +29,14 @@ fun BottomNavGraph(navController: NavHostController) {
         composable(route=BottomBarScreen.ProfileSport.route){
             ProfileSportScreen()
         }
+        composable(route=BottomBarScreen.ProfileEdit.route){
+            ProfileEditScreen()
+        }
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen()
         }
         composable(route=BottomBarScreen.Profile.route){
-            ProfileScreen()
+            ProfileScreen(navController)
         }
         composable(route=BottomBarScreen.RentField.route){
             RentFieldScreen()

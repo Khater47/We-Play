@@ -26,6 +26,11 @@ sealed class BottomBarScreen(
         title="Profile",
         icon= Icons.Default.Person
     )
+    object ProfileEdit:BottomBarScreen(
+        route = "profileEdit",
+        title="Edit Profile",
+        icon= Icons.Default.Person
+    )
 
     object ProfileSport:BottomBarScreen(
         route = "profileSport",
