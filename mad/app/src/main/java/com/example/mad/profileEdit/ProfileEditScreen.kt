@@ -69,12 +69,21 @@ import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getImageFromInternalStorage
 import com.example.mad.utils.getKeyboard
 import com.example.mad.utils.saveImageBitmapOnInternalStorage
+import com.example.mad.utils.saveImageUriOnInternalStorage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
 
 const val CAMERA = android.Manifest.permission.CAMERA
 const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
+
+/*
+* TODO():
+*   rotate image for camera intent
+*   add viewModel for save user info
+*   check gallery intent for API > 24
+*
+*/
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
@@ -302,22 +311,21 @@ fun EditImageProfile() {
         mutableStateOf(getImageFromInternalStorage(context))
     }
 
-//    var hasImage by remember {
-//        mutableStateOf(false)
-//    }
+    var imageUri by remember {
+        mutableStateOf<Uri>(Uri.EMPTY)
+    }
 
 
+    val imagePicker = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->
+            if(uri!=null) {
+                imageUri = uri
+                loadImage=saveImageUriOnInternalStorage(imageUri,context)
 
-//    var imageUri by remember {
-//        mutableStateOf<Uri>(Uri.EMPTY)
-//    }
-//
-//    val packageName = context.packageName
-//    context.grantUriPermission(
-//        packageName,
-//        imageUri,
-//        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-//    )
+            }
+        }
+    )
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview(),
@@ -377,10 +385,11 @@ fun EditImageProfile() {
                     onDismissRequest = { showMenu = false }) {
 
                     DropdownMenuItem(onClick = {
+
                         if (context.checkSelfPermission(READ_EXT_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                             //TODO(Intent read gallery)
                             showMenu = false
-
+                            imagePicker.launch("image/*")
                         }
                     }) {
                         Text("Select image from gallery")

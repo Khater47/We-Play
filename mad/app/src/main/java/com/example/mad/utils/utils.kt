@@ -117,22 +117,8 @@ fun rotateBitmap(input: Bitmap?,imageUri:Uri?,context: Context): Bitmap? {
     }
 }
 
-
-fun openCamera(context: Context){
-
-    val contentResolver = context.contentResolver
-    val values = ContentValues()
-    values.put(MediaStore.Images.Media.TITLE,"New Picture")
-    values.put(MediaStore.Images.Media.DESCRIPTION,"From the Camera")
-    val imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
-    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
-    context.startActivity(cameraIntent)
-
-}
-
 @RequiresApi(Build.VERSION_CODES.P)
-fun saveImageUriOnInternalStorage(imageUri:Uri?, context: Context){
+fun saveImageUriOnInternalStorage(imageUri:Uri?, context: Context):Bitmap{
 
     val directory = context.filesDir
     val imageFile = File(directory, "profilePicture")
@@ -150,10 +136,13 @@ fun saveImageUriOnInternalStorage(imageUri:Uri?, context: Context){
         BitmapFactory.decodeResource(context.resources,R.drawable.profile)
 
 
+    Log.d("TAG - ",bitmap.toString())
+
     val outputStream = FileOutputStream(imageFile)
     bitmap?.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
     outputStream.flush()
     outputStream.close()
+    return bitmap?:BitmapFactory.decodeResource(context.resources,R.drawable.profile)
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
