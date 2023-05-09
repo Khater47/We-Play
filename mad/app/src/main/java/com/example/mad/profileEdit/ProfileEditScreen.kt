@@ -1,16 +1,15 @@
 package com.example.mad.profileEdit
 
-import android.content.ActivityNotFoundException
-import android.content.ContentValues
-import android.content.Context
+
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -30,19 +29,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,72 +54,37 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.example.mad.R
 import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getKeyboard
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.shouldShowRationale
 
-const val PERMISSION = 112
 const val CAMERA = android.Manifest.permission.CAMERA
+const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
-
-//fun openCamera(imageUri: Uri?){
-//
-//    val values = ContentValues()
-//    values.put(MediaStore.Images.Media.TITLE,"New Picture")
-//    values.put(MediaStore.Images.Media.DESCRIPTION,"From the Camera")
-//    imageUri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
-//    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-//    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
-//
-//}
-fun checkAndRequestCameraPermission(
-    context: Context,
-    permission: String,
-    launcher: ManagedActivityResultLauncher<String, Boolean>
-) {
-    val permissionCheckResult = ContextCompat.checkSelfPermission(context, permission)
-    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
-        //Open camera
-//        launcher.launch(permission)
-        Log.d("OPEN CAMERA","OPEN CAMERA")
-    } else {
-        //Show Dialog
-        launcher.launch(permission)
-    }
-}
 
 @Composable
 fun ProfileEditScreen() {
 
     val configuration = LocalConfiguration.current
-
-    //handle runTime permission here
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = { isGranted ->
-                if (!isGranted) {
-                    //Show dialog that explain the user reason for requesting permission
-                    Log.d("DENIED", "DENIED")
-                } else {
-                    Log.d("GRANTED", "GRANTED")
-                }
-            }
-        )
-
-
-
 
     Scaffold(
         topBar = { TopAppBarEditProfile() }
@@ -125,11 +93,11 @@ fun ProfileEditScreen() {
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitEditProfile(launcher)
+                    PortraitEditProfile()
                 }
 
                 else -> {
-                    LandscapeEditProfile(launcher)
+                    LandscapeEditProfile()
                 }
             }
         }
@@ -137,7 +105,7 @@ fun ProfileEditScreen() {
 }
 
 @Composable
-fun PortraitEditProfile(launcher: ManagedActivityResultLauncher<String, Boolean>) {
+fun PortraitEditProfile() {
 
     Column(
         Modifier
@@ -148,7 +116,7 @@ fun PortraitEditProfile(launcher: ManagedActivityResultLauncher<String, Boolean>
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
 
-            ) { EditImageProfile(launcher) }
+            ) { EditImageProfile() }
 
         Spacer(Modifier.padding(top = 40.dp))
 
@@ -165,7 +133,7 @@ fun PortraitEditProfile(launcher: ManagedActivityResultLauncher<String, Boolean>
 }
 
 @Composable
-fun LandscapeEditProfile(launcher: ManagedActivityResultLauncher<String, Boolean>) {
+fun LandscapeEditProfile() {
 
     Row(
         Modifier
@@ -179,7 +147,7 @@ fun LandscapeEditProfile(launcher: ManagedActivityResultLauncher<String, Boolean
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            EditImageProfile(launcher)
+            EditImageProfile()
         }
 
 
@@ -230,15 +198,107 @@ fun TopAppBarEditProfile() {
 }
 
 @Composable
-fun EditImageProfile(launcher: ManagedActivityResultLauncher<String, Boolean>) {
+fun DialogPermission(text: String) {
 
     val context = LocalContext.current
+
+    var showRational by remember {
+        mutableStateOf(true)
+    }
+
+    //Dialog for handle denied permission
+    if (showRational) {
+
+        AlertDialog(onDismissRequest = { showRational = false },
+            title = { Text("Permission Dialog", fontSize = 24.sp) },
+            confirmButton = {
+                Button(onClick = {
+                    showRational = false
+                    context.startActivity(
+                        Intent(
+                            Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                            Uri.fromParts("package", context.packageName, null)
+                        )
+                    )
+                }, modifier = Modifier.clip(RectangleShape)) {
+                    Text("GRANT PERMISSION")
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showRational = false },
+                    Modifier.clip(RectangleShape)
+                ) {
+                    Text("CANCEL")
+                }
+            },
+            text = {
+                Text(
+                    text = text,
+                    fontSize = 18.sp,
+                    color = Color.DarkGray
+                )
+            }
+        )
+    }
+}
+
+@ExperimentalPermissionsApi
+@Composable
+fun MultiplePermissions() {
+
+    val permissionStates = rememberMultiplePermissionsState(
+        permissions = listOf(
+            READ_EXT_STORAGE,
+            CAMERA
+        )
+    )
+
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(key1 = lifecycleOwner, effect = {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_START -> {
+                    permissionStates.launchMultiplePermissionRequest()
+                }
+
+                else -> {}
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    })
+
+    val deniedPermission =
+        permissionStates.permissions.map { it.status.shouldShowRationale }.contains(true)
+
+    if (deniedPermission) {
+        DialogPermission(text = "Camera and External storage permission " +
+                "is needed for change user profile image." +
+                "\nOtherwise you can use default image."
+        )
+    }
+
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun EditImageProfile() {
+    
+    val context = LocalContext.current
+    
     //Menu for camera/gallery intent
     var showMenu by remember {
         mutableStateOf(false)
     }
 
-    checkAndRequestCameraPermission(context,CAMERA,launcher)
+    //handle permission
+    MultiplePermissions()
 
     Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
@@ -271,6 +331,7 @@ fun EditImageProfile(launcher: ManagedActivityResultLauncher<String, Boolean>) {
             ) {
                 IconButton(onClick = {
                     showMenu = !showMenu
+                    //LAUNCH
                 }) {
                     Icon(
                         Icons.Default.PhotoCamera, "cameraIconButton",
@@ -283,13 +344,17 @@ fun EditImageProfile(launcher: ManagedActivityResultLauncher<String, Boolean>) {
                     onDismissRequest = { showMenu = false }) {
 
                     DropdownMenuItem(onClick = {
-
+                        if(context.checkSelfPermission(READ_EXT_STORAGE)==PackageManager.PERMISSION_GRANTED){
+                            //Intent read gallery
+                        }
                     }) {
                         Text("Select image from gallery")
                     }
 
                     DropdownMenuItem(onClick = {
-
+                        if(context.checkSelfPermission(CAMERA)==PackageManager.PERMISSION_GRANTED){
+                            //Intent take picture
+                        }
                     }) {
                         Text("Take a picture")
                     }
