@@ -1,7 +1,13 @@
 package com.example.mad.profileEdit
 
+import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,18 +53,49 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.example.mad.R
-import com.example.mad.ui.theme.MadTheme
 import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getKeyboard
+
+const val PERMISSION = 112
+const val CAMERA = android.Manifest.permission.CAMERA
+
+fun checkAndRequestCameraPermission(
+    context: Context,
+    permission: String,
+    launcher: ManagedActivityResultLauncher<String, Boolean>
+) {
+    val permissionCheckResult = ContextCompat.checkSelfPermission(context, permission)
+    if (permissionCheckResult == PackageManager.PERMISSION_GRANTED) {
+        //Open camera
+//        launcher.launch(permission)
+    } else {
+        //Show Dialog
+        launcher.launch(permission)
+    }
+}
 
 @Composable
 fun ProfileEditScreen() {
 
     val configuration = LocalConfiguration.current
+
+    //handle runTime permission here
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
+            onResult = { isGranted ->
+                if (!isGranted) {
+                    //Show dialog that explain the user reason for requesting permission
+                    Log.d("DENIED", "DENIED")
+                } else {
+                    Log.d("GRANTED", "GRANTED")
+                }
+            }
+        )
+
 
     Scaffold(
         topBar = { TopAppBarEditProfile() }
@@ -107,6 +144,39 @@ fun PortraitEditProfile() {
 }
 
 @Composable
+fun LandscapeEditProfile() {
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+    ) {
+
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(top = 10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            EditImageProfile()
+        }
+
+
+        Column(
+            Modifier
+                .weight(2f)
+                .padding(start = 20.dp),
+            verticalArrangement = Arrangement.Center,
+        ) {
+            EditUserInfo()
+        }
+
+
+    }
+}
+
+
+@Composable
 fun TopAppBarEditProfile() {
 
     val context = LocalContext.current
@@ -139,16 +209,17 @@ fun TopAppBarEditProfile() {
 }
 
 
-//Image,FullName
 @Composable
 fun EditImageProfile() {
 
     val context = LocalContext.current
+
+    //Menu for camera/gallery intent
     var showMenu by remember {
         mutableStateOf(false)
     }
 
-    Spacer(modifier = Modifier.padding(vertical = 5.dp))
+    Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
     Box(
         Modifier.height(150.dp)
@@ -178,7 +249,7 @@ fun EditImageProfile() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = {
-                    showMenu=!showMenu
+                    showMenu = !showMenu
                 }) {
                     Icon(
                         Icons.Default.PhotoCamera, "cameraIconButton",
@@ -188,13 +259,15 @@ fun EditImageProfile() {
                 }
 
                 DropdownMenu(expanded = showMenu,
-                    onDismissRequest = { showMenu=false }) {
+                    onDismissRequest = { showMenu = false }) {
 
                     DropdownMenuItem(onClick = { /*TODO*/ }) {
                         Text("Select image from gallery")
                     }
 
-                    DropdownMenuItem(onClick = { /*TODO*/ }) {
+                    DropdownMenuItem(onClick = {
+
+                    }) {
                         Text("Take a picture")
                     }
                 }
@@ -263,47 +336,16 @@ fun EditInfo(text: String, icon: ImageVector) {
 }
 
 
-@Composable
-fun LandscapeEditProfile() {
-
-    Row(
-        Modifier
-            .fillMaxWidth()
-    ) {
-
-        Column(
-            Modifier
-                .weight(1f)
-                .padding(top = 10.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            EditImageProfile()
-        }
-
-
-        Column(
-            Modifier
-                .weight(2f)
-                .padding(start = 20.dp),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            EditUserInfo()
-        }
-
-
-    }
-}
 
 //Portrait Preview
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        ProfileEditScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        ProfileEditScreen()
+//    }
+//}
 
 //Landscape Preview
 

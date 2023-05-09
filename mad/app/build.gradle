@@ -2,6 +2,7 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt' apply true
 
     //DI
     id("com.google.dagger.hilt.android")
@@ -98,11 +99,11 @@ dependencies {
     implementation 'com.github.npanigrahy:Custom-Calendar-View:v1.1'
 
     //Room
-    implementation 'androidx.room:room-common:2.5.1'
-    implementation "androidx.room:room-runtime:2.5.1"
-    implementation "androidx.room:room-ktx:2.5.1"
-//    kapt "androidx.room:room-compiler:2.5.1"
-    androidTestImplementation "androidx.room:room-testing:2.5.1"
+    implementation 'androidx.room:room-common:2.6.0-alpha01'
+    implementation "androidx.room:room-runtime:2.6.0-alpha01"
+    implementation "androidx.room:room-ktx:2.6.0-alpha01"
+    kapt "androidx.room:room-compiler:2.6.0-alpha01"
+    androidTestImplementation "androidx.room:room-testing:2.6.0-alpha01"
 
     //DI
     implementation 'com.google.dagger:hilt-android:2.46'

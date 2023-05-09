@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.mad.UserViewModel
 import com.example.mad.home.HomeScreen
 import com.example.mad.profile.ProfileScreen
 import com.example.mad.profileEdit.ProfileEditScreen
@@ -19,7 +20,7 @@ import com.example.mad.sport.SportScreen
 @Composable
 fun BottomNavGraph(navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.ProfileEdit.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
