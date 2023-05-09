@@ -1,17 +1,16 @@
 package com.example.mad.profileEdit
 
 
-import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,6 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.Text
@@ -55,32 +53,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.example.mad.R
 import com.example.mad.utils.getIconUserInfo
+import com.example.mad.utils.getImageFromInternalStorage
 import com.example.mad.utils.getKeyboard
+import com.example.mad.utils.saveImageBitmapOnInternalStorage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
 
 const val CAMERA = android.Manifest.permission.CAMERA
 const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
-
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun ProfileEditScreen() {
 
@@ -104,6 +100,7 @@ fun ProfileEditScreen() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun PortraitEditProfile() {
 
@@ -132,6 +129,7 @@ fun PortraitEditProfile() {
 
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun LandscapeEditProfile() {
 
@@ -250,7 +248,7 @@ fun MultiplePermissions() {
     val permissionStates = rememberMultiplePermissionsState(
         permissions = listOf(
             READ_EXT_STORAGE,
-            CAMERA
+            CAMERA,
         )
     )
 
@@ -278,24 +276,59 @@ fun MultiplePermissions() {
         permissionStates.permissions.map { it.status.shouldShowRationale }.contains(true)
 
     if (deniedPermission) {
-        DialogPermission(text = "Camera and External storage permission " +
-                "is needed for change user profile image." +
-                "\nOtherwise you can use default image."
+        DialogPermission(
+            text = "Camera and External storage permission " +
+                    "is needed for change user profile image." +
+                    "\nOtherwise you can use default image."
         )
     }
 
 }
 
+
+@RequiresApi(Build.VERSION_CODES.P)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditImageProfile() {
-    
+
     val context = LocalContext.current
-    
+
     //Menu for camera/gallery intent
     var showMenu by remember {
         mutableStateOf(false)
     }
+
+    var loadImage by remember{
+        mutableStateOf(getImageFromInternalStorage(context))
+    }
+
+//    var hasImage by remember {
+//        mutableStateOf(false)
+//    }
+
+
+
+//    var imageUri by remember {
+//        mutableStateOf<Uri>(Uri.EMPTY)
+//    }
+//
+//    val packageName = context.packageName
+//    context.grantUriPermission(
+//        packageName,
+//        imageUri,
+//        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+//    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+        onResult = {
+            if(it!=null){
+                saveImageBitmapOnInternalStorage(it,context)
+                loadImage=it
+            }
+
+        }
+    )
 
     //handle permission
     MultiplePermissions()
@@ -305,8 +338,9 @@ fun EditImageProfile() {
     Box(
         Modifier.height(150.dp)
     ) {
+
         Image(
-            painter = painterResource(id = R.drawable.profile),
+            bitmap=loadImage.asImageBitmap(),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -331,7 +365,6 @@ fun EditImageProfile() {
             ) {
                 IconButton(onClick = {
                     showMenu = !showMenu
-                    //LAUNCH
                 }) {
                     Icon(
                         Icons.Default.PhotoCamera, "cameraIconButton",
@@ -344,16 +377,21 @@ fun EditImageProfile() {
                     onDismissRequest = { showMenu = false }) {
 
                     DropdownMenuItem(onClick = {
-                        if(context.checkSelfPermission(READ_EXT_STORAGE)==PackageManager.PERMISSION_GRANTED){
-                            //Intent read gallery
+                        if (context.checkSelfPermission(READ_EXT_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                            //TODO(Intent read gallery)
+                            showMenu = false
+
                         }
                     }) {
                         Text("Select image from gallery")
                     }
 
                     DropdownMenuItem(onClick = {
-                        if(context.checkSelfPermission(CAMERA)==PackageManager.PERMISSION_GRANTED){
-                            //Intent take picture
+                        if (context.checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                            //TODO(Intent take picture)
+                            showMenu = false
+                            cameraLauncher.launch(null)
+
                         }
                     }) {
                         Text("Take a picture")
