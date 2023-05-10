@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,10 +33,8 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
@@ -71,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
@@ -97,21 +95,35 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun ProfileEditScreen(vm:UserViewModel,navController:NavHostController,userId:String?) {
+fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userId: String?) {
 
     val configuration = LocalConfiguration.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val userObject = remember{ mutableStateMapOf(
-        "userId" to userId as String,
-        "FullName" to "Carlo Neri",
-        "Email" to "mariorossi@gmail.com",
-        "Nickname" to "carlo",
-        "PhoneNumber" to "1234567890",
-        "Description" to "student in Rome"
-    ) }
+    val userObject = remember {
+        mutableStateMapOf(
+            "userId" to userId as String,
+            "FullName" to "Carlo Neri",
+            "Email" to "mariorossi@gmail.com",
+            "Nickname" to "carlo",
+            "PhoneNumber" to "1234567890",
+            "Description" to "student in Rome"
+        )
+    }
+
+    vm.getProfileById(userId?.toInt()?: 2).observe(lifecycleOwner, Observer { user ->
+        if (user != null) {
+            userObject["FullName"] = user.fullName
+            userObject["Email"] = user.email
+            userObject["Nickname"] = user.nickname
+            userObject["PhoneNumber"] = user.phone
+            userObject["Description"] = user.description
+        }
+    })
+
 
     Scaffold(
-        topBar = { TopAppBarEditProfile(userObject,navController,vm) }
+        topBar = { TopAppBarEditProfile(userObject, navController, vm) }
     ) {
         Box(Modifier.padding(it)) {
 
@@ -192,17 +204,35 @@ fun LandscapeEditProfile(userObject: SnapshotStateMap<String, String>) {
 
 
 @Composable
-fun TopAppBarEditProfile(userObject: SnapshotStateMap<String, String>,navController: NavHostController,vm:UserViewModel) {
+fun TopAppBarEditProfile(
+    userObject: SnapshotStateMap<String, String>,
+    navController: NavHostController,
+    vm: UserViewModel
+) {
+
+    val configuration = LocalConfiguration.current
+
+    val modifier =
+        if(configuration.orientation==Configuration.ORIENTATION_PORTRAIT){
+            Modifier.fillMaxWidth().padding(start=60.dp)
+        }
+        else {
+            Modifier.fillMaxWidth()
+        }
+    val horizontalAlignment= if(configuration.orientation==Configuration.ORIENTATION_LANDSCAPE){
+        Alignment.CenterHorizontally
+    }
+    else {Alignment.Start}
 
     TopAppBar(
         title = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier=modifier, horizontalAlignment=horizontalAlignment) {
                 Text(
                     text = "Edit Profile",
+                    color=Color.White,
                     fontSize = 24.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    textAlign= TextAlign.Center
                 )
             }
         },
@@ -231,7 +261,6 @@ fun TopAppBarEditProfile(userObject: SnapshotStateMap<String, String>,navControl
         }
 
     )
-
 
 
 }
@@ -339,7 +368,7 @@ fun EditImageProfile() {
         mutableStateOf(false)
     }
 
-    var loadImage by remember{
+    var loadImage by remember {
         mutableStateOf(getImageFromInternalStorage(context))
     }
 
@@ -351,9 +380,9 @@ fun EditImageProfile() {
     val imagePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            if(uri!=null) {
+            if (uri != null) {
                 imageUri = uri
-                loadImage=saveImageUriOnInternalStorage(imageUri,context)
+                loadImage = saveImageUriOnInternalStorage(imageUri, context)
 
             }
         }
@@ -362,9 +391,9 @@ fun EditImageProfile() {
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview(),
         onResult = {
-            if(it!=null){
-                saveImageBitmapOnInternalStorage(it,context)
-                loadImage=it
+            if (it != null) {
+                saveImageBitmapOnInternalStorage(it, context)
+                loadImage = it
             }
 
         }
@@ -380,7 +409,7 @@ fun EditImageProfile() {
     ) {
 
         Image(
-            bitmap=loadImage.asImageBitmap(),
+            bitmap = loadImage.asImageBitmap(),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -460,7 +489,7 @@ fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
 
     LazyColumn {
         items(userInfo, itemContent = { item ->
-            EditInfo(item, getIconUserInfo(item),userObject)
+            EditInfo(item, getIconUserInfo(item), userObject)
         })
     }
 
@@ -468,10 +497,8 @@ fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
 }
 
 
-
-
 @Composable
-fun EditInfo(text: String, icon: ImageVector,userObject: SnapshotStateMap<String,String>) {
+fun EditInfo(text: String, icon: ImageVector, userObject: SnapshotStateMap<String, String>) {
 
     val info = remember { mutableStateOf("") }
 
@@ -492,7 +519,7 @@ fun EditInfo(text: String, icon: ImageVector,userObject: SnapshotStateMap<String
         }
 
         OutlinedTextField(
-            value = info.value,
+            value = userObject[text]?:"",
             onValueChange = {
                 info.value = it
                 userObject[text] = it
