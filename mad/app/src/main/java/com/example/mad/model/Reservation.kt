@@ -13,5 +13,5 @@ data class Reservation(
     val idPlayground: Int,
     val idStartTimeSlot: Int,
     val idEndTimeSlot: Int,
-    val idProfile:String,
+    val idProfile:Int,
 )

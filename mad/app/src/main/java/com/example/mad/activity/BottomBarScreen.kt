@@ -22,12 +22,12 @@ sealed class BottomBarScreen(
     )
 
     object Profile:BottomBarScreen(
-        route = "profile",
+        route = "profile?userId={userId}",
         title="Profile",
         icon= Icons.Default.Person
     )
     object ProfileEdit:BottomBarScreen(
-        route = "profileEdit",
+        route = "profileEdit/{userId}",
         title="Edit Profile",
         icon= Icons.Default.Person
     )

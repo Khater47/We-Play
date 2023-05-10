@@ -1,11 +1,15 @@
 package com.example.mad.activity
 
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.mad.UserViewModel
 import com.example.mad.home.HomeScreen
 import com.example.mad.profile.ProfileScreen
@@ -17,10 +21,11 @@ import com.example.mad.rentField.RentFieldScreen
 import com.example.mad.sport.SportScreen
 
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun BottomNavGraph(navController: NavHostController) {
+fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
 
-    NavHost(navController = navController, startDestination = BottomBarScreen.ProfileEdit.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.Profile.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
@@ -30,14 +35,19 @@ fun BottomNavGraph(navController: NavHostController) {
         composable(route=BottomBarScreen.ProfileSport.route){
             ProfileSportScreen()
         }
-        composable(route=BottomBarScreen.ProfileEdit.route){
-            ProfileEditScreen()
+        composable(route=BottomBarScreen.ProfileEdit.route,
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+            ){ backStackEntry ->
+            ProfileEditScreen(vm,navController,backStackEntry.arguments?.getString("userId"))
         }
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen()
         }
-        composable(route=BottomBarScreen.Profile.route){
-            ProfileScreen(navController)
+        composable(route=BottomBarScreen.Profile.route,
+            arguments = listOf(navArgument("userId") { defaultValue = "2" })
+            ){
+                backStackEntry ->
+            ProfileScreen(navController,vm, backStackEntry.arguments?.getString("userId"))
         }
         composable(route=BottomBarScreen.RentField.route){
             RentFieldScreen()

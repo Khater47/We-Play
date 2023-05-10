@@ -1,6 +1,7 @@
 package com.example.mad.profile
 
 import android.content.res.Configuration
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -23,35 +24,63 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Email
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.mad.R
+import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 
 @Composable
-fun ProfileScreen(navController:NavHostController) {
+fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String?) {
 
     val configuration = LocalConfiguration.current
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val userObject = remember{ mutableStateMapOf(
+        "FullName" to "Mario Verdi",
+        "Email" to "marioverdi@gmail.com",
+        "Nickname" to "mario_verdi",
+        "PhoneNumber" to "3123467890",
+        "Description" to "worker"
+    ) }
+
+    vm.getProfileById(userId?.toInt()?:2).observe(lifecycleOwner, Observer {
+            user ->
+                if(user!=null){
+                    Log.d("TAG","FOUND")
+                    userObject["userId"] = user.id.toString()
+                    userObject["FullName"] = user.fullName
+                    userObject["Email"] = user.email
+                    userObject["Nickname"] = user.nickname
+                    userObject["PhoneNumber"] = user.phone
+                    userObject["Description"] = user.description
+                }
+    })
+
     Scaffold(
-        topBar = { TopAppBarProfile(navController) }
+        topBar = { TopAppBarProfile(navController,userId?:"2") }
     ) {
         Box(Modifier.padding(it)) {
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitProfile()
+                    PortraitProfile(userObject)
                 }
 
                 else -> {
-                    LandscapeProfile()
+                    LandscapeProfile(userObject)
                 }
             }
         }
@@ -59,9 +88,8 @@ fun ProfileScreen(navController:NavHostController) {
 }
 
 @Composable
-fun TopAppBarProfile(navController:NavHostController) {
+fun TopAppBarProfile(navController:NavHostController,userId:String) {
 
-    val context = LocalContext.current
 
     TopAppBar(
         title = {
@@ -75,7 +103,7 @@ fun TopAppBarProfile(navController:NavHostController) {
         navigationIcon = {},
         actions = {
             IconButton(onClick = {
-                navController.navigate(BottomBarScreen.ProfileEdit.route)
+                navController.navigate("profileEdit/$userId")
             }) {
                 Icon(Icons.Default.Edit, "Edit", Modifier.size(28.dp))
             }
@@ -85,7 +113,7 @@ fun TopAppBarProfile(navController:NavHostController) {
 }
 
 @Composable
-fun PortraitProfile() {
+fun PortraitProfile(userObject: Map<String, String>) {
 
     Column(
         Modifier
@@ -98,7 +126,7 @@ fun PortraitProfile() {
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
 
-            ) { ImageProfile() }
+            ) { ImageProfile(userObject.getValue("FullName")) }
 
         Column(
             Modifier
@@ -111,7 +139,7 @@ fun PortraitProfile() {
                     .fillMaxWidth()
                     .border(1.dp, Color.LightGray, RoundedCornerShape(16.dp))
                     .padding(16.dp)
-            ) { UserInfo() }
+            ) { UserInfo(userObject) }
         }
 
     }
@@ -120,7 +148,7 @@ fun PortraitProfile() {
 }
 
 @Composable
-fun LandscapeProfile() {
+fun LandscapeProfile(userObject: Map<String, String>) {
 
     Row {
         Column(
@@ -129,7 +157,7 @@ fun LandscapeProfile() {
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
 
-            ) { ImageProfile() }
+            ) { ImageProfile(userObject.getValue("FullName")) }
         Column(
             Modifier
                 .weight(3f)
@@ -137,7 +165,7 @@ fun LandscapeProfile() {
                 .clip(RoundedCornerShape(16.dp))
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
-        ) { UserInfo() }
+        ) { UserInfo(userObject) }
 
     }
 
@@ -145,7 +173,7 @@ fun LandscapeProfile() {
 
 //Image,FullName
 @Composable
-fun ImageProfile() {
+fun ImageProfile(fullName:String) {
 
     Spacer(modifier = Modifier.padding(vertical = 5.dp))
     Image(
@@ -157,28 +185,28 @@ fun ImageProfile() {
             .clip(CircleShape)
 
     )
-    Text(text = "Mario Rossi", fontSize = 20.sp, modifier = Modifier.padding(vertical = 10.dp))
+    Text(text = fullName, fontSize = 20.sp, modifier = Modifier.padding(vertical = 10.dp))
 }
 
 //Email,Nickname,PhoneNumber,Description
 @Composable
-fun UserInfo() {
+fun UserInfo(userObject:Map<String,String>) {
 
     val body = MaterialTheme.typography.body1
     val modifierText = Modifier.padding(vertical = 15.dp)
 
     Text(text = "Personal Info", modifier = modifierText, style = body, fontSize = 20.sp)
 
-    ProfileInfo("mariorossi@gmail.com", Icons.Outlined.Email)
+    ProfileInfo(userObject.getValue("Email"), Icons.Outlined.Email)
     Divider()
 
-    ProfileInfo("mario", Icons.Outlined.AlternateEmail)
+    ProfileInfo(userObject.getValue("Nickname"), Icons.Outlined.AlternateEmail)
     Divider()
 
-    ProfileInfo("1234567890", Icons.Default.Phone)
+    ProfileInfo(userObject.getValue("PhoneNumber"), Icons.Default.Phone)
     Divider()
 
-    ProfileInfo("student", Icons.Default.Description)
+    ProfileInfo(userObject.getValue("Description"), Icons.Default.Description)
 
 }
 

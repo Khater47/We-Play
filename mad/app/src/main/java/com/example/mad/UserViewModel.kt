@@ -50,6 +50,9 @@ class UserViewModel @Inject constructor(private val repo:UserRepository): ViewMo
     //Profile functions
     //--------------------------------------------
     fun getProfileByEmail(email:String):LiveData<Profile> = repo.getProfileByEmail(email)
+
+    fun getProfileById(id:Int):LiveData<Profile> = repo.getProfileById(id)
+
     fun insertProfile(profile: Profile){
         viewModelScope.launch(Dispatchers.IO) {
             repo.insertProfile(profile)

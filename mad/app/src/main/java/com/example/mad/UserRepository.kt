@@ -41,6 +41,9 @@ class UserRepository @Inject constructor(
     //--------------------------------------------
     fun getProfileByEmail(email:String):LiveData<Profile> = profileDao.getProfileByEmail(email)
 
+    fun getProfileById(id:Int):LiveData<Profile> = profileDao.getProfileById(id)
+
+
     suspend fun insertProfile(profile: Profile){
         profileDao.insertProfile(profile)
     }

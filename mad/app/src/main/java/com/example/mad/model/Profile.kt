@@ -10,8 +10,7 @@ data class Profile(
     val id: Int,
     val fullName: String,
     val email: String,
-    val password:String,
     val nickname:String,
-    val description:String?,
-    val phoneNumber:String?,
+    val description:String,
+    val phone:String,
 )

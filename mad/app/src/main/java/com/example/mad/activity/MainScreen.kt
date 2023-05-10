@@ -16,14 +16,14 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mad.UserViewModel
 
 @Composable
-fun MainScreen() {
+fun MainScreen(vm:UserViewModel) {
     val navController = rememberNavController()
 
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
         Box(Modifier.padding(it)) {
-            BottomNavGraph(navController = navController)
+            BottomNavGraph(navController = navController,vm)
         }
     }
 }

@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,21 +34,25 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,11 +65,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavHostController
+import com.example.mad.UserViewModel
+import com.example.mad.activity.BottomBarScreen
+import com.example.mad.model.Profile
 import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getImageFromInternalStorage
 import com.example.mad.utils.getKeyboard
@@ -79,30 +89,39 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
 /*
 * TODO():
+*   save instance when pass on landscape
 *   rotate image for camera intent
-*   add viewModel for save user info
 *   check gallery intent for API > 24
-*
+*   save image on internal storage and not in gallery
 */
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun ProfileEditScreen() {
+fun ProfileEditScreen(vm:UserViewModel,navController:NavHostController,userId:String?) {
 
     val configuration = LocalConfiguration.current
 
+    val userObject = remember{ mutableStateMapOf(
+        "userId" to userId as String,
+        "FullName" to "Carlo Neri",
+        "Email" to "mariorossi@gmail.com",
+        "Nickname" to "carlo",
+        "PhoneNumber" to "1234567890",
+        "Description" to "student in Rome"
+    ) }
+
     Scaffold(
-        topBar = { TopAppBarEditProfile() }
+        topBar = { TopAppBarEditProfile(userObject,navController,vm) }
     ) {
         Box(Modifier.padding(it)) {
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitEditProfile()
+                    PortraitEditProfile(userObject)
                 }
 
                 else -> {
-                    LandscapeEditProfile()
+                    LandscapeEditProfile(userObject)
                 }
             }
         }
@@ -111,7 +130,7 @@ fun ProfileEditScreen() {
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun PortraitEditProfile() {
+fun PortraitEditProfile(userObject: SnapshotStateMap<String, String>) {
 
     Column(
         Modifier
@@ -131,7 +150,7 @@ fun PortraitEditProfile() {
                 .fillMaxWidth()
                 .padding(start = 10.dp, end = 10.dp)
                 .padding(16.dp)
-        ) { EditUserInfo() }
+        ) { EditUserInfo(userObject) }
 
 
     }
@@ -140,7 +159,7 @@ fun PortraitEditProfile() {
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun LandscapeEditProfile() {
+fun LandscapeEditProfile(userObject: SnapshotStateMap<String, String>) {
 
     Row(
         Modifier
@@ -164,7 +183,7 @@ fun LandscapeEditProfile() {
                 .padding(start = 20.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            EditUserInfo()
+            EditUserInfo(userObject)
         }
 
 
@@ -173,35 +192,48 @@ fun LandscapeEditProfile() {
 
 
 @Composable
-fun TopAppBarEditProfile() {
-
-    val context = LocalContext.current
+fun TopAppBarEditProfile(userObject: SnapshotStateMap<String, String>,navController: NavHostController,vm:UserViewModel) {
 
     TopAppBar(
         title = {
-            Text(
-                text = "Edit Profile",
-                fontSize = 24.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "Edit Profile",
+                    fontSize = 24.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign= TextAlign.Center
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = {
-                Toast.makeText(context, "Go Back", Toast.LENGTH_SHORT).show()
+                navController.navigate(BottomBarScreen.Profile.route)
             }) {
                 Icon(Icons.Default.ArrowBack, "arrowBack", Modifier.size(28.dp))
             }
         },
         actions = {
             IconButton(onClick = {
-                Toast.makeText(context, "Load Edit Profile", Toast.LENGTH_SHORT).show()
+                val p = Profile(
+                    userObject.getValue("userId").toInt(),
+                    userObject.getValue("FullName"),
+                    userObject.getValue("Email"),
+                    userObject.getValue("Nickname"),
+                    userObject.getValue("Description"),
+                    userObject.getValue("PhoneNumber")
+                )
+                vm.insertProfile(p)
+                navController.navigate(BottomBarScreen.Profile.route)
             }) {
-                Icon(Icons.Default.Edit, "Edit", Modifier.size(28.dp))
+                Icon(Icons.Default.Check, "Edit", Modifier.size(28.dp))
             }
         }
 
     )
+
+
+
 }
 
 @Composable
@@ -415,7 +447,7 @@ fun EditImageProfile() {
 
 
 @Composable
-fun EditUserInfo() {
+fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
 
     val userInfo = listOf(
         "FullName",
@@ -425,20 +457,23 @@ fun EditUserInfo() {
         "Description"
     )
 
+
     LazyColumn {
         items(userInfo, itemContent = { item ->
-            EditInfo(item, getIconUserInfo(item))
+            EditInfo(item, getIconUserInfo(item),userObject)
         })
     }
 
 
 }
 
+
+
+
 @Composable
-fun EditInfo(text: String, icon: ImageVector) {
+fun EditInfo(text: String, icon: ImageVector,userObject: SnapshotStateMap<String,String>) {
 
     val info = remember { mutableStateOf("") }
-
 
     Row(
         Modifier.padding(10.dp),
@@ -460,6 +495,7 @@ fun EditInfo(text: String, icon: ImageVector) {
             value = info.value,
             onValueChange = {
                 info.value = it
+                userObject[text] = it
             },
             label = { Text(text = text) },
             keyboardOptions = KeyboardOptions(
