@@ -1,5 +1,7 @@
 package com.example.mad.activity
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -15,6 +17,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mad.UserViewModel
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun MainScreen(vm:UserViewModel) {
     val navController = rememberNavController()
