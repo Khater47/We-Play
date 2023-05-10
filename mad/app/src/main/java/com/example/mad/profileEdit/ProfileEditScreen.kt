@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -44,12 +45,12 @@ import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,13 +63,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
@@ -76,6 +75,7 @@ import com.example.mad.model.Profile
 import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getImageFromInternalStorage
 import com.example.mad.utils.getKeyboard
+import com.example.mad.utils.invalidField
 import com.example.mad.utils.saveImageBitmapOnInternalStorage
 import com.example.mad.utils.saveImageUriOnInternalStorage
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -93,37 +93,21 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 *   save image on internal storage and not in gallery
 */
 
+
+
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userId: String?) {
 
     val configuration = LocalConfiguration.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val userObject = remember {
-        mutableStateMapOf(
-            "userId" to userId as String,
-            "FullName" to "Carlo Neri",
-            "Email" to "mariorossi@gmail.com",
-            "Nickname" to "carlo",
-            "PhoneNumber" to "1234567890",
-            "Description" to "student in Rome"
-        )
+    val userObject = rememberSaveable{
+        mutableStateOf(Bundle())
     }
-
-    vm.getProfileById(userId?.toInt()?: 2).observe(lifecycleOwner, Observer { user ->
-        if (user != null) {
-            userObject["FullName"] = user.fullName
-            userObject["Email"] = user.email
-            userObject["Nickname"] = user.nickname
-            userObject["PhoneNumber"] = user.phone
-            userObject["Description"] = user.description
-        }
-    })
 
 
     Scaffold(
-        topBar = { TopAppBarEditProfile(userObject, navController, vm) }
+        topBar = { TopAppBarEditProfile(userObject, navController,vm,userId) }
     ) {
         Box(Modifier.padding(it)) {
 
@@ -142,7 +126,7 @@ fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userI
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun PortraitEditProfile(userObject: SnapshotStateMap<String, String>) {
+fun PortraitEditProfile(userObject: MutableState<Bundle>) {
 
     Column(
         Modifier
@@ -171,7 +155,7 @@ fun PortraitEditProfile(userObject: SnapshotStateMap<String, String>) {
 
 @RequiresApi(Build.VERSION_CODES.P)
 @Composable
-fun LandscapeEditProfile(userObject: SnapshotStateMap<String, String>) {
+fun LandscapeEditProfile(userObject: MutableState<Bundle>) {
 
     Row(
         Modifier
@@ -205,16 +189,20 @@ fun LandscapeEditProfile(userObject: SnapshotStateMap<String, String>) {
 
 @Composable
 fun TopAppBarEditProfile(
-    userObject: SnapshotStateMap<String, String>,
+    userObject: MutableState<Bundle>,
     navController: NavHostController,
-    vm: UserViewModel
+    vm:UserViewModel,
+    userId:String?
 ) {
 
     val configuration = LocalConfiguration.current
+    val context = LocalContext.current
 
     val modifier =
         if(configuration.orientation==Configuration.ORIENTATION_PORTRAIT){
-            Modifier.fillMaxWidth().padding(start=60.dp)
+            Modifier
+                .fillMaxWidth()
+                .padding(start = 60.dp)
         }
         else {
             Modifier.fillMaxWidth()
@@ -245,16 +233,24 @@ fun TopAppBarEditProfile(
         },
         actions = {
             IconButton(onClick = {
-                val p = Profile(
-                    userObject.getValue("userId").toInt(),
-                    userObject.getValue("FullName"),
-                    userObject.getValue("Email"),
-                    userObject.getValue("Nickname"),
-                    userObject.getValue("Description"),
-                    userObject.getValue("PhoneNumber")
-                )
-                vm.insertProfile(p)
-                navController.navigate(BottomBarScreen.Profile.route)
+
+                if(invalidField(userObject.value)){
+                    Toast.makeText(context,"Fill all fields with correct value",Toast.LENGTH_SHORT).show()
+                }
+                else {
+                    val p = Profile(
+                        userId?.toInt()?:0,
+                        userObject.value.getString("FullName")?:"",
+                        userObject.value.getString("Email")?:"",
+                        userObject.value.getString("Nickname")?:"",
+                        userObject.value.getString("Description")?:"",
+                        userObject.value.getString("PhoneNumber")?:""
+                    )
+                    vm.insertProfile(p)
+                    navController.navigate(BottomBarScreen.Profile.route)
+                }
+
+
             }) {
                 Icon(Icons.Default.Check, "Edit", Modifier.size(28.dp))
             }
@@ -264,6 +260,7 @@ fun TopAppBarEditProfile(
 
 
 }
+
 
 @Composable
 fun DialogPermission(text: String) {
@@ -476,7 +473,7 @@ fun EditImageProfile() {
 
 
 @Composable
-fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
+fun EditUserInfo(userObject: MutableState<Bundle>) {
 
     val userInfo = listOf(
         "FullName",
@@ -485,7 +482,6 @@ fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
         "PhoneNumber",
         "Description"
     )
-
 
     LazyColumn {
         items(userInfo, itemContent = { item ->
@@ -498,9 +494,9 @@ fun EditUserInfo(userObject: SnapshotStateMap<String, String>) {
 
 
 @Composable
-fun EditInfo(text: String, icon: ImageVector, userObject: SnapshotStateMap<String, String>) {
+fun EditInfo(text: String, icon: ImageVector, userObject: MutableState<Bundle>) {
 
-    val info = remember { mutableStateOf("") }
+    val info = remember{ mutableStateOf(userObject.value.getString(text)?:"") }
 
     Row(
         Modifier.padding(10.dp),
@@ -519,10 +515,10 @@ fun EditInfo(text: String, icon: ImageVector, userObject: SnapshotStateMap<Strin
         }
 
         OutlinedTextField(
-            value = userObject[text]?:"",
+            value = info.value,
             onValueChange = {
-                info.value = it
-                userObject[text] = it
+                info.value=it
+                userObject.value.putString(text,it)
             },
             label = { Text(text = text) },
             keyboardOptions = KeyboardOptions(

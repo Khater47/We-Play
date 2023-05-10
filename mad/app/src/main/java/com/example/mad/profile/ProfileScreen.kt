@@ -1,8 +1,6 @@
 package com.example.mad.profile
 
 import android.content.res.Configuration
-import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,9 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.mad.ui.theme.MadTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Edit
@@ -28,18 +24,17 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
-import com.example.mad.R
 import com.example.mad.UserViewModel
-import com.example.mad.activity.BottomBarScreen
+import com.example.mad.utils.getImageFromInternalStorage
 
 @Composable
 fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String?) {
@@ -59,7 +54,6 @@ fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String
     vm.getProfileById(userId?.toInt()?:2).observe(lifecycleOwner, Observer {
             user ->
                 if(user!=null){
-                    Log.d("TAG","FOUND")
                     userObject["userId"] = user.id.toString()
                     userObject["FullName"] = user.fullName
                     userObject["Email"] = user.email
@@ -191,9 +185,14 @@ fun LandscapeProfile(userObject: Map<String, String>) {
 @Composable
 fun ImageProfile(fullName:String) {
 
+    val context = LocalContext.current
+    val image = getImageFromInternalStorage(context)
+
+
     Spacer(modifier = Modifier.padding(vertical = 5.dp))
+
     Image(
-        painter = painterResource(id = R.drawable.profile),
+        bitmap=image.asImageBitmap() ,
         contentDescription = "Image",
         contentScale = ContentScale.Crop,
         modifier = Modifier

@@ -18,15 +18,14 @@ import androidx.compose.material.icons.filled.SportsVolleyball
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import android.annotation.SuppressLint
-import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -188,4 +187,31 @@ fun getImageFromInternalStorage(context: Context): Bitmap {
     else
         BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 
+}
+
+fun invalidField(user: Bundle):Boolean{
+
+    if(user.getString("FullName")==null || user.getString("FullName")==""){
+
+        return true
+    }
+    if(user.getString("Email")==null || user.getString("Email")==""){
+
+
+        return true
+    }
+    if(user.getString("Nickname")==null ||  user.getString("Nickname")==""){
+
+        return true
+    }
+    if(user.getString("PhoneNumber")==null || user.getString("PhoneNumber")==""){
+
+        return true
+
+    }
+    if(user.getString("Description")==null || user.getString("Description")==""){
+
+        return true
+    }
+    return false
 }
