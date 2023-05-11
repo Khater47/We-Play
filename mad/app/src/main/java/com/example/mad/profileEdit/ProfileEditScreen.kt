@@ -4,10 +4,12 @@ package com.example.mad.profileEdit
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -69,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
+import com.example.mad.R
 import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.Profile
@@ -85,6 +88,9 @@ import com.google.accompanist.permissions.shouldShowRationale
 const val CAMERA = android.Manifest.permission.CAMERA
 const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
+
 /*
 * TODO():
 *   save instance when pass on landscape
@@ -95,7 +101,7 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 
 
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userId: String?) {
 
@@ -124,7 +130,7 @@ fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userI
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PortraitEditProfile(userObject: MutableState<Bundle>) {
 
@@ -153,7 +159,7 @@ fun PortraitEditProfile(userObject: MutableState<Bundle>) {
 
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun LandscapeEditProfile(userObject: MutableState<Bundle>) {
 
@@ -298,14 +304,30 @@ fun DialogPermission(text: String) {
 }
 
 @ExperimentalPermissionsApi
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MultiplePermissions() {
 
-    val permissionStates = rememberMultiplePermissionsState(
-        permissions = listOf(
-            READ_EXT_STORAGE,
-            CAMERA,
+    val permission = mutableListOf<String>()
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        permission.addAll(
+            listOf(
+                READ_MEDIA_IMAGES,
+                CAMERA,
+            )
         )
+    } else {
+        permission.addAll(
+            listOf(
+                READ_EXT_STORAGE,
+                CAMERA,
+            )
+        )
+    }
+
+    val permissionStates = rememberMultiplePermissionsState(
+        permissions = permission
     )
 
 
@@ -342,12 +364,14 @@ fun MultiplePermissions() {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditImageProfile() {
 
     val context = LocalContext.current
+
+    val cameraGranted = context.checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED
 
     //Menu for camera/gallery intent
     var showMenu by remember {
@@ -371,15 +395,20 @@ fun EditImageProfile() {
                 loadImage = saveImageUriOnInternalStorage(imageUri, context)
 
             }
+            else {
+                loadImage = BitmapFactory.decodeResource(context.resources, R.drawable.profile)
+            }
         }
     )
 
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicturePreview(),
         onResult = {
-            if (it != null) {
+
+            loadImage = if (it != null) {
                 saveImageBitmapOnInternalStorage(it, context)
-                loadImage = it
+            } else {
+                BitmapFactory.decodeResource(context.resources, R.drawable.profile)
             }
 
         }
@@ -419,7 +448,20 @@ fun EditImageProfile() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 IconButton(onClick = {
-                    showMenu = !showMenu
+                    val galleryGranted = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                        context.checkSelfPermission(READ_EXT_STORAGE) == PackageManager.PERMISSION_GRANTED
+                    } else {
+                        context.checkSelfPermission(READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                    }
+
+                    if (cameraGranted || galleryGranted)
+                        showMenu = !showMenu
+                    else
+                        Toast.makeText(
+                            context, "Go to app settings for activate " +
+                                    "permission for camera and gallery", Toast.LENGTH_LONG
+                        ).show()
+
                 }) {
                     Icon(
                         Icons.Default.PhotoCamera, "cameraIconButton",
@@ -433,22 +475,41 @@ fun EditImageProfile() {
 
                     DropdownMenuItem(onClick = {
 
-                        if (context.checkSelfPermission(READ_EXT_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                            //TODO(Intent read gallery)
-                            showMenu = false
-                            imagePicker.launch("image/*")
-                        }
+                            val galleryGranted = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                                context.checkSelfPermission(READ_EXT_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            } else {
+                                context.checkSelfPermission(READ_MEDIA_IMAGES) == PackageManager.PERMISSION_GRANTED
+                            }
+
+                            if (galleryGranted) {
+                                showMenu = false
+                                imagePicker.launch("image/*")
+                            } else {
+                                Toast.makeText(
+                                    context, "Go to app settings for activate " +
+                                            "permission for gallery", Toast.LENGTH_LONG
+                                ).show()
+                            }
                     }) {
                         Text("Select image from gallery")
                     }
 
                     DropdownMenuItem(onClick = {
-                        if (context.checkSelfPermission(CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                            //TODO(Intent take picture)
-                            showMenu = false
-                            cameraLauncher.launch(null)
+                            if (cameraGranted) {
 
-                        }
+                                showMenu = false
+                                cameraLauncher.launch(null)
+
+                            } else {
+                                Toast.makeText(
+                                    context, "Go to app settings for activate " +
+                                            "permission for camera", Toast.LENGTH_LONG
+                                ).show()
+                            }
+
+
+
+
                     }) {
                         Text("Take a picture")
                     }

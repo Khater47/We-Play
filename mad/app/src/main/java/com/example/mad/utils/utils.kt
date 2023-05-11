@@ -145,7 +145,7 @@ fun saveImageUriOnInternalStorage(imageUri:Uri?, context: Context):Bitmap{
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
-fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context){
+fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context):Bitmap{
 
     val directory = context.filesDir
     val imageFile = File(directory, "profilePicture")
@@ -167,6 +167,7 @@ fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context){
     savedBitmap?.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
     outputStream.flush()
     outputStream.close()
+    return savedBitmap
 
 }
 fun getImageFromInternalStorage(context: Context): Bitmap {
