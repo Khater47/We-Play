@@ -18,7 +18,9 @@ import androidx.compose.material.icons.filled.SportsVolleyball
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -28,6 +30,9 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import com.example.mad.R
 import java.io.File
@@ -215,4 +220,23 @@ fun invalidField(user: Bundle):Boolean{
         return true
     }
     return false
+}
+
+//launch intent for camera
+fun openCamera(context: Context,cameraActivityResultLauncher: ManagedActivityResultLauncher<Intent,ActivityResult>):Uri?{
+
+    val values = ContentValues()
+    values.put(MediaStore.Images.Media.TITLE,"New Picture")
+    values.put(MediaStore.Images.Media.DESCRIPTION,"From the Camera")
+    val imageUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
+    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
+    cameraActivityResultLauncher.launch(cameraIntent)
+    return imageUri
+}
+fun openGallery(context: Context,galleryActivityResultLauncher: ManagedActivityResultLauncher<Intent,ActivityResult>){
+    val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+    val mimeTypes = arrayOf("image/*")
+    galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+    galleryActivityResultLauncher.launch(galleryIntent)
 }

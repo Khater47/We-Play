@@ -1,16 +1,20 @@
 package com.example.mad.profileEdit
 
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -79,8 +83,12 @@ import com.example.mad.utils.getIconUserInfo
 import com.example.mad.utils.getImageFromInternalStorage
 import com.example.mad.utils.getKeyboard
 import com.example.mad.utils.invalidField
+import com.example.mad.utils.openCamera
+import com.example.mad.utils.openGallery
+import com.example.mad.utils.rotateBitmap
 import com.example.mad.utils.saveImageBitmapOnInternalStorage
 import com.example.mad.utils.saveImageUriOnInternalStorage
+import com.example.mad.utils.uriToBitmap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -92,11 +100,9 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 
 /*
-* TODO():
-*   save instance when pass on landscape
-*   rotate image for camera intent
-*   check gallery intent for API > 24
-*   save image on internal storage and not in gallery
+TODO():
+    fix rotate camera intent
+
 */
 
 
@@ -388,28 +394,34 @@ fun EditImageProfile() {
 
 
     val imagePicker = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->
-            if (uri != null) {
-                imageUri = uri
-                loadImage = saveImageUriOnInternalStorage(imageUri, context)
+        contract = ActivityResultContracts.StartActivityForResult(),
+        onResult = { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
 
-            }
-            else {
-                loadImage = BitmapFactory.decodeResource(context.resources, R.drawable.profile)
+                if(result.data?.data!=null){
+                    imageUri = result.data?.data as Uri
+                    loadImage = saveImageUriOnInternalStorage(imageUri,context)
+                }
+                else  loadImage=BitmapFactory.decodeResource(context.resources,R.drawable.profile)
+
+
+
             }
         }
     )
 
     val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicturePreview(),
+        contract = ActivityResultContracts.StartActivityForResult(),
         onResult = {
+            result -> if (result.resultCode == Activity.RESULT_OK) {
 
-            loadImage = if (it != null) {
-                saveImageBitmapOnInternalStorage(it, context)
-            } else {
-                BitmapFactory.decodeResource(context.resources, R.drawable.profile)
-            }
+            val inputImage = uriToBitmap(imageUri,context)
+            val rotated = rotateBitmap(inputImage,imageUri,context)
+            saveImageUriOnInternalStorage(imageUri,context)
+            loadImage = rotated ?:
+                BitmapFactory.decodeResource(context.resources,R.drawable.profile)
+        }
+
 
         }
     )
@@ -483,7 +495,7 @@ fun EditImageProfile() {
 
                             if (galleryGranted) {
                                 showMenu = false
-                                imagePicker.launch("image/*")
+                                openGallery(context,imagePicker)
                             } else {
                                 Toast.makeText(
                                     context, "Go to app settings for activate " +
@@ -498,7 +510,8 @@ fun EditImageProfile() {
                             if (cameraGranted) {
 
                                 showMenu = false
-                                cameraLauncher.launch(null)
+//                                cameraLauncher.launch(null)
+                                imageUri=openCamera(context,cameraLauncher) as Uri
 
                             } else {
                                 Toast.makeText(
