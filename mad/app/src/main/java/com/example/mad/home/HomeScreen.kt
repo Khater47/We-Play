@@ -22,9 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.mad.ui.theme.MadTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Search
@@ -37,11 +35,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 
@@ -213,17 +209,7 @@ fun CardNavigationPage(
                 interactionSource = interactionSource,
                 indication = rippleIndication,
                 onClick = {
-                    navController.navigate(route) {
-                        //Pop up to the start destination of the graph to avoid
-                        //building up a large stack of destinations on the back stack as users select items
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        //Avoid multiple copies of the same destination when reselecting the same item
-                        launchSingleTop = true
-                        //Restore state when reselecting a previously selected item
-                        restoreState = true
-                    }
+                    navController.navigate(route)
                 }
             ),
         elevation = 10.dp,
@@ -232,7 +218,7 @@ fun CardNavigationPage(
         ) {
 
         Column {
-            ImageCard(searchIcon, imageCard, navController)
+            ImageCard(searchIcon, imageCard)
 
             TextCard(textCard)
 
@@ -266,7 +252,6 @@ fun TopAppBarHome() {
 @Composable
 fun CardUserPreferences(navController: NavHostController) {
 
-    val context = LocalContext.current
 
     Card(
         Modifier
@@ -329,7 +314,7 @@ fun CardUserPreferences(navController: NavHostController) {
 
 
 @Composable
-fun ImageCard(icon: ImageVector, image: Int, navController: NavHostController) {
+fun ImageCard(icon: ImageVector, image: Int) {
 
     Box(
         Modifier.height(104.dp)

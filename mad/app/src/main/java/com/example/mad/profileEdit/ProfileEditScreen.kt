@@ -101,13 +101,13 @@ fun ProfileEditScreen(vm: UserViewModel, navController: NavHostController, userI
 
     val configuration = LocalConfiguration.current
 
-    val userObject = rememberSaveable{
+    val userObject = rememberSaveable {
         mutableStateOf(Bundle())
     }
 
 
     Scaffold(
-        topBar = { TopAppBarEditProfile(userObject, navController,vm,userId) }
+        topBar = { TopAppBarEditProfile(userObject, navController, vm, userId) }
     ) {
         Box(Modifier.padding(it)) {
 
@@ -191,38 +191,24 @@ fun LandscapeEditProfile(userObject: MutableState<Bundle>) {
 fun TopAppBarEditProfile(
     userObject: MutableState<Bundle>,
     navController: NavHostController,
-    vm:UserViewModel,
-    userId:String?
+    vm: UserViewModel,
+    userId: String?
 ) {
 
-    val configuration = LocalConfiguration.current
     val context = LocalContext.current
 
-    val modifier =
-        if(configuration.orientation==Configuration.ORIENTATION_PORTRAIT){
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 60.dp)
-        }
-        else {
-            Modifier.fillMaxWidth()
-        }
-    val horizontalAlignment= if(configuration.orientation==Configuration.ORIENTATION_LANDSCAPE){
-        Alignment.CenterHorizontally
-    }
-    else {Alignment.Start}
 
     TopAppBar(
         title = {
-            Column(modifier=modifier, horizontalAlignment=horizontalAlignment) {
-                Text(
-                    text = "Edit Profile",
-                    color=Color.White,
-                    fontSize = 24.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+
+            Text(
+                text = "Edit Profile",
+                color = Color.White,
+                fontSize = 24.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -234,17 +220,20 @@ fun TopAppBarEditProfile(
         actions = {
             IconButton(onClick = {
 
-                if(invalidField(userObject.value)){
-                    Toast.makeText(context,"Fill all fields with correct value",Toast.LENGTH_SHORT).show()
-                }
-                else {
+                if (invalidField(userObject.value)) {
+                    Toast.makeText(
+                        context,
+                        "Fill all fields with correct value",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
                     val p = Profile(
-                        userId?.toInt()?:0,
-                        userObject.value.getString("FullName")?:"",
-                        userObject.value.getString("Email")?:"",
-                        userObject.value.getString("Nickname")?:"",
-                        userObject.value.getString("Description")?:"",
-                        userObject.value.getString("PhoneNumber")?:""
+                        userId?.toInt() ?: 0,
+                        userObject.value.getString("FullName") ?: "",
+                        userObject.value.getString("Email") ?: "",
+                        userObject.value.getString("Nickname") ?: "",
+                        userObject.value.getString("Description") ?: "",
+                        userObject.value.getString("PhoneNumber") ?: ""
                     )
                     vm.insertProfile(p)
                     navController.navigate(BottomBarScreen.Profile.route)
@@ -496,7 +485,7 @@ fun EditUserInfo(userObject: MutableState<Bundle>) {
 @Composable
 fun EditInfo(text: String, icon: ImageVector, userObject: MutableState<Bundle>) {
 
-    val info = remember{ mutableStateOf(userObject.value.getString(text)?:"") }
+    val info = remember { mutableStateOf(userObject.value.getString(text) ?: "") }
 
     Row(
         Modifier.padding(10.dp),
@@ -517,8 +506,8 @@ fun EditInfo(text: String, icon: ImageVector, userObject: MutableState<Bundle>) 
         OutlinedTextField(
             value = info.value,
             onValueChange = {
-                info.value=it
-                userObject.value.putString(text,it)
+                info.value = it
+                userObject.value.putString(text, it)
             },
             label = { Text(text = text) },
             keyboardOptions = KeyboardOptions(

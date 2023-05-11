@@ -84,31 +84,14 @@ fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String
 @Composable
 fun TopAppBarProfile(navController:NavHostController,userId:String) {
 
-    val configuration = LocalConfiguration.current
-
-    val modifier =
-    if(configuration.orientation==Configuration.ORIENTATION_PORTRAIT){
-        Modifier.fillMaxWidth().padding(start=60.dp)
-    }
-    else {
-        Modifier.fillMaxWidth().padding(start=30.dp)
-    }
-
-    val horizontalAlignment= if(configuration.orientation==Configuration.ORIENTATION_LANDSCAPE){
-        Alignment.CenterHorizontally
-    }
-    else {Alignment.Start}
-
     TopAppBar(
         title = {
-            Column(modifier=modifier, horizontalAlignment=horizontalAlignment) {
                 Text(
                     text = "User Profile",
                     fontSize = 24.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-            }
         },
         navigationIcon = {},
         actions = {
