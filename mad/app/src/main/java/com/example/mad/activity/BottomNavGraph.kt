@@ -21,11 +21,11 @@ import com.example.mad.rentField.RentFieldScreen
 import com.example.mad.sport.SportScreen
 
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
 
-    NavHost(navController = navController, startDestination = BottomBarScreen.Profile.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.ProfileSport.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
@@ -33,7 +33,7 @@ fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
             ReservationScreen()
         }
         composable(route=BottomBarScreen.ProfileSport.route){
-            ProfileSportScreen()
+            ProfileSportScreen(/*navController,vm*/)
         }
         composable(route=BottomBarScreen.ProfileEdit.route,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })

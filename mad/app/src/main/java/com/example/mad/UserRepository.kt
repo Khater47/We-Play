@@ -34,6 +34,7 @@ class UserRepository @Inject constructor(
     //--------------------------------------------
     fun playgrounds():LiveData<List<Playgrounds>> = playgroundsDao.getAll()
 
+    fun getAllSport() : LiveData<List<String>> = playgroundsDao.getAllSport()
 
 
     //--------------------------------------------
@@ -57,7 +58,7 @@ class UserRepository @Inject constructor(
     //Profile Sport functions
     //--------------------------------------------
 
-    fun getProfileSportByIdProfile(idProfile:Int):LiveData<ProfileSport> = profileSportDao.getProfileSportByIdProfile(idProfile)
+    fun getProfileSportByIdProfile(idProfile:Int):LiveData<List<ProfileSport>> = profileSportDao.getProfileSportByIdProfile(idProfile)
 
     suspend fun insertProfileSport(profileSport: ProfileSport){
         profileSportDao.insertProfileSport(profileSport)

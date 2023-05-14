@@ -47,6 +47,7 @@ class UserViewModel @Inject constructor(
     //Playground functions
     //--------------------------------------------
     val playgrounds: LiveData<List<Playgrounds>> = repo.playgrounds()
+    val sports:LiveData<List<String>> = repo.getAllSport()
 
     //--------------------------------------------
     //Profile functions
@@ -70,7 +71,7 @@ class UserViewModel @Inject constructor(
     //--------------------------------------------
     //Profile Sport functions
     //--------------------------------------------
-    fun getProfileSportByIdProfile(idProfile: Int): LiveData<ProfileSport> =
+    fun getProfileSportByIdProfile(idProfile: Int): LiveData<List<ProfileSport>> =
         repo.getProfileSportByIdProfile(idProfile)
 
     fun insertProfileSport(profileSport: ProfileSport) {

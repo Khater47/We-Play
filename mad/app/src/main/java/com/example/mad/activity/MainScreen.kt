@@ -11,13 +11,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mad.UserViewModel
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun MainScreen(vm:UserViewModel) {
     val navController = rememberNavController()
@@ -64,11 +63,7 @@ fun RowScope.AddItem(
             },
             onClick = {
                 navController.navigate(screen.route){
-                    //Pop up to the start destination of the graph to avoid
-                    //building up a large stack of destinations on the back stack as users select items
-                    popUpTo(navController.graph.findStartDestination().id){
-                        saveState=true
-                    }
+
                     //Avoid multiple copies of the same destination when re-selecting the same item
                     launchSingleTop = true
                     //Restore state when re-selecting a previously selected item

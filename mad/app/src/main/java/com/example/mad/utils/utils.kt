@@ -32,14 +32,13 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
 import androidx.annotation.RequiresApi
 import com.example.mad.R
 import java.io.File
 import java.io.FileOutputStream
 
-fun getIconSport(sportText:String): ImageVector {
-    return when (sportText){
+fun getIconSport(sportText: String): ImageVector {
+    return when (sportText) {
         "Soccer" -> Icons.Default.SportsSoccer
         "Baseball" -> Icons.Default.SportsBaseball
         "Basketball" -> Icons.Default.SportsBasketball
@@ -53,8 +52,8 @@ fun getIconSport(sportText:String): ImageVector {
     }
 }
 
-fun getIconUserInfo(userInfo:String): ImageVector{
-    return when (userInfo){
+fun getIconUserInfo(userInfo: String): ImageVector {
+    return when (userInfo) {
         "FullName" -> Icons.Default.Person
         "Email" -> Icons.Default.Email
         "Nickname" -> Icons.Default.AlternateEmail
@@ -65,31 +64,29 @@ fun getIconUserInfo(userInfo:String): ImageVector{
 }
 
 
-fun getKeyboard(userInfo:String):KeyboardType{
-    return when (userInfo){
+fun getKeyboard(userInfo: String): KeyboardType {
+    return when (userInfo) {
         "PhoneNumber" -> KeyboardType.Number
         "Email" -> KeyboardType.Email
-         else -> KeyboardType.Text
+        else -> KeyboardType.Text
     }
 }
-
 
 
 const val QUALITY = 100
 
 //convert Uri to Bitmap
-fun uriToBitmap(selectedFileUri:Uri?,context: Context):Bitmap?{
-    try{
+fun uriToBitmap(selectedFileUri: Uri?, context: Context): Bitmap? {
+    try {
         val parcelFileDescriptor =
-            selectedFileUri?.let { context.contentResolver.openFileDescriptor(it,"r") }
+            selectedFileUri?.let { context.contentResolver.openFileDescriptor(it, "r") }
 
         val fileDescriptor = parcelFileDescriptor?.fileDescriptor
         val image = BitmapFactory.decodeFileDescriptor(fileDescriptor)
         parcelFileDescriptor?.close()
         return image
 
-    }
-    catch (e:Exception){
+    } catch (e: Exception) {
         e.printStackTrace()
     }
     return null
@@ -97,7 +94,7 @@ fun uriToBitmap(selectedFileUri:Uri?,context: Context):Bitmap?{
 
 //rotate image when using landscape mode on camera
 @SuppressLint("Range")
-fun rotateBitmap(input: Bitmap?,imageUri:Uri?,context: Context): Bitmap? {
+fun rotateBitmap(input: Bitmap?, imageUri: Uri?, context: Context): Bitmap? {
     val orientationColumn: Array<String> = arrayOf(MediaStore.Images.Media.ORIENTATION)
     val cur: Cursor? =
         imageUri?.let { context.contentResolver.query(it, orientationColumn, null, null, null) }
@@ -122,35 +119,32 @@ fun rotateBitmap(input: Bitmap?,imageUri:Uri?,context: Context): Bitmap? {
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
-fun saveImageUriOnInternalStorage(imageUri:Uri?, context: Context):Bitmap{
+fun saveImageUriOnInternalStorage(imageUri: Uri?, context: Context): Bitmap {
 
     val directory = context.filesDir
     val imageFile = File(directory, "profilePicture")
 
-    val bitmap = if(imageUri!=null) //select picture
+    val bitmap = if (imageUri != null) //select picture
     {
-        val tempBitmap  = uriToBitmap(imageUri,context)
-        rotateBitmap(tempBitmap,imageUri,context)
-    }
-
-    else if(imageFile.totalSpace>0) //set previous image, if user don't select picture
+        val tempBitmap = uriToBitmap(imageUri, context)
+        rotateBitmap(tempBitmap, imageUri, context)
+    } else if (imageFile.totalSpace > 0) //set previous image, if user don't select picture
         BitmapFactory.decodeFile(imageFile.absolutePath)
-
     else  //no image provided, set default image
-        BitmapFactory.decodeResource(context.resources,R.drawable.profile)
+        BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 
 
-    Log.d("TAG - ",bitmap.toString())
+    Log.d("TAG - ", bitmap.toString())
 
     val outputStream = FileOutputStream(imageFile)
     bitmap?.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
     outputStream.flush()
     outputStream.close()
-    return bitmap?:BitmapFactory.decodeResource(context.resources,R.drawable.profile)
+    return bitmap ?: BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 }
 
 @RequiresApi(Build.VERSION_CODES.P)
-fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context):Bitmap{
+fun saveImageBitmapOnInternalStorage(bitmap: Bitmap?, context: Context): Bitmap {
 
     val directory = context.filesDir
     val imageFile = File(directory, "profilePicture")
@@ -159,13 +153,13 @@ fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context):Bitmap{
         //select picture
         bitmap
 
-            //set previous image, if user don't select picture
-            ?: if(imageFile.totalSpace>0){
+        //set previous image, if user don't select picture
+            ?: if (imageFile.totalSpace > 0) {
                 BitmapFactory.decodeFile(imageFile.absolutePath)
             }
             //no image provided, set default image
-            else{
-                BitmapFactory.decodeResource(context.resources,R.drawable.profile)
+            else {
+                BitmapFactory.decodeResource(context.resources, R.drawable.profile)
             }
 
     val outputStream = FileOutputStream(imageFile)
@@ -175,6 +169,7 @@ fun saveImageBitmapOnInternalStorage(bitmap:Bitmap?, context: Context):Bitmap{
     return savedBitmap
 
 }
+
 fun getImageFromInternalStorage(context: Context): Bitmap {
 
     val fileName = "profilePicture"
@@ -186,7 +181,7 @@ fun getImageFromInternalStorage(context: Context): Bitmap {
 
     //get selected image
         BitmapFactory.decodeFile(imageFile.absolutePath)
-            ?:BitmapFactory.decodeResource(context.resources, R.drawable.profile)
+            ?: BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 
 
     //get default image
@@ -195,46 +190,110 @@ fun getImageFromInternalStorage(context: Context): Bitmap {
 
 }
 
-fun invalidField(user: Bundle):Boolean{
+fun invalidField(user: Bundle): Boolean {
 
-    if(user.getString("FullName")==null || user.getString("FullName")==""){
-
-        return true
-    }
-    if(user.getString("Email")==null || user.getString("Email")==""){
-
+    if (user.getString("FullName") == null || user.getString("FullName") == "") {
 
         return true
     }
-    if(user.getString("Nickname")==null ||  user.getString("Nickname")==""){
+    if (user.getString("Email") == null || user.getString("Email") == "") {
+
 
         return true
     }
-    if(user.getString("PhoneNumber")==null || user.getString("PhoneNumber")==""){
+    if (user.getString("Nickname") == null || user.getString("Nickname") == "") {
+
+        return true
+    }
+    if (user.getString("PhoneNumber") == null || user.getString("PhoneNumber") == "") {
 
         return true
 
     }
-    if(user.getString("Description")==null || user.getString("Description")==""){
+    if (user.getString("Description") == null || user.getString("Description") == "") {
 
         return true
     }
     return false
 }
 
+fun convertAchievement(achievement:Int):String?{
+    return when (achievement) {
+        0 -> {
+            "first"
+        }
+        1 -> {
+            "second"
+        }
+        2 -> {
+            "third"
+        }
+        else -> {
+            null
+        }
+    }
+}
+
+
+
+
+fun getColorListFromLevel(level: Int): List<Int> {
+
+
+    when (level) {
+        0 -> {
+            return listOf<Int>(0, 0, 0, 0, 0)
+        }
+
+        1 -> {
+            return listOf<Int>(1, 0, 0, 0, 0)
+
+        }
+
+        2 -> {
+            return listOf<Int>(1, 1, 0, 0, 0)
+
+        }
+
+        3 -> {
+            return listOf<Int>(1, 1, 1, 0, 0)
+
+        }
+
+        4 -> {
+            return  listOf<Int>(1, 1, 1, 1, 0)
+
+        }
+
+        else -> {
+            return listOf<Int>(1, 1, 1, 1, 1)
+
+        }
+
+    }
+}
+
 //launch intent for camera
-fun openCamera(context: Context,cameraActivityResultLauncher: ManagedActivityResultLauncher<Intent,ActivityResult>):Uri?{
+fun openCamera(
+    context: Context,
+    cameraActivityResultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+): Uri? {
 
     val values = ContentValues()
-    values.put(MediaStore.Images.Media.TITLE,"New Picture")
-    values.put(MediaStore.Images.Media.DESCRIPTION,"From the Camera")
-    val imageUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,values)
+    values.put(MediaStore.Images.Media.TITLE, "New Picture")
+    values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
+    val imageUri =
+        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
     val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri)
+    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
     cameraActivityResultLauncher.launch(cameraIntent)
     return imageUri
 }
-fun openGallery(context: Context,galleryActivityResultLauncher: ManagedActivityResultLauncher<Intent,ActivityResult>){
+
+fun openGallery(
+    context: Context,
+    galleryActivityResultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
     val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
     val mimeTypes = arrayOf("image/*")
     galleryIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)

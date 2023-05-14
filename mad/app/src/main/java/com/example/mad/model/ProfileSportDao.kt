@@ -12,7 +12,7 @@ interface ProfileSportDao {
 
 
     @Query("SELECT * FROM profileSport WHERE idProfile=:idProfile")
-    fun getProfileSportByIdProfile(idProfile:Int) : LiveData<ProfileSport>
+    fun getProfileSportByIdProfile(idProfile:Int) : LiveData<List<ProfileSport>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfileSport(profileSport: ProfileSport)

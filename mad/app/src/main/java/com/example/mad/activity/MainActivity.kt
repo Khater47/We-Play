@@ -9,9 +9,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.mad.UserViewModel
 import com.example.mad.ui.theme.MadTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint
 *   Splash Screen + Animation
 * */
 
-@RequiresApi(Build.VERSION_CODES.P)
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
