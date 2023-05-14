@@ -38,10 +38,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.mad.model.ProfileSport
+import com.example.mad.ui.theme.MadTheme
 import com.example.mad.utils.convertAchievement
 import com.example.mad.utils.getColorListFromLevel
 
@@ -414,10 +416,10 @@ fun Achievements(profileSportList: List<ProfileSport>) {
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreview() {
-//    MadTheme {
-//        ContentDialog(sport = "Soccer")
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    MadTheme {
+        ProfileSportScreen()
+    }
+}

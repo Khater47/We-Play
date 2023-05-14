@@ -11,13 +11,15 @@ import androidx.room.Query
 interface ProfileRatingDao {
     
 
-    @Query("SELECT * FROM profileRating WHERE idProfile=:idProfile ORDER BY rating")
-    fun getProfileRatingByIdProfile(idProfile:Int) : LiveData<ProfileRating>
+    @Query("SELECT * FROM profileRating WHERE idProfile=:idProfile")
+    fun getProfileRatingByIdProfile(idProfile:Int) : LiveData<List<ProfileRating>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertProfileRating(profileRating: ProfileRating)
 
     @Delete
     suspend fun deleteProfileRating(profileRating: ProfileRating)
+
+
 
 }

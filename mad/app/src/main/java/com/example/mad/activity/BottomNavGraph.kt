@@ -25,7 +25,7 @@ import com.example.mad.sport.SportScreen
 @Composable
 fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
 
-    NavHost(navController = navController, startDestination = BottomBarScreen.ProfileSport.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
@@ -41,7 +41,7 @@ fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
             ProfileEditScreen(vm,navController,backStackEntry.arguments?.getString("userId"))
         }
         composable(route=BottomBarScreen.ProfileRating.route){
-            ProfileRatingScreen()
+            ProfileRatingScreen(navController,vm)
         }
         composable(route=BottomBarScreen.Profile.route,
             arguments = listOf(navArgument("userId") { defaultValue = "2" })

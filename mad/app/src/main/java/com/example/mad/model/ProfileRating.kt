@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class ProfileRating(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val rating: Int,
-    val comments: String?,
+    val quality: Int?,
+    val facilities: Int?,
     val idProfile: Int,
     val idPlayground:Int,
     )
