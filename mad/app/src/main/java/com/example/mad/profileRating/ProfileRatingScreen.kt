@@ -31,6 +31,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CardDefaults
@@ -210,59 +211,29 @@ fun PlaygroundRating(vm:UserViewModel){
         vm.playgrounds.observeAsState(emptyList())
 
     val ratingPlaygrounds by vm.getProfileRatingByIdProfile(2).observeAsState(emptyList())
-
-//    var ratingPlaygrounds  by remember { mutableStateOf<List<ProfileRating>>(emptyList()) }
-
-//    val lifecycleOwner = LocalLifecycleOwner.current
-//
-//    vm.getProfileRatingByIdProfile(2).observe(lifecycleOwner) {
-//        ratingPlaygrounds=it.toList()
-//    }
-
-    var id by remember {
-        mutableStateOf(0)
-    }
-
-    var playground by remember {
-        mutableStateOf("")
-    }
-    var idPlayground by remember {
-        mutableStateOf(-1)
-    }
-
-    val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
-
-
-    if(showDialog){
-        DialogSetRating(vm,id,playground, idPlayground = idPlayground, userId = "2", setShowDialog = setShowDialog)
-    }
+    
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        items(playgrounds,itemContent = { item ->
+        items(ratingPlaygrounds,itemContent = { item ->
             Card(
                 modifier= Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp)
-                    .clickable {
-                        setShowDialog(true)
-                        playground = item.playground
-                        idPlayground = item.id
-                        val first = ratingPlaygrounds.filter { it.idPlayground == item.id }
-                        Log.d("TAG", first.size.toString())
-                        id = if (first.isNotEmpty()) {
-                            first[0].id
-                        } else {
-                            0
-                        }
-                    },
+                    .padding(vertical = 10.dp),
                 elevation = 16.dp,
                 shape = RoundedCornerShape(16.dp),
             ) {
+                val playground = playgrounds.firstOrNull(){it.id==item.idPlayground}
+
+                val playgroundTitle = playground?.playground?:""
+                val playgroundSport = playground?.sport?:""
+                val playgroundLocation = playground?.location?:""
+
+
                 Column(){
-                    Text(text = item.playground,modifier=Modifier.padding(10.dp))
+                    Text(text = playgroundTitle,modifier=Modifier.padding(10.dp))
 
                     Image(
-                        painter = painterResource(id = getIconPlayground(item.sport)),
+                        painter = painterResource(id = getIconPlayground(playgroundSport)),
                         contentDescription = "Image",
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -277,17 +248,17 @@ fun PlaygroundRating(vm:UserViewModel){
                                 Icon(imageVector = Icons.Default.LocationOn,
                                     contentDescription = "IconLocation",
                                 modifier=Modifier.padding(5.dp))
-                                Text(text = item.location,
+                                Text(text = playgroundLocation,
                                     modifier=Modifier.padding(10.dp))
                             }
 
                         }
                         Column(Modifier.weight(1f)){
                             Row(verticalAlignment = Alignment.CenterVertically){
-                                Icon(imageVector = getIconSport(item.sport),
+                                Icon(imageVector = getIconSport(playgroundSport),
                                     contentDescription = "IconLocation",
                                     modifier=Modifier.padding(5.dp))
-                                Text(text = item.sport,
+                                Text(text = playgroundSport,
                                     modifier=Modifier.padding(10.dp))
                             }
                         }
@@ -300,16 +271,9 @@ fun PlaygroundRating(vm:UserViewModel){
                             Text(text="Quality: ",modifier=Modifier.padding(10.dp))
                         }
                         Column(Modifier.weight(3f)) {
-                            val first = ratingPlaygrounds.filter { it.idPlayground == item.id }
 
-                            val q = if(first.isNotEmpty()){
-                                first[0].quality?:0
 
-                            } else {
-                                0
-                            }
-
-                            StarIcon(score = q,item.id,item.playground)
+                            StarIcon(score = item.quality)
                         }
                     }
 
@@ -320,24 +284,17 @@ fun PlaygroundRating(vm:UserViewModel){
                             Text(text="Facilities: ",modifier=Modifier.padding(10.dp))
                         }
                         Column(Modifier.weight(3f)) {
-                            val first = ratingPlaygrounds.filter { it.idPlayground == item.id }
 
-                            val f = if(first.isNotEmpty()){
-                                first[0].facilities?:0
-                            } else {
-                                0
-                            }
-
-
-                            StarIcon(score = f,item.id,item.playground)
+                            StarIcon(score = item.facilities)
                         }
                     }
 
-                    Column(modifier=Modifier.fillMaxWidth(),
+                    Column(modifier=Modifier.fillMaxWidth().padding(10.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center) {
-                        Button(onClick={
-                            val first = ratingPlaygrounds.filter{idPlayground==item.id}
+                        Button(
+                            onClick={
+                            val first = ratingPlaygrounds.filter{it.idPlayground==item.id}
                             if(first.size==1){
                                 val p = ProfileRating(first[0].id,
                                 first[0].quality,
@@ -348,7 +305,11 @@ fun PlaygroundRating(vm:UserViewModel){
                             }
 
                         }){
-                            Text(text="Reset")
+                            Row(horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically){
+                                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Rating Playground",modifier=Modifier.padding(horizontal = 10.dp))
+                                Text(text="Delete")
+                            }
                         }
                     }
 
@@ -364,7 +325,7 @@ fun PlaygroundRating(vm:UserViewModel){
 }
 
 @Composable
-fun StarIcon(score:Int?,idPlayground: Int,playground:String){
+fun StarIcon(score:Int?){
 
     var newScore by remember{
         mutableStateOf(score?:0)

@@ -54,9 +54,9 @@ sealed class BottomBarScreen(
         icon= Icons.Default.CarRental
     )
 
-    object Sport:BottomBarScreen(
-        route = "sport",
-        title="Select Sport",
+    object AddRating:BottomBarScreen(
+        route = "addProfileRating",
+        title="Add Profile Rating",
         icon= Icons.Default.Sports
     )
 
