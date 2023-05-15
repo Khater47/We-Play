@@ -217,24 +217,25 @@ fun invalidField(user: Bundle): Boolean {
     return false
 }
 
-fun convertAchievement(achievement:Int):String?{
+fun convertAchievement(achievement: Int): String? {
     return when (achievement) {
         0 -> {
             "first"
         }
+
         1 -> {
             "second"
         }
+
         2 -> {
             "third"
         }
+
         else -> {
-            null
+            "null"
         }
     }
 }
-
-
 
 
 fun getColorListFromLevel(level: Int): List<Int> {
@@ -261,7 +262,7 @@ fun getColorListFromLevel(level: Int): List<Int> {
         }
 
         4 -> {
-            return  listOf<Int>(1, 1, 1, 1, 0)
+            return listOf<Int>(1, 1, 1, 1, 0)
 
         }
 
