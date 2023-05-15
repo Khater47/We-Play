@@ -1,5 +1,7 @@
 package com.example.mad.addRating
 
+import android.content.res.Configuration
+import android.graphics.Bitmap.Config
 import android.widget.Toast
 import androidx.compose.material.Card
 import androidx.compose.foundation.BorderStroke
@@ -64,6 +66,7 @@ import com.example.mad.model.Playgrounds
 import com.example.mad.utils.getIconPlayground
 import com.example.mad.utils.getIconSport
 import androidx.compose.material3.MaterialTheme.colorScheme
+import androidx.compose.ui.platform.LocalConfiguration
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.ProfileRating
 
@@ -71,20 +74,18 @@ import com.example.mad.model.ProfileRating
 @Composable
 fun AddRatingScreen(navController: NavHostController, vm: UserViewModel) {
 
-    val (profileRating,setProfileRating) = remember {
+    val (profileRating, setProfileRating) = remember {
         mutableStateOf<ProfileRating?>(null)
     }
 
-    Scaffold(
-        topBar = { TopAppBarAddRating(navController,vm,profileRating) }
-    ) {
+    Scaffold(topBar = { TopAppBarAddRating(navController, vm, profileRating) }) {
         Box(
             Modifier
                 .fillMaxSize()
                 .padding(it)
         ) {
 
-            AddContainer(vm,setProfileRating)
+            AddContainer(vm, setProfileRating)
         }
     }
 }
@@ -92,53 +93,44 @@ fun AddRatingScreen(navController: NavHostController, vm: UserViewModel) {
 
 @Composable
 fun TopAppBarAddRating(
-    navController:NavHostController,
-    vm:UserViewModel,
-    profileRating: ProfileRating?
+    navController: NavHostController, vm: UserViewModel, profileRating: ProfileRating?
 ) {
 
     val context = LocalContext.current
 
-    TopAppBar(
-        title = {
-            Text(
-                text = " Add Rating",
-                fontSize = 24.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+    TopAppBar(title = {
+        Text(
+            text = " Add Rating",
+            fontSize = 24.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
 
-        },
-        navigationIcon = {
-            IconButton(onClick = {
+    }, navigationIcon = {
+        IconButton(onClick = {
+            navController.navigate(BottomBarScreen.ProfileRating.route)
+        }) {
+            Icon(Icons.Filled.ArrowBack, "backIcon")
+        }
+    }, actions = {
+        IconButton(onClick = {
+            if (profileRating != null) {
+                vm.insertProfileRating(profileRating)
                 navController.navigate(BottomBarScreen.ProfileRating.route)
-            }) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
+            } else {
+                Toast.makeText(context, "Profile Rating not valid", Toast.LENGTH_SHORT).show()
             }
-        },
-        actions = {
-            IconButton(onClick = {
-                if(profileRating!=null){
-                    vm.insertProfileRating(profileRating)
-                    navController.navigate(BottomBarScreen.ProfileRating.route)
-                }
-                else {
-                    Toast.makeText(context,"Profile Rating not valid",Toast.LENGTH_SHORT).show()
-                }
-            }) {
-                Icon(Icons.Filled.Check, "backIcon", Modifier.size(28.dp))
-            }
-        },
-        elevation = 10.dp
+        }) {
+            Icon(Icons.Filled.Check, "backIcon", Modifier.size(28.dp))
+        }
+    }, elevation = 10.dp
 
     )
 }
 
 @Composable
 fun DialogSetRating(
-    vm: UserViewModel,
-    setPlayground: (Playgrounds?) -> Unit,
-    setShowDialog: (Boolean) -> Unit
+    vm: UserViewModel, setPlayground: (Playgrounds?) -> Unit, setShowDialog: (Boolean) -> Unit
 ) {
 
     val playgrounds = vm.playgrounds.observeAsState().value ?: emptyList()
@@ -148,7 +140,8 @@ fun DialogSetRating(
     var selected by remember { mutableStateOf<Playgrounds?>(null) }
 
     Dialog(onDismissRequest = { setShowDialog(false) }) {
-        Card(modifier=Modifier.padding(10.dp),
+        Card(
+            modifier = Modifier.padding(10.dp),
             shape = RoundedCornerShape(16.dp),
             border = BorderStroke(1.dp, Color.LightGray),
             colors = CardDefaults.cardColors()
@@ -156,7 +149,8 @@ fun DialogSetRating(
             Column(
                 Modifier
                     .width(350.dp)
-                    .height(300.dp)) {
+                    .height(300.dp)
+            ) {
                 LazyColumn(Modifier.weight(3f)) {
                     items(playgrounds, itemContent = { item ->
                         Column(
@@ -164,11 +158,15 @@ fun DialogSetRating(
                                 .fillMaxWidth()
                                 .background(color = if (selected?.id == item.id) Color.Gray else Color.White)
                         ) {
-                            Text(text = item.playground, modifier = Modifier
-                                .padding(10.dp)
-                                .clickable {
-                                    selected = item
-                                }, fontSize = 20.sp)
+                            Text(
+                                text = item.playground,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .clickable {
+                                        selected = item
+                                    },
+                                fontSize = 20.sp
+                            )
 
                             Divider()
                         }
@@ -202,9 +200,7 @@ fun DialogSetRating(
                             setShowDialog(false)
 
 
-                        },
-                        shape = CircleShape,
-                        modifier = Modifier
+                        }, shape = CircleShape, modifier = Modifier
                             .weight(1f)
                             .padding(start = 5.dp)
 
@@ -224,7 +220,7 @@ fun DialogSetRating(
 
 
 @Composable
-fun AddContainer(vm: UserViewModel,setProfileRating:(ProfileRating)->Unit) {
+fun AddContainer(vm: UserViewModel, setProfileRating: (ProfileRating) -> Unit) {
 
     val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
 
@@ -233,20 +229,22 @@ fun AddContainer(vm: UserViewModel,setProfileRating:(ProfileRating)->Unit) {
     val (scoreQuality, setScoreQuality) = remember { mutableStateOf(0) }
     val (scoreFacilities, setScoreFacilities) = remember { mutableStateOf(0) }
 
+    val orientation = LocalConfiguration.current.orientation
+
     if (showDialog) {
         DialogSetRating(vm, setPlayground, setShowDialog)
     }
 
-    if(playground!=null){
-        val ratingPlaygrounds = vm.getProfileRatingByIdProfile(2).observeAsState().value?.firstOrNull{
-            it.idProfile==2 && it.idPlayground==playground.id
-        }
-        val id = ratingPlaygrounds?.id?:0
+    if (playground != null) {
+        val ratingPlaygrounds =
+            vm.getProfileRatingByIdProfile(2).observeAsState().value?.firstOrNull {
+                it.idProfile == 2 && it.idPlayground == playground.id
+            }
+        val id = ratingPlaygrounds?.id ?: 0
 
-        val p = ProfileRating(id,scoreQuality,scoreFacilities,2,playground.id)
+        val p = ProfileRating(id, scoreQuality, scoreFacilities, 2, playground.id)
         setProfileRating(p)
     }
-
 
     Column(Modifier.verticalScroll(rememberScrollState())) {
 
@@ -270,106 +268,67 @@ fun AddContainer(vm: UserViewModel,setProfileRating:(ProfileRating)->Unit) {
             val playgroundSport = playground.sport
             val playgroundLocation = playground.location
 
+            when (orientation) {
+                Configuration.ORIENTATION_PORTRAIT -> {
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                    ) {
 
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp)
-            ) {
-
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-
-                    Column {
-                        Text(text = playgroundName, modifier = Modifier.padding(10.dp))
-
-                        Image(
-                            painter = painterResource(id = getIconPlayground(playgroundSport)),
-                            contentDescription = "Image",
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .height(200.dp)
-                                .fillMaxWidth()
+                        CardPlaygroundRating(
+                            playgroundName,
+                            playgroundSport,
+                            playgroundLocation
                         )
 
-                        Row(modifier = Modifier.fillMaxWidth()) {
+                        RatingRow(
+                            scoreQuality,
+                            setScoreQuality,
+                            "Quality"
 
-                            Column(Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = Icons.Default.LocationOn,
-                                        contentDescription = "IconLocation",
-                                        modifier = Modifier.padding(5.dp)
-                                    )
-                                    Text(
-                                        text = playgroundLocation,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
-                                }
+                        )
 
-                            }
-                            Column(Modifier.weight(1f)) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        imageVector = getIconSport(playgroundSport),
-                                        contentDescription = "IconLocation",
-                                        modifier = Modifier.padding(5.dp)
-                                    )
-                                    Text(
-                                        text = playgroundSport,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
-                                }
-                            }
+                        RatingRow(
+                            scoreFacilities,
+                            setScoreFacilities,
+                            "Facilities"
+                        )
+                    }
+                }
+
+                else -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(horizontal = 10.dp)
+                    ) {
+
+                        Column(Modifier.weight(1f)) {
+
+                            CardPlaygroundRating(
+                                playgroundName,
+                                playgroundSport,
+                                playgroundLocation
+                            )
                         }
+                        Column(
+                            Modifier.weight(1f),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                            RatingRow(
+                                scoreQuality,
+                                setScoreQuality,
+                                "Quality"
+                            )
 
+                            RatingRow(
+                                scoreFacilities,
+                                setScoreFacilities,
+                                "Facilities"
 
-                    }
-
-
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            text = "Quality: ",
-                            modifier = Modifier.padding(horizontal = 10.dp),
-                            fontSize = 20.sp
-                        )
-                    }
-                    Column(Modifier.weight(2f)) {
-                        StarButtonIcon(scoreQuality, setScoreQuality)
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            text = "Facilities: ",
-                            modifier = Modifier.padding(horizontal = 10.dp),
-                            fontSize = 20.sp
-                        )
-                    }
-                    Column(Modifier.weight(2f)) {
-
-                        StarButtonIcon(scoreFacilities, setScoreFacilities)
+                            )
+                        }
                     }
                 }
             }
@@ -379,8 +338,122 @@ fun AddContainer(vm: UserViewModel,setProfileRating:(ProfileRating)->Unit) {
     }
 
 
+}
+
+@Composable
+fun CardPlaygroundRating(
+    playgroundName: String, playgroundSport: String, playgroundLocation: String
+) {
+
+    val orientation = LocalConfiguration.current.orientation
+
+    val heightImage =
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+            200.dp
+        } else {
+            140.dp
+        }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        elevation = 16.dp,
+        shape = RoundedCornerShape(16.dp),
+    ) {
+
+        Column {
+            Text(text = playgroundName, modifier = Modifier.padding(10.dp), fontSize = 20.sp)
+
+            Image(
+                painter = painterResource(id = getIconPlayground(playgroundSport)),
+                contentDescription = "Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(heightImage)
+                    .fillMaxWidth()
+            )
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = playgroundLocation, modifier = Modifier.padding(10.dp)
+                        )
+                    }
+
+                }
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = getIconSport(playgroundSport),
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = playgroundSport, modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            }
 
 
+        }
+
+
+    }
+}
+
+@Composable
+fun RatingRow(score: Int, setScore: (Int) -> Unit, text: String) {
+
+    when(LocalConfiguration.current.orientation){
+
+        Configuration.ORIENTATION_PORTRAIT->{
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Column(Modifier.weight(1f)) {
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(horizontal = 10.dp),
+                        fontSize = 20.sp
+                    )
+                }
+                Column(Modifier.weight(2f)) {
+
+                    StarButtonIcon(score, setScore)
+                }
+            }
+        }
+        else -> {
+            Column(verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(vertical=5.dp)) {
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(horizontal = 10.dp),
+                    fontSize = 20.sp
+                )
+            }
+            Column(verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(vertical=5.dp)) {
+
+                StarButtonIcon(score, setScore)
+            }
+        }
+    }
 
 }
 
@@ -392,9 +465,9 @@ fun StarButtonIcon(score: Int, setScore: (Int) -> Unit) {
         items(5) { index ->
             IconButton(onClick = { setScore(index + 1) }) {
                 Icon(
-                    imageVector = Icons.Default.Star, contentDescription = "starIcon",
-                    tint =
-                    if (index < score) Color(0xFFFFB600)
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "starIcon",
+                    tint = if (index < score) Color(0xFFFFB600)
                     else Color.Gray
                 )
             }
