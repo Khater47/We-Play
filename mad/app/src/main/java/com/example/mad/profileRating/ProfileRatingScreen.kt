@@ -1,5 +1,6 @@
 package com.example.mad.profileRating
 
+import android.content.res.Configuration
 import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -53,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,16 +72,17 @@ import com.example.mad.utils.getIconSport
 
 
 @Composable
-fun ProfileRatingScreen(navController:NavHostController,vm:UserViewModel) {
+fun ProfileRatingScreen(navController: NavHostController, vm: UserViewModel) {
 
     Scaffold(
         topBar = { TopAppBarRating(navController) }
-    ){
+    ) {
         Box(
             Modifier
                 .fillMaxSize()
-                .padding(it)) {
-                PlaygroundRating(navController,vm)
+                .padding(it)
+        ) {
+            PlaygroundRating(vm)
         }
     }
 
@@ -87,167 +90,324 @@ fun ProfileRatingScreen(navController:NavHostController,vm:UserViewModel) {
 }
 
 
-
-
 @Composable
-fun PlaygroundRating(navController: NavHostController,vm:UserViewModel){
+fun PlaygroundRating(vm: UserViewModel) {
 
-    val playgrounds:List<Playgrounds> by
-        vm.playgrounds.observeAsState(emptyList())
+    val playgrounds: List<Playgrounds> by
+    vm.playgrounds.observeAsState(emptyList())
 
     val ratingPlaygrounds by vm.getProfileRatingByIdProfile(2).observeAsState(emptyList())
-    
-    Column(Modifier.fillMaxSize()) {
 
-        LazyColumn(modifier = Modifier
-            .padding(16.dp)
-            .weight(4f)) {
-            items(ratingPlaygrounds,itemContent = { item ->
-                Card(
-                    modifier= Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(16.dp),
+    when (LocalConfiguration.current.orientation) {
+        Configuration.ORIENTATION_PORTRAIT -> {
+            Column(Modifier.fillMaxSize()) {
+
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(4f)
                 ) {
-                    val playground = playgrounds.firstOrNull{it.id==item.idPlayground}
-
-                    if(playground!=null){
-                        val idPlayground = playground.id
-                        val playgroundTitle = playground.playground
-                        val playgroundSport = playground.sport
-                        val playgroundLocation = playground.location
-
-                        Column(){
-                            Text(text = playgroundTitle,modifier=Modifier.padding(10.dp))
-
-                            Image(
-                                painter = painterResource(id = getIconPlayground(playgroundSport)),
-                                contentDescription = "Image",
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .height(120.dp)
-                                    .fillMaxWidth()
-                            )
-
-                            Row(modifier=Modifier.fillMaxWidth()){
-
-                                Column(Modifier.weight(1f)){
-                                    Row(verticalAlignment = Alignment.CenterVertically){
-                                        Icon(imageVector = Icons.Default.LocationOn,
-                                            contentDescription = "IconLocation",
-                                            modifier=Modifier.padding(5.dp))
-                                        Text(text = playgroundLocation,
-                                            modifier=Modifier.padding(10.dp))
-                                    }
-
-                                }
-                                Column(Modifier.weight(1f)){
-                                    Row(verticalAlignment = Alignment.CenterVertically){
-                                        Icon(imageVector = getIconSport(playgroundSport),
-                                            contentDescription = "IconLocation",
-                                            modifier=Modifier.padding(5.dp))
-                                        Text(text = playgroundSport,
-                                            modifier=Modifier.padding(10.dp))
-                                    }
-                                }
-                            }
-
-                            Row(modifier=Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically){
-
-                                Column(Modifier.weight(1f)) {
-                                    Text(text="Quality: ",modifier=Modifier.padding(10.dp))
-                                }
-                                Column(Modifier.weight(3f)) {
-
-
-                                    StarIcon(score = item.quality)
-                                }
-                            }
-
-                            Row(modifier=Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically){
-
-                                Column(Modifier.weight(1f)) {
-                                    Text(text="Facilities: ",modifier=Modifier.padding(10.dp))
-                                }
-                                Column(Modifier.weight(3f)) {
-
-                                    StarIcon(score = item.facilities)
-                                }
-                            }
-
-                            Column(modifier= Modifier
-                                .fillMaxWidth()
-                                .padding(10.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center) {
-                                Button(
-                                    onClick={
-                                        val first = ratingPlaygrounds.firstOrNull{it.idPlayground==idPlayground}
-                                        if(first!=null){
-                                            val p = ProfileRating(first.id,
-                                                first.quality,
-                                                first.facilities,
-                                                first.idPlayground,
-                                                first.idProfile)
-
-                                            vm.deleteProfileRating(p)
-                                        }
-
-                                    }){
-                                    Row(horizontalArrangement = Arrangement.Center,
-                                        verticalAlignment = Alignment.CenterVertically){
-                                        Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete Rating Playground",modifier=Modifier.padding(horizontal = 10.dp))
-                                        Text(text="Delete")
-                                    }
-                                }
-                            }
-
-                        }
-                    }
-
-
-
+                    items(ratingPlaygrounds, itemContent = { item ->
+                        CardPlaygroundPortrait(
+                            playgrounds,
+                            vm,
+                            item,
+                            ratingPlaygrounds
+                        )
+                    })
                 }
-            })
+            }
+
         }
 
-        Column(Modifier.weight(1f).fillMaxWidth().padding(horizontal=10.dp),
-        horizontalAlignment = Alignment.End,
+        else -> {
+            Row(Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(1f)
+                ) {
+                    items(ratingPlaygrounds, itemContent = { item ->
+                        Row{
+                            Column(Modifier.weight(1f)) {
+                                CardPlaygroundLandscape(
+                                    playgrounds,
+                                    item,
+                                )
+
+                            }
+                            Column(Modifier.weight(1f),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+
+                                val playground = playgrounds.firstOrNull { it.id == item.idPlayground }
+                                val idPlayground = playground?.id ?: -1
+
+
+                                Column(Modifier.padding(10.dp)) {
+                                    RatingRow(item.quality,"Quality")
+                                }
+
+                                Column(Modifier.padding(10.dp)) {
+                                    RatingRow(item.facilities,"Facilities")
+                                }
+
+                                Column(modifier=Modifier.padding(vertical=10.dp),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally){
+                                    DeleteRatingPlaygroundButton(
+                                        vm,
+                                        ratingPlaygrounds,
+                                        idPlayground
+                                    )
+                                }
+                            }
+                        }
+
+                    })
+                }
+
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun CardPlaygroundLandscape(
+    playgrounds: List<Playgrounds>,
+    item: ProfileRating,
+) {
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        elevation = 16.dp,
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        val playground = playgrounds.firstOrNull { it.id == item.idPlayground }
+
+        if (playground != null) {
+            val idPlayground = playground.id
+            val playgroundTitle = playground.playground
+            val playgroundSport = playground.sport
+            val playgroundLocation = playground.location
+
+            Column {
+                Text(
+                    text = playgroundTitle,
+                    modifier = Modifier.padding(10.dp),
+                    fontSize = 20.sp
+                )
+
+                Image(
+                    painter = painterResource(id = getIconPlayground(playgroundSport)),
+                    contentDescription = "Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(120.dp)
+                        .fillMaxWidth()
+                )
+
+                InfoPlayground(playgroundLocation, playgroundSport)
+            }
+
+        }
+    }
+}
+
+@Composable
+fun CardPlaygroundPortrait(
+    playgrounds: List<Playgrounds>,
+    vm: UserViewModel,
+    item: ProfileRating,
+    ratingPlaygrounds: List<ProfileRating>
+) {
+
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        elevation = 16.dp,
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        val playground = playgrounds.firstOrNull { it.id == item.idPlayground }
+
+        if (playground != null) {
+            val idPlayground = playground.id
+            val playgroundTitle = playground.playground
+            val playgroundSport = playground.sport
+            val playgroundLocation = playground.location
+
+            Column {
+                Text(
+                    text = playgroundTitle,
+                    modifier = Modifier.padding(10.dp),
+                    fontSize = 20.sp
+                )
+
+                Image(
+                    painter = painterResource(id = getIconPlayground(playgroundSport)),
+                    contentDescription = "Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .height(120.dp)
+                        .fillMaxWidth()
+                )
+
+                InfoPlayground(playgroundLocation, playgroundSport)
+
+                RatingRow(item.quality,"Quality")
+
+                RatingRow(item.facilities,"Facilities")
+
+                DeleteRatingPlaygroundButton(
+                    vm,
+                    ratingPlaygrounds,
+                    idPlayground
+                )
+
+            }
+        }
+
+
+    }
+
+
+}
+
+@Composable
+fun DeleteRatingPlaygroundButton(
+    vm: UserViewModel,
+    ratingPlaygrounds: List<ProfileRating>,
+    idPlayground: Int
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Button(
+            onClick = {
+                val first = ratingPlaygrounds.firstOrNull { it.idPlayground == idPlayground }
+                if (first != null) {
+                    val p = ProfileRating(
+                        first.id,
+                        first.quality,
+                        first.facilities,
+                        first.idPlayground,
+                        first.idProfile
+                    )
+
+                    vm.deleteProfileRating(p)
+                }
+
+            }) {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Rating Playground",
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+                Text(text = "Delete")
+            }
+        }
+    }
+}
+
+@Composable
+fun InfoPlayground(playgroundLocation: String, playgroundSport: String) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.LocationOn,
+                    contentDescription = "IconLocation",
+                    modifier = Modifier.padding(5.dp)
+                )
+                Text(
+                    text = playgroundLocation,
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+
+        }
+        Column(Modifier.weight(1f)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = getIconSport(playgroundSport),
+                    contentDescription = "IconLocation",
+                    modifier = Modifier.padding(5.dp)
+                )
+                Text(
+                    text = playgroundSport,
+                    modifier = Modifier.padding(10.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun RatingRow(score: Int?,text:String) {
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+
+        Column(
+            Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
-            Button(onClick = {
-                          navController.navigate(BottomBarScreen.AddRating.route)
-            }, Modifier.clip(CircleShape).size(60.dp)) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "addIcon")
-            }
+            Text(text = text, modifier = Modifier.padding(10.dp), fontSize = 18.sp)
         }
-                
+        Column(
+            Modifier
+                .weight(2f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
+
+            StarIcon(score = score)
+        }
     }
-
-
 
 }
 
 @Composable
-fun StarIcon(score:Int?){
+fun StarIcon(score: Int?) {
 
-    var newScore by remember{
-        mutableStateOf(score?:0)
+    var newScore by remember {
+        mutableStateOf(score ?: 0)
     }
 
 
-    LazyRow(){
+    LazyRow() {
         items(5) { index ->
-            if(index<newScore){
-                Icon(imageVector = Icons.Default.Star, contentDescription = "starIcon",
-                    tint= Color(0xFFFFB600))
-            }
-
-            else {
-                Icon(imageVector = Icons.Default.Star, contentDescription = "starIcon",
-                    tint= Color.Gray)
+            if (index < newScore) {
+                Icon(
+                    imageVector = Icons.Default.Star, contentDescription = "starIcon",
+                    tint = Color(0xFFFFB600)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Star, contentDescription = "starIcon",
+                    tint = Color.Gray
+                )
             }
         }
     }
@@ -255,7 +415,7 @@ fun StarIcon(score:Int?){
 }
 
 @Composable
-fun TopAppBarRating(navController:NavHostController) {
+fun TopAppBarRating(navController: NavHostController) {
 
 
     TopAppBar(
@@ -275,7 +435,13 @@ fun TopAppBarRating(navController:NavHostController) {
                 Icon(Icons.Filled.ArrowBack, "backIcon")
             }
         },
-        actions = {},
+        actions = {
+            IconButton(onClick = {
+                navController.navigate(BottomBarScreen.AddRating.route)
+            }) {
+                Icon(Icons.Filled.Add, "backIcon",Modifier.size(25.dp))
+            }
+        },
         elevation = 10.dp
 
     )
@@ -288,3 +454,24 @@ fun TopAppBarRating(navController:NavHostController) {
 //        ProfileRatingScreen()
 //    }
 //}
+
+
+//        Column(
+//            Modifier
+//                .weight(1f)
+//                .fillMaxWidth()
+//                .padding(horizontal = 10.dp),
+//            horizontalAlignment = Alignment.End,
+//            verticalArrangement = Arrangement.Center
+//        ) {
+//            Button(
+//                onClick = {
+//                    navController.navigate(BottomBarScreen.AddRating.route)
+//                },
+//                Modifier
+//                    .clip(CircleShape)
+//                    .size(60.dp)
+//            ) {
+//                Icon(imageVector = Icons.Default.Add, contentDescription = "addIcon")
+//            }
+//        }
