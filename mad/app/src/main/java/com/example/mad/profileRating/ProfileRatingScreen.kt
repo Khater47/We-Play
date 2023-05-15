@@ -209,14 +209,15 @@ fun PlaygroundRating(vm:UserViewModel){
     val playgrounds:List<Playgrounds> by
         vm.playgrounds.observeAsState(emptyList())
 
+    val ratingPlaygrounds by vm.getProfileRatingByIdProfile(2).observeAsState(emptyList())
 
-    var ratingPlaygrounds  by remember { mutableStateOf<List<ProfileRating>>(emptyList()) }
+//    var ratingPlaygrounds  by remember { mutableStateOf<List<ProfileRating>>(emptyList()) }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    vm.getProfileRatingByIdProfile(2).observe(lifecycleOwner){
-            ratingPlaygrounds = it
-    }
+//    val lifecycleOwner = LocalLifecycleOwner.current
+//
+//    vm.getProfileRatingByIdProfile(2).observe(lifecycleOwner) {
+//        ratingPlaygrounds=it.toList()
+//    }
 
     var id by remember {
         mutableStateOf(0)
