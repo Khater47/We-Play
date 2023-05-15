@@ -96,7 +96,7 @@ class UserViewModel @Inject constructor(
     //--------------------------------------------
     //Profile Rating functions
     //--------------------------------------------
-    fun getProfileRatingByIdProfile(idProfile: Int): LiveData<ProfileRating> =
+    fun getProfileRatingByIdProfile(idProfile: Int): LiveData<List<ProfileRating>> =
         repo.getProfileRatingByIdProfile(idProfile)
 
     fun insertProfileRating(profileRating: ProfileRating) {

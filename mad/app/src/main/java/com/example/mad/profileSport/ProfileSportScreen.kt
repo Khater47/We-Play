@@ -56,6 +56,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -64,6 +65,7 @@ import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.ProfileSport
+import com.example.mad.ui.theme.MadTheme
 import com.example.mad.utils.convertAchievement
 import com.example.mad.utils.getColorListFromLevel
 
@@ -763,10 +765,10 @@ fun Achievements(
 }
 
 
-/*@Preview(showBackground = true, name = "User profile Sport")
+/*@Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MadTheme() {
-        DialogEditUserProfileSport(sport = "football", userId = "2", setShowDialogSport = { true })
+    MadTheme {
+        ProfileSportScreen()
     }
 }*/

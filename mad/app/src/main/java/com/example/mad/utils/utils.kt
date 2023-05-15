@@ -38,15 +38,15 @@ import java.io.File
 import java.io.FileOutputStream
 
 fun getIconSport(sportText: String): ImageVector {
-    return when (sportText) {
-        "Soccer" -> Icons.Default.SportsSoccer
-        "Baseball" -> Icons.Default.SportsBaseball
-        "Basketball" -> Icons.Default.SportsBasketball
-        "Cricket" -> Icons.Default.SportsCricket
-        "Football" -> Icons.Default.SportsFootball
-        "Golf" -> Icons.Default.SportsGolf
-        "Gymnastic" -> Icons.Default.SportsGymnastics
-        "Tennis" -> Icons.Default.SportsTennis
+    return when (sportText.lowercase()) {
+        "soccer" -> Icons.Default.SportsSoccer
+        "baseball" -> Icons.Default.SportsBaseball
+        "basketball" -> Icons.Default.SportsBasketball
+        "cricket" -> Icons.Default.SportsCricket
+        "football" -> Icons.Default.SportsFootball
+        "golf" -> Icons.Default.SportsGolf
+        "gymnastic" -> Icons.Default.SportsGymnastics
+        "tennis" -> Icons.Default.SportsTennis
         else -> Icons.Default.SportsVolleyball
 
     }
@@ -234,6 +234,21 @@ fun convertAchievement(achievement: Int): String? {
         else -> {
             "null"
         }
+    }
+}
+
+fun getIconPlayground(sport: String): Int {
+    return when (sport.lowercase()) {
+        "soccer" -> R.drawable.soccer
+        "baseball" -> R.drawable.baseball
+        "basketball" -> R.drawable.basketball
+        "cricket" -> R.drawable.cricket
+        "football" -> R.drawable.football
+        "golf" -> R.drawable.golf
+        "gymnastic" -> R.drawable.gymnastic
+        "tennis" -> R.drawable.tennis
+        else -> R.drawable.volleyball
+
     }
 }
 

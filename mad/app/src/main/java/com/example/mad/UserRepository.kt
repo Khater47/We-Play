@@ -79,8 +79,7 @@ class UserRepository @Inject constructor(
     //Profile Rating functions
     //--------------------------------------------
 
-    fun getProfileRatingByIdProfile(idProfile: Int): LiveData<ProfileRating> =
-        profileRatingDao.getProfileRatingByIdProfile(idProfile)
+    fun getProfileRatingByIdProfile(idProfile:Int):LiveData<List<ProfileRating>> = profileRatingDao.getProfileRatingByIdProfile(idProfile)
 
     suspend fun insertProfileRating(profileRating: ProfileRating) {
         profileRatingDao.insertProfileRating(profileRating)

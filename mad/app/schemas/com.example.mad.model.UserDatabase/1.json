@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c01d809e65bad6311bf54e4c9ef542d9",
+    "identityHash": "aad3000c31e6905a98b8abfd095fc858",
     "entities": [
       {
         "tableName": "reservations",
@@ -194,7 +194,7 @@
       },
       {
         "tableName": "profileRating",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `rating` INTEGER NOT NULL, `comments` TEXT, `idProfile` INTEGER NOT NULL, `idPlayground` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `quality` INTEGER, `facilities` INTEGER, `idProfile` INTEGER NOT NULL, `idPlayground` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -203,15 +203,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "rating",
-            "columnName": "rating",
+            "fieldPath": "quality",
+            "columnName": "quality",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
-            "fieldPath": "comments",
-            "columnName": "comments",
-            "affinity": "TEXT",
+            "fieldPath": "facilities",
+            "columnName": "facilities",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -266,7 +266,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c01d809e65bad6311bf54e4c9ef542d9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aad3000c31e6905a98b8abfd095fc858')"
     ]
   }
 }
