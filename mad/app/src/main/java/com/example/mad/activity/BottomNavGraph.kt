@@ -23,36 +23,37 @@ import com.example.mad.sport.SportScreen
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun BottomNavGraph(navController: NavHostController,vm:UserViewModel) {
+fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
 
     NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
-        composable(route=BottomBarScreen.Reservation.route){
+        composable(route = BottomBarScreen.Reservation.route) {
             ReservationScreen()
         }
-        composable(route=BottomBarScreen.ProfileSport.route){
-            ProfileSportScreen(/*navController,vm*/)
+        composable(route = BottomBarScreen.ProfileSport.route) {
+            ProfileSportScreen(navController, vm)
         }
-        composable(route=BottomBarScreen.ProfileEdit.route,
+        composable(
+            route = BottomBarScreen.ProfileEdit.route,
             arguments = listOf(navArgument("userId") { type = NavType.StringType })
-            ){ backStackEntry ->
-            ProfileEditScreen(vm,navController,backStackEntry.arguments?.getString("userId"))
+        ) { backStackEntry ->
+            ProfileEditScreen(vm, navController, backStackEntry.arguments?.getString("userId"))
         }
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen(navController,vm)
         }
-        composable(route=BottomBarScreen.Profile.route,
+        composable(
+            route = BottomBarScreen.Profile.route,
             arguments = listOf(navArgument("userId") { defaultValue = "2" })
-            ){
-                backStackEntry ->
-            ProfileScreen(navController,vm, backStackEntry.arguments?.getString("userId"))
+        ) { backStackEntry ->
+            ProfileScreen(navController, vm, backStackEntry.arguments?.getString("userId"))
         }
-        composable(route=BottomBarScreen.RentField.route){
+        composable(route = BottomBarScreen.RentField.route) {
             RentFieldScreen()
         }
-        composable(route=BottomBarScreen.Sport.route){
+        composable(route = BottomBarScreen.Sport.route) {
             SportScreen()
         }
 
