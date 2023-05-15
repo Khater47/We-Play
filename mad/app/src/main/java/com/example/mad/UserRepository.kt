@@ -10,7 +10,8 @@ class UserRepository @Inject constructor(
     private val profileDao: ProfileDao,
     private val profileSportDao: ProfileSportDao,
     private val profileRatingDao: ProfileRatingDao,
-    private val timeSlotDao: TimeSlotDao
+    private val timeSlotDao: TimeSlotDao,
+    private val availablePlaygroundDao: AvailablePlaygroundDao
 ) {
 
     //--------------------------------------------
@@ -94,5 +95,27 @@ class UserRepository @Inject constructor(
     //--------------------------------------------
     fun getTimeSlotByTime(time: String): LiveData<TimeSlot> = timeSlotDao.getTimeSlotByTime(time)
 
+    fun timeSlot(): LiveData<List<TimeSlot>> = timeSlotDao.getAll()
+
+
+    //--------------------------------------------
+    //Available Playground
+    //--------------------------------------------
+    fun getAvailablePlaygroundOrdered():LiveData<List<AvailablePlayground>> = availablePlaygroundDao.getAvailablePlaygroundOrdered()
+
+    fun getAvailablePlaygroundByDate(date:String):LiveData<List<AvailablePlayground>> = availablePlaygroundDao.getAvailablePlaygroundByDate(date)
+
+
+    fun getAvailablePlaygroundByTime(time:String):LiveData<List<AvailablePlayground>> = availablePlaygroundDao.getAvailablePlaygroundByTime(time)
+
+    fun getAvailablePlaygroundsByAllFilter(time:String,date:String):LiveData<List<AvailablePlayground>> = availablePlaygroundDao.getAvailablePlaygroundsByAllFilter(time,date)
+
+    suspend fun insertAvailablePlayground(availablePlayground: AvailablePlayground) {
+        availablePlaygroundDao.insertAvailablePlayground(availablePlayground)
+    }
+
+    suspend fun deleteAvailablePlayground(availablePlayground: AvailablePlayground) {
+        availablePlaygroundDao.deleteAvailablePlayground(availablePlayground)
+    }
 
 }

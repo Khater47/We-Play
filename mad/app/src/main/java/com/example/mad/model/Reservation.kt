@@ -11,7 +11,7 @@ data class Reservation(
     val date: String,
     val equipment:Int,
     val idPlayground: Int,
-    val idStartTimeSlot: Int,
-    val idEndTimeSlot: Int,
+    val startTime: String,
+    val endTime: String,
     val idProfile:Int,
 )

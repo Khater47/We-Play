@@ -25,7 +25,7 @@ import com.example.mad.rentField.RentFieldScreen
 @Composable
 fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
 
-    NavHost(navController = navController, startDestination = BottomBarScreen.RentField.route) {
+    NavHost(navController = navController, startDestination = BottomBarScreen.Home.route) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
@@ -51,7 +51,7 @@ fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
             ProfileScreen(navController, vm, backStackEntry.arguments?.getString("userId"))
         }
         composable(route = BottomBarScreen.RentField.route) {
-            RentFieldScreen()
+            RentFieldScreen(navController,vm)
         }
         composable(route = BottomBarScreen.AddRating.route) {
             AddRatingScreen(navController,vm)

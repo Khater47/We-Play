@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "aad3000c31e6905a98b8abfd095fc858",
+    "identityHash": "29f5a9fefb17af2c4b555253755115fe",
     "entities": [
       {
         "tableName": "reservations",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` TEXT NOT NULL, `equipment` INTEGER NOT NULL, `idPlayground` INTEGER NOT NULL, `idStartTimeSlot` INTEGER NOT NULL, `idEndTimeSlot` INTEGER NOT NULL, `idProfile` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `date` TEXT NOT NULL, `equipment` INTEGER NOT NULL, `idPlayground` INTEGER NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `idProfile` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,15 +33,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "idStartTimeSlot",
-            "columnName": "idStartTimeSlot",
-            "affinity": "INTEGER",
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "idEndTimeSlot",
-            "columnName": "idEndTimeSlot",
-            "affinity": "INTEGER",
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -261,12 +261,68 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "available_playgrounds",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `sport` TEXT NOT NULL, `playground` TEXT NOT NULL, `date` TEXT NOT NULL, `startTime` TEXT NOT NULL, `endTime` TEXT NOT NULL, `location` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sport",
+            "columnName": "sport",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "playground",
+            "columnName": "playground",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "startTime",
+            "columnName": "startTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "endTime",
+            "columnName": "endTime",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'aad3000c31e6905a98b8abfd095fc858')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '29f5a9fefb17af2c4b555253755115fe')"
     ]
   }
 }

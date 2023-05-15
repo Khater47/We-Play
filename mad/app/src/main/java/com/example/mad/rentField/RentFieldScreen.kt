@@ -2,9 +2,10 @@ package com.example.mad.rentField
 
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.res.Configuration
 import android.icu.util.Calendar
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +20,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -36,24 +36,26 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.Playgrounds
-import com.example.mad.profileRating.TopAppBarRating
-import com.example.mad.ui.theme.MadTheme
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material.Switch
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
-import androidx.compose.material.icons.filled.LockClock
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
+import com.example.mad.activity.BottomBarScreen
+import com.example.mad.model.AvailablePlayground
 import com.example.mad.model.Reservation
 import com.example.mad.model.TimeSlot
 import com.example.mad.utils.getIconPlayground
@@ -61,25 +63,7 @@ import com.example.mad.utils.getIconSport
 import java.util.Locale
 
 
-@Composable
-fun RentFieldScreen() {
-
-
-    Scaffold(
-        topBar = { TopAppBarRentField() }
-    ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            Container()
-        }
-    }
-
-
-}
-
+//adjust start-end time row above the available playground card
 fun formatSetTime(
     startTime: String,
     endTime: String,
@@ -103,6 +87,8 @@ fun formatSetTime(
 
 }
 
+
+//fix the date format
 fun formatDate(day: Int, month: Int, year: Int): String {
 
 
@@ -112,141 +98,225 @@ fun formatDate(day: Int, month: Int, year: Int): String {
     return "$d/$m/$year"
 }
 
+
 @Composable
-fun Container() {
+fun RentFieldScreen(navController: NavHostController, vm: UserViewModel) {
 
-    val calendar = Calendar.getInstance(Locale.ITALY)
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    val today = formatDate(day, month, year)
+//    val calendar = Calendar.getInstance(Locale.ITALY)
+//    val year = calendar.get(Calendar.YEAR)
+//    val month = calendar.get(Calendar.MONTH)
+//    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+//    val today = formatDate(day, month, year)
+
+    val today = "21/04/2023"
 
     val (openDateDialog, setOpenDateDialog) = remember { mutableStateOf(false) }
+    val (openTimeDialog, setOpenTimeDialog) = remember { mutableStateOf(false) }
+
     val (date, setDate) = remember { mutableStateOf(today) }
+    val (time, setTime) = remember { mutableStateOf("") }
 
-    val clearButton = remember {
-        mutableStateOf(false)
+
+    var playgrounds: List<AvailablePlayground> = emptyList()
+
+    if (date.isEmpty() && time.isEmpty()) {
+        Log.d("TAG", "null")
+        playgrounds = vm.getAvailablePlaygroundOrdered().observeAsState().value ?: emptyList()
+        Log.d("TAG", playgrounds.size.toString())
+
+    } else if (date.isNotEmpty() && time.isEmpty()) {
+        Log.d("TAG", "date")
+        playgrounds = vm.getAvailablePlaygroundByDate(date).observeAsState().value ?: emptyList()
+        Log.d("TAG", playgrounds.size.toString())
+
+    } else if (date.isEmpty() && time.isNotEmpty()) {
+        Log.d("TAG", "time")
+        playgrounds = vm.getAvailablePlaygroundByTime(time).observeAsState().value ?: emptyList()
+        Log.d("TAG", playgrounds.size.toString())
+
+    } else {
+        Log.d("TAG", "all")
+        playgrounds =
+            vm.getAvailablePlaygroundsByAllFilter(time, date).observeAsState().value ?: emptyList()
+        Log.d("TAG", playgrounds.size.toString())
+
     }
 
-    val list = listOf(
-        Playgrounds(1, "soccer", "Campo Admond", "Torino"),
-        Playgrounds(1, "basketball", "Campo Groot", "Roma")
-    )
 
-
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(10.dp)
+    Scaffold(
+        topBar = { TopAppBarRentField(navController) }
     ) {
-
-        Row(
+        Box(
             Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .fillMaxSize()
+                .padding(it)
         ) {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Button(onClick = {
-                    //DateDialog
-                    setOpenDateDialog(true)
+            RentFieldScreenPage(
+                openDateDialog,
+                setOpenDateDialog,
+                openTimeDialog,
+                setOpenTimeDialog,
+                setDate,
+                playgrounds,
+                setTime,
+                vm
+            )
 
-                }) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "dateDialog"
-                        )
-                        Text("Date", Modifier.padding(horizontal = 5.dp), fontSize = 20.sp)
-
-                    }
-                }
-            }
-            Column(
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .padding(5.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-
-                Button(
-                    onClick = {
-                        //Clear Button
-                        clearButton.value = true
-                        setDate("")
-                        setOpenDateDialog(false)
-                    },
-
-                    ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-
-                        ) {
-                        Icon(imageVector = Icons.Default.Clear, contentDescription = "dateDialog")
-                        Text("Clear", Modifier.padding(horizontal = 5.dp), fontSize = 20.sp)
-
-                    }
-                }
-            }
         }
-
-        LazyColumn() {
-            items(list) { item ->
-                CardAvailablePlayground(date, item,clearButton.value)
-
-            }
-        }
-
-
     }
 
+
+}
+
+@Composable
+fun RentFieldScreenPage(
+    openDateDialog: Boolean,
+    setOpenDateDialog: (Boolean) -> Unit,
+    openTimeDialog: Boolean,
+    setOpenTimeDialog: (Boolean) -> Unit,
+    setDate: (String) -> Unit,
+    availablePlaygrounds: List<AvailablePlayground>,
+    setTime: (String) -> Unit,
+    vm: UserViewModel
+) {
+
+    val orientation = LocalConfiguration.current.orientation
+
+
+    Column(Modifier.padding(horizontal = 10.dp)) {
+
+        ButtonGroup(
+            setOpenTimeDialog,
+            setOpenDateDialog,
+            setTime,
+            setDate,
+
+        )
+        LazyColumn {
+            items(availablePlaygrounds) { item ->
+                when (orientation) {
+                    Configuration.ORIENTATION_PORTRAIT -> {
+                        CardAvailablePlayground(item, vm)
+                    }
+
+                    else -> {
+                        CardAvailablePlaygroundLandscape(item, vm)
+                    }
+                }
+
+            }
+        }
+    }
     if (openDateDialog) {
         OpenDateDialog(setDate, setOpenDateDialog)
     }
+    if (openTimeDialog) {
+        OpenTimeDialog(setOpenTimeDialog, setTime)
+    }
+
+}
+
+
+@Composable
+fun ButtonGroup(
+    setOpenTimeDialog: (Boolean) -> Unit,
+    setOpenDateDialog: (Boolean) -> Unit,
+    setTime: (String) -> Unit,
+    setDate: (String) -> Unit,
+) {
+
+    val orientation = LocalConfiguration.current.orientation
+
+    var verticalAlignment: Alignment.Vertical
+    var horizontalAlignment: Arrangement.Horizontal
+    var modifier: Modifier
+
+    if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+        verticalAlignment = Alignment.CenterVertically
+        horizontalAlignment = Arrangement.SpaceEvenly
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    } else {
+        verticalAlignment = Alignment.Top
+        horizontalAlignment = Arrangement.SpaceBetween
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+    }
+
+
+    Row(
+        modifier = modifier,
+        verticalAlignment = verticalAlignment,
+        horizontalArrangement = horizontalAlignment
+    ) {
+
+        Button(onClick = {
+            //DateDialog
+            setOpenDateDialog(true)
+
+        }
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = "dateDialog"
+                )
+                Text("Date", Modifier.padding(horizontal = 5.dp), fontSize = 20.sp)
+
+            }
+        }
+
+
+        Button(onClick = {
+            //TimeDialog
+            setOpenTimeDialog(true)
+
+        }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    imageVector = Icons.Default.AccessTime,
+                    contentDescription = "timeDialog"
+                )
+                Text("Time", Modifier.padding(horizontal = 5.dp), fontSize = 20.sp)
+
+            }
+        }
+
+
+        Button(
+            onClick = {
+                //Clear Button
+                setDate("")
+                setTime("")
+            }
+
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(imageVector = Icons.Default.Clear, contentDescription = "dateDialog")
+                Text("Clear", Modifier.padding(horizontal = 5.dp), fontSize = 20.sp)
+
+            }
+        }
+
+    }
+
 }
 
 @Composable
 fun CardAvailablePlayground(
-    date: String,
-    item:Playgrounds,
-    clearButton:Boolean
+    availablePlaygrounds: AvailablePlayground,
+    vm: UserViewModel,
 ) {
 
-    val (startTime, setStartTime) = remember { mutableStateOf("") }
-    val (endTime, setEndTime) = remember { mutableStateOf("") }
-
-
-    val timeSlotFake = listOf(
-        TimeSlot(1, "09:00"),
-        TimeSlot(1, "09:30"),
-        TimeSlot(1, "10:00"),
-        TimeSlot(1, "10:30"),
-        TimeSlot(1, "11:00"),
-        TimeSlot(1, "11:30"),
-        TimeSlot(1, "12:00"),
-    )
-
-    if(clearButton){
-        setStartTime("")
-        setEndTime("")
+    var checkedState = remember {
+        mutableStateOf(false)
     }
-
-    DateTimeRow(
-        date = date,
-        time = formatSetTime(startTime, endTime, setStartTime, setEndTime)
-    )
 
     Card(
         modifier = Modifier
@@ -256,10 +326,14 @@ fun CardAvailablePlayground(
         shape = RoundedCornerShape(16.dp),
     ) {
         Column {
-            Text(text = item.playground, modifier = Modifier.padding(10.dp), fontSize = 20.sp)
+            Text(
+                text = availablePlaygrounds.playground,
+                modifier = Modifier.padding(10.dp),
+                fontSize = 20.sp
+            )
 
             Image(
-                painter = painterResource(id = getIconPlayground(item.sport)),
+                painter = painterResource(id = getIconPlayground(availablePlaygrounds.sport)),
                 contentDescription = "Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -277,7 +351,7 @@ fun CardAvailablePlayground(
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
-                            text = item.location,
+                            text = availablePlaygrounds.location,
                             modifier = Modifier.padding(10.dp)
                         )
                     }
@@ -286,37 +360,87 @@ fun CardAvailablePlayground(
                 Column(Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = getIconSport(item.sport),
+                            imageVector = getIconSport(availablePlaygrounds.sport),
                             contentDescription = "IconLocation",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
-                            text = item.sport,
+                            text = availablePlaygrounds.sport,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+                }
+            }
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.date,
+                            modifier = Modifier.padding(10.dp)
+                        )
+                    }
+
+                }
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.startTime + "-" + availablePlaygrounds.endTime,
                             modifier = Modifier.padding(10.dp)
                         )
                     }
                 }
             }
 
-            Column(
+
+
+            Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(10.dp), verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(10.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(onClick = {
-//                            val r = Reservation(
-//                                0,
-//                                date,
-//                                equipment = 1,
-//                                idPlayground = 1,
-//                                idStartTimeSlot = 1,
-//                                idEndTimeSlot = 2,
-//                                2
-//                            )
-//                            vm.insertReservation(r)
+                    val r = Reservation(
+                        0,
+                        availablePlaygrounds.date,
+                        equipment = if(checkedState.value) 1 else 0,
+                        availablePlaygrounds.id,
+                        availablePlaygrounds.startTime,
+                        availablePlaygrounds.endTime,
+                        2,
+                    )
+                    vm.insertReservation(r)
+                    vm.deleteAvailablePlayground(availablePlaygrounds)
+
                 }) {
                     Text("Book Field", fontSize = 20.sp)
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    Switch(
+                        checked = checkedState.value,
+                        onCheckedChange = {
+                            checkedState.value = it
+                        }
+                    )
+                    Text(
+                        "Equipment",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
                 }
             }
 
@@ -325,73 +449,157 @@ fun CardAvailablePlayground(
 
     }
 
-
-    TimeSlotRow(timeSlotFake, startTime, endTime, setStartTime, setEndTime)
 
 }
 
 @Composable
-fun DateTimeRow(date: String, time: String) {
+fun CardAvailablePlaygroundLandscape(
+    availablePlaygrounds: AvailablePlayground,
+    vm: UserViewModel,
 
-
-    if (date != "" || time != "") {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 10.dp), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-
-            if (date != "") {
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "calendarDate",
-                            Modifier.padding(horizontal = 5.dp)
-                        )
-                        Text(text = date, fontSize = 18.sp)
-                    }
-                }
-            }
-
-            if (time != "") {
-                Column(
-                    Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                        .padding(horizontal = 10.dp)
-                        .clip(RoundedCornerShape(16.dp)),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-
-                    Row {
-                        Icon(
-                            imageVector = Icons.Default.AccessTime,
-                            contentDescription = "calendarDate",
-                            Modifier.padding(horizontal = 5.dp)
-                        )
-                        Text(text = time, fontSize = 18.sp)
-                    }
-                }
-            }
-
-
-        }
+) {
+    var checkedState = remember {
+        mutableStateOf(false)
     }
 
-}
+    Row(Modifier.fillMaxWidth()) {
+        Column(Modifier.weight(1f)) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                elevation = 16.dp,
+                shape = RoundedCornerShape(16.dp),
+            ) {
+                Column {
+                    Text(
+                        text = availablePlaygrounds.playground,
+                        modifier = Modifier.padding(10.dp),
+                        fontSize = 20.sp
+                    )
 
+                    Image(
+                        painter = painterResource(id = getIconPlayground(availablePlaygrounds.sport)),
+                        contentDescription = "Image",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .height(120.dp)
+                            .fillMaxWidth()
+                    )
+
+                }
+
+            }
+        }
+
+        Column(Modifier.weight(1f)) {
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.LocationOn,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.location,
+                            modifier = Modifier.padding(10.dp),
+                            fontSize = 20.sp
+                        )
+                    }
+
+                }
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = getIconSport(availablePlaygrounds.sport),
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.sport,
+                            modifier = Modifier.padding(10.dp),
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.CalendarMonth,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.date,
+                            modifier = Modifier.padding(10.dp),
+                            fontSize = 20.sp
+                        )
+                    }
+
+                }
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = "IconLocation",
+                            modifier = Modifier.padding(5.dp)
+                        )
+                        Text(
+                            text = availablePlaygrounds.startTime + "-" + availablePlaygrounds.endTime,
+                            modifier = Modifier.padding(10.dp),
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = {
+                    val r = Reservation(
+                        0,
+                        availablePlaygrounds.date,
+                        equipment = if(checkedState.value) 1 else 0,
+                        availablePlaygrounds.id,
+                        availablePlaygrounds.startTime,
+                        availablePlaygrounds.endTime,
+                        2,
+                    )
+                    vm.insertReservation(r)
+                    vm.deleteAvailablePlayground(availablePlaygrounds)
+                }) {
+                    Text("Book Field", fontSize = 20.sp)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    Switch(
+                        checked = checkedState.value,
+                        onCheckedChange = {
+                            checkedState.value = it
+                        }
+                    )
+                    Text(
+                        "Equipment",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun OpenDateDialog(setDate: (String) -> Unit, setOpenDateDialog: (Boolean) -> Unit) {
@@ -405,30 +613,14 @@ fun OpenDateDialog(setDate: (String) -> Unit, setOpenDateDialog: (Boolean) -> Un
     val context = LocalContext.current
 
     val datePickerDialog =
-        DatePickerDialog(context, DatePickerDialog.OnDateSetListener { _, year, month, day ->
+        DatePickerDialog(context, { _, year, month, day ->
 
             val monthOfYear = if (month < 9) "0${month + 1}" else month.toString()
             val dayOfMonth = if (day < 10) "0${day}" else day.toString()
 
-
-            setDate("$dayOfMonth/$monthOfYear/$year")
+            val d = "$dayOfMonth/$monthOfYear/$year"
+            setDate(d)
             setOpenDateDialog(false)
-
-//            date = "$dayOfMonth/$monthOfYear/$year"
-//
-//            if(sport.isNotEmpty() && date.isNotEmpty() && time.isEmpty()){
-//                vm.getAvailablePlaygroundsByDateAndSportAndPlayground(sport,date,playground).observe(this, Observer {
-//                    adapter.setAvailablePlayground(it)
-//                })
-//            }
-//
-//            else if(sport.isNotEmpty() && time.isNotEmpty() && date.isNotEmpty()){
-//                vm.getAvailablePlaygroundsByAllFilter(sport,time,date,playground).observe(this, Observer {
-//                    adapter.setAvailablePlayground(it)
-//                })
-//            }
-
-
         }, y, m, d)
 
     datePickerDialog.show()
@@ -437,92 +629,36 @@ fun OpenDateDialog(setDate: (String) -> Unit, setOpenDateDialog: (Boolean) -> Un
 }
 
 @Composable
-fun TimeSlotRow(
-    timeSlot: List<TimeSlot>,
-    startTime: String,
-    endTime: String,
-    setStartTime: (String) -> Unit,
-    setEndTime: (String) -> Unit
-) {
+fun OpenTimeDialog(setOpenTimeDialog: (Boolean) -> Unit, setTime: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+
+    val context = LocalContext.current
+
+    val h = calendar.get(Calendar.HOUR)
+    val m = calendar.get(Calendar.MINUTE)
+    val is24HourView = true
 
 
-    fun handleTime(
-        time: String,
-        startTime: String,
-        endTime: String,
-        setStartTime: (String) -> Unit,
-        setEndTime: (String) -> Unit
-    ) {
+    val timePickerDialog = TimePickerDialog(context, { _, hour, minute ->
 
-        if (startTime.isEmpty() && endTime.isEmpty()) {
-            //set start time
-            setStartTime(time)
-        } else if (startTime.isNotEmpty() && endTime.isEmpty()) {
+        val hourFormatted = if (hour < 10) "0$hour" else hour.toString()
+        val minuteFormatted = if (minute < 10) "0$minute" else minute.toString()
 
-            //set end time
-            if (time != startTime)
-                setEndTime(time)
-            //unset start time
-            else
-                setStartTime("")
-
-        } else if (startTime.isEmpty() && endTime.isNotEmpty()) {
-
-            //set start time
-            if (time != endTime)
-                setStartTime(time)
-            //unset end time
-            else
-                setEndTime("")
-
-        } else if (startTime.isNotEmpty() && endTime.isNotEmpty()) {
-            //unset start time
-            if (time == startTime) {
-                setStartTime("")
-            }
-            //unset end time
-            else if (time == endTime) {
-                setEndTime("")
-            }
-            // newTime>startTime => setEndTime(newTime)
-            else if (time > startTime) {
-                setEndTime(time)
-            }
-            // newTime<startTime => setStartTime(newTime)
-            else if (time < startTime) {
-                setStartTime(time)
-            }
+        val time = "$hourFormatted:$minuteFormatted"
+        setTime(time)
+        setOpenTimeDialog(false)
 
 
-        }
+    }, h, m, is24HourView)
 
+    timePickerDialog.show()
 
-    }
-
-    LazyRow {
-        items(timeSlot, itemContent = { item ->
-
-            Card(
-                elevation = 10.dp, modifier = Modifier
-                    .padding(16.dp)
-                    .clickable {
-                        handleTime(item.time, startTime, endTime, setStartTime, setEndTime)
-                    },
-                backgroundColor = if (startTime == item.time || endTime == item.time)
-                    Color(0xFF5891F7)
-                else Color.White
-            ) {
-                Column(Modifier.padding(10.dp)) {
-                    Text(item.time, fontSize = 18.sp)
-                }
-            }
-        })
-    }
 }
+
 
 @Composable
 fun TopAppBarRentField(
-//    navController:NavHostController
+    navController: NavHostController
 ) {
 
 
@@ -538,7 +674,7 @@ fun TopAppBarRentField(
         },
         navigationIcon = {
             IconButton(onClick = {
-//                navController.navigate(BottomBarScreen.Home.route)
+                navController.navigate(BottomBarScreen.Home.route)
             }) {
                 Icon(Icons.Filled.ArrowBack, "backIcon")
             }
@@ -549,10 +685,11 @@ fun TopAppBarRentField(
     )
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        RentFieldScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        RentFieldScreen()
+//    }
+//}
+

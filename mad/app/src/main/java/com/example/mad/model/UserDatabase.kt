@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 @Database(
     entities = [Reservation::class, Playgrounds::class,
         Profile::class, ProfileSport::class, ProfileRating::class,
-        TimeSlot::class
+        TimeSlot::class,AvailablePlayground::class
     ], version = 1, exportSchema = true
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -18,6 +18,8 @@ abstract class UserDatabase : RoomDatabase() {
     abstract fun profileSportDao(): ProfileSportDao
     abstract fun profileRatingDao(): ProfileRatingDao
     abstract fun timeSlotDao(): TimeSlotDao
+
+    abstract fun availablePlaygroundDao(): AvailablePlaygroundDao
 
     companion object {
         @Volatile

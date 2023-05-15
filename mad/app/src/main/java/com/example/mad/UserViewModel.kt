@@ -3,6 +3,7 @@ package com.example.mad
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mad.model.AvailablePlayground
 import com.example.mad.model.Playgrounds
 import com.example.mad.model.Profile
 import com.example.mad.model.ProfileRating
@@ -117,5 +118,32 @@ class UserViewModel @Inject constructor(
     //--------------------------------------------
 
     fun getTimeSlotByTime(time: String): LiveData<TimeSlot> = repo.getTimeSlotByTime(time)
+
+    fun timeSlot(): LiveData<List<TimeSlot>> = repo.timeSlot()
+
+    //--------------------------------------------
+    //Available Playground Dao
+    //--------------------------------------------
+
+    fun getAvailablePlaygroundOrdered():LiveData<List<AvailablePlayground>> = repo.getAvailablePlaygroundOrdered()
+
+    fun getAvailablePlaygroundByDate(date:String):LiveData<List<AvailablePlayground>> = repo.getAvailablePlaygroundByDate(date)
+
+    fun getAvailablePlaygroundByTime(time:String):LiveData<List<AvailablePlayground>> = repo.getAvailablePlaygroundByTime(time)
+
+    fun getAvailablePlaygroundsByAllFilter(time:String,date:String):LiveData<List<AvailablePlayground>> = repo.getAvailablePlaygroundsByAllFilter(time,date)
+
+
+    fun insertAvailablePlayground(availablePlayground: AvailablePlayground) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.insertAvailablePlayground(availablePlayground)
+        }
+    }
+
+    fun deleteAvailablePlayground(availablePlayground: AvailablePlayground) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.deleteAvailablePlayground(availablePlayground)
+        }
+    }
 
 }

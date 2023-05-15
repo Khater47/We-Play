@@ -1,6 +1,7 @@
 package com.example.mad
 
 import android.content.Context
+import com.example.mad.model.AvailablePlaygroundDao
 import com.example.mad.model.PlaygroundsDao
 import com.example.mad.model.ProfileDao
 import com.example.mad.model.ProfileRatingDao
@@ -51,6 +52,12 @@ class AppModule {
     @Provides
     fun providesTimeSlot(@ApplicationContext context: Context): TimeSlotDao {
         return UserDatabase.getDatabase(context).timeSlotDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideAvailablePlaygroundDao(@ApplicationContext context: Context): AvailablePlaygroundDao {
+        return UserDatabase.getDatabase(context).availablePlaygroundDao()
     }
 
 }
