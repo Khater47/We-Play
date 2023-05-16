@@ -5,16 +5,12 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -86,7 +82,6 @@ import com.example.mad.utils.invalidField
 import com.example.mad.utils.openCamera
 import com.example.mad.utils.openGallery
 import com.example.mad.utils.rotateBitmap
-import com.example.mad.utils.saveImageBitmapOnInternalStorage
 import com.example.mad.utils.saveImageUriOnInternalStorage
 import com.example.mad.utils.uriToBitmap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -495,7 +490,7 @@ fun EditImageProfile() {
 
                             if (galleryGranted) {
                                 showMenu = false
-                                openGallery(context,imagePicker)
+                                openGallery(imagePicker)
                             } else {
                                 Toast.makeText(
                                     context, "Go to app settings for activate " +

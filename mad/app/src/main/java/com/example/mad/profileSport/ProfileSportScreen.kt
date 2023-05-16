@@ -1,7 +1,5 @@
 package com.example.mad.profileSport
 
-//import androidx.compose.ui.tooling.preview.Preview
-//import com.example.mad.ui.theme.MadTheme
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,18 +35,19 @@ import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -56,7 +56,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -65,83 +64,11 @@ import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.ProfileSport
-import com.example.mad.ui.theme.MadTheme
+import com.example.mad.ui.theme.bronze
+import com.example.mad.ui.theme.gold
 import com.example.mad.utils.convertAchievement
-import com.example.mad.utils.getColorListFromLevel
+import com.example.mad.utils.getColorFromAchievement
 
-
-@Composable
-fun ProfileSportScreen(
-    navController: NavHostController,
-    vm: UserViewModel
-) {
-
-    val userId = "2"
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-
-    val (showDialogAddSport, setShowDialogAddSport) = remember {
-        mutableStateOf(false)
-    }
-
-    val sports = remember {
-        mutableStateListOf<String>()
-    }
-
-
-    val profileSportList = remember { mutableStateListOf<ProfileSport>() }
-
-
-    // Get the list of available sports from db
-    vm.sports.observe(lifecycleOwner) { sportsList ->
-        sportsList.forEach {
-            sports.add(it)
-        }
-    }
-
-    // Get the user Profile Sports from the db
-    //Note: fix this method later because it runs more tha  once
-    vm.getProfileSportByIdProfile(userId.toInt()).observe(lifecycleOwner) { profileSports ->
-        profileSports.forEach {
-            if (profileSportList.find { profileSport -> profileSport.id == it.id } == null) {
-                profileSportList.add(it)
-            }
-        }
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBarSport(
-                navController
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    setShowDialogAddSport(true)
-                },
-                containerColor = Color(0xFF6750A4)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    tint = Color(0xFFFFFFFF)
-                )
-            }
-        }
-    ) {
-        Box(
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-
-            Achievements(vm, profileSportList, showDialogAddSport, setShowDialogAddSport, sports)
-        }
-    }
-
-
-}
 
 @Composable
 fun TopAppBarSport(
@@ -227,18 +154,18 @@ fun SelectSportDropDownMenu(
 
 @Composable
 fun DialogAddUserProfileSport(
-    vm: UserViewModel,
     userId: String,
     setShowDialogAddSport: (Boolean) -> Unit,
     sportsList: List<String>,
-    profileSportList: MutableList<ProfileSport>
+    profileSportList: MutableList<ProfileSport>,
+    vm: UserViewModel,
 ) {
-
-    val selectedAchievement = remember { mutableStateListOf(false, false, false) }
-
     val context = LocalContext.current
 
-    var selectedLevel by remember {
+    val (selectedLevel, setSelectedLevel) = remember {
+        mutableStateOf(0)
+    }
+    val (selectedAchievement, setSelectedAchievement) = remember {
         mutableStateOf(0)
     }
 
@@ -246,137 +173,62 @@ fun DialogAddUserProfileSport(
         mutableStateOf("")
     }
 
+
     Dialog(onDismissRequest = { setShowDialogAddSport(false) }) {
         Card(
             shape = RoundedCornerShape(20.dp),
             border = BorderStroke(1.dp, Color.LightGray),
             colors = CardDefaults.cardColors()
         ) {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
                 SelectSportDropDownMenu(sportsList, selectedSport, setSelectedSport)
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(onClick = { selectedLevel = 1 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 1) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
+            }
 
-                    IconButton(onClick = { selectedLevel = 2 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 2) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 3 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 3) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 4 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 4) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 5 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 5) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
+            DialogLevelAndAchievementButton(selectedLevel, setSelectedLevel, setSelectedAchievement)
 
 
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
 
-                    IconButton(onClick = {
-                        selectedAchievement[0] = true
-                        selectedAchievement[1] = false
-                        selectedAchievement[2] = false
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[0]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        selectedAchievement[0] = false
-                        selectedAchievement[1] = true
-                        selectedAchievement[2] = false
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[1]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        selectedAchievement[0] = false
-                        selectedAchievement[1] = false
-                        selectedAchievement[2] = true
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[2]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
+                    ButtonCancel(setShowDialogAddSport)
                 }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Button(
                         onClick = {
-                            setShowDialogAddSport(false)
-                        },
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCF142B))
-                    ) {
-                        Text(text = "Cancel", color = Color.White)
-                    }
-                    Button(
-                        onClick = {
-
-                            val achievement = convertAchievement(selectedAchievement.indexOf(true))
+                            val achievement = convertAchievement(selectedAchievement)
                             val level = if (selectedLevel == 0) null else selectedLevel
                             val p =
                                 ProfileSport(0, achievement, selectedSport, level, userId.toInt())
 
+
                             //viewModel add user profile sport
                             if (p.sport != "") {
+
                                 if (profileSportList.find { profileSport -> profileSport.sport == p.sport } == null) {
+
                                     vm.insertProfileSport(p)
                                     setShowDialogAddSport(false)
+
                                 } else {
                                     Toast.makeText(
                                         context,
@@ -393,20 +245,15 @@ fun DialogAddUserProfileSport(
                                 )
                                     .show()
                             }
-
-
                         },
                         shape = CircleShape,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(16.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF32CD32))
 
                     ) {
                         Text(text = "Confirm", color = Color.White)
                     }
-
                 }
+
             }
 
         }
@@ -425,11 +272,14 @@ fun DialogEditUserProfileSport(
     profileSportList: MutableList<ProfileSport>
 ) {
 
-    val selectedAchievement = remember { mutableStateListOf(false, false, false) }
 
-    var selectedLevel by remember {
+    val (selectedLevel, setSelectedLevel) = remember {
         mutableStateOf(0)
     }
+    val (selectedAchievement, setSelectedAchievement) = remember {
+        mutableStateOf(0)
+    }
+
 
     Dialog(onDismissRequest = { setShowDialogSport(false) }) {
         Card(
@@ -437,130 +287,50 @@ fun DialogEditUserProfileSport(
             border = BorderStroke(1.dp, Color.LightGray),
             colors = CardDefaults.cardColors()
         ) {
-            Column {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+
                 Text(
-                    "Edit ${sport.replaceFirstChar { it.uppercase() }} card",
+                    "Edit ${sport.replaceFirstChar { it.uppercase() }} results",
                     fontSize = 24.sp,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 5.dp, vertical = 10.dp),
                     textAlign = TextAlign.Center
                 )
+            }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(onClick = { selectedLevel = 1 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 1) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 2 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 2) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 3 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 3) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 4 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 4) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = { selectedLevel = 5 }) {
-                        Icon(
-                            imageVector = Icons.Default.Star,
-                            contentDescription = null,
-                            tint = if (selectedLevel >= 5) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
+            DialogLevelAndAchievementButton(selectedLevel, setSelectedLevel, setSelectedAchievement)
 
 
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
 
-                    IconButton(onClick = {
-                        selectedAchievement[0] = true
-                        selectedAchievement[1] = false
-                        selectedAchievement[2] = false
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[0]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        selectedAchievement[0] = false
-                        selectedAchievement[1] = true
-                        selectedAchievement[2] = false
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[1]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        selectedAchievement[0] = false
-                        selectedAchievement[1] = false
-                        selectedAchievement[2] = true
-                    }) {
-
-                        Icon(
-                            imageVector = Icons.Default.WorkspacePremium,
-                            contentDescription = null,
-                            tint = if (selectedAchievement[2]) Color(0xFFFFB600) else Color.Gray
-                        )
-                    }
+                    ButtonCancel(setShowDialogSport)
                 }
 
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Button(
                         onClick = {
-                            setShowDialogSport(false)
-                        },
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(16.dp),
-                        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCF142B))
-                    ) {
-                        Text(text = "Cancel", color = Color.White)
-                    }
-                    Button(
-                        onClick = {
-
-                            val achievement = convertAchievement(selectedAchievement.indexOf(true))
+                            val achievement = convertAchievement(selectedAchievement)
                             val level = if (selectedLevel == 0) null else selectedLevel
                             val p = ProfileSport(
                                 profileSportId,
@@ -570,29 +340,23 @@ fun DialogEditUserProfileSport(
                                 userId.toInt()
                             )
 
-                            //viewModel Update user profile sport
+//                            viewModel Update user profile sport
                             vm.updateProfileSport(p)
                             val index =
                                 profileSportList.indexOfFirst { profileSport -> profileSport.id == profileSportId }
                             profileSportList[index] = p
 
-                            setShowDialogSport(false)
 
+                            setShowDialogSport(false)
                         },
                         shape = CircleShape,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(16.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF32CD32))
 
                     ) {
-                        Text(
-                            text = "Confirm",
-                            color = Color.White,
-                        )
+                        Text(text = "Confirm", color = Color.White)
                     }
-
                 }
+
             }
 
         }
@@ -601,17 +365,132 @@ fun DialogEditUserProfileSport(
     }
 }
 
+
+@Composable
+fun DialogLevelAndAchievementButton(
+    selectedLevel: Int,
+    setSelectedLevel: (Int) -> Unit,
+    setSelectedAchievement: (Int) -> Unit
+) {
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()
+    ) {
+        ButtonLevelDialog(selectedLevel, setSelectedLevel)
+
+        ButtonAchievementDialog(setSelectedAchievement)
+    }
+
+}
+
+
+@Composable
+fun ButtonCancel(showDialog: (Boolean) -> Unit) {
+    Button(
+        onClick = {
+            showDialog(false)
+        },
+        shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFCF142B))
+    ) {
+        Text(text = "Cancel", color = Color.White)
+    }
+}
+
+@Composable
+fun ProfileSportScreen(
+    navController: NavHostController,
+    vm: UserViewModel
+) {
+
+    val userId = "2"
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+
+    val (showDialogAddSport, setShowDialogAddSport) = remember {
+        mutableStateOf(false)
+    }
+
+    // Get the list of available sports from db
+    val sportsList = vm.sports.observeAsState().value?: emptyList()
+
+    val profileSportList = remember { mutableStateListOf<ProfileSport>() }
+
+    // Get the user Profile Sports from the db
+    //Note: fix this method later because it runs more tha  once
+    vm.getProfileSportByIdProfile(userId.toInt()).observe(lifecycleOwner) { profileSports ->
+        profileSports.forEach {
+            if (profileSportList.find { profileSport -> profileSport.id == it.id } == null) {
+                profileSportList.add(it)
+            }
+        }
+    }
+
+//    val profileSportList = mutableListOf(
+//        ProfileSport(1, "first", "soccer", 5, 1),
+//        ProfileSport(2, "third", "baseball", 2, 1),
+//    )
+//    val sportsList = listOf("cricket","volleyball")
+
+    if (showDialogAddSport) {
+        DialogAddUserProfileSport(
+            userId = "2",
+            setShowDialogAddSport,
+            sportsList,
+            profileSportList,
+            vm,
+        )
+    }
+
+
+    Scaffold(
+        topBar = {
+            TopAppBarSport(
+                navController
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    setShowDialogAddSport(true)
+                },
+                containerColor = Color(0xFF6750A4),
+                modifier = Modifier.clip(CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+        }
+    ) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+
+            Achievements(
+                vm,
+                profileSportList,
+            )
+        }
+    }
+
+
+}
+
+
 @Composable
 fun Achievements(
     vm: UserViewModel,
     profileSportList: MutableList<ProfileSport>,
-    showDialogAddSport: Boolean,
-    setShowDialogAddSport: (Boolean) -> Unit,
-    sportsList: List<String>
 ) {
 
     val (showDialogSport, setShowDialogSport) = remember { mutableStateOf(false) }
-
+//
     var sportDialog by remember {
         mutableStateOf("")
     }
@@ -632,22 +511,9 @@ fun Achievements(
         )
     }
 
-    if (showDialogAddSport) {
-        DialogAddUserProfileSport(
-            vm,
-            userId = "2",
-            setShowDialogAddSport = setShowDialogAddSport,
-            sportsList,
-            profileSportList
-        )
-    }
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(profileSportList, itemContent = { item ->
-
-            val levelListColor = getColorListFromLevel(item.level ?: 0)
-            val achievement = item.achievement as String
-
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -667,71 +533,7 @@ fun Achievements(
                             .padding(16.dp)
                             .weight(3f)
                     ) {
-                        Text(
-                            text = item.sport.replaceFirstChar { it.uppercase() },
-                            style = MaterialTheme.typography.h5
-                        )
-
-                        Row(
-                            Modifier.padding(vertical = 10.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(text = "Level: ", modifier = Modifier.padding(end = 2.dp))
-
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (levelListColor[0] == 0) Color.Gray else Color(0xFFFFB600)
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (levelListColor[1] == 0) Color.Gray else Color(0xFFFFB600)
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (levelListColor[2] == 0) Color.Gray else Color(0xFFFFB600)
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (levelListColor[3] == 0) Color.Gray else Color(0xFFFFB600)
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Star,
-                                contentDescription = null,
-                                tint = if (levelListColor[4] == 0) Color.Gray else Color(0xFFFFB600)
-                            )
-
-                        }
-
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (achievement != "null") {
-                                Text(text = "Achievement: ")
-                                if (achievement.contains("first")) {
-                                    Icon(
-                                        imageVector = Icons.Default.EmojiEvents,
-                                        contentDescription = null,
-                                        tint = Color(0xFFFFB600)
-                                    )
-                                } else if (achievement.contains("second")) {
-                                    Icon(
-                                        imageVector = Icons.Default.EmojiEvents,
-                                        contentDescription = null,
-                                        tint = Color.Gray
-                                    )
-                                } else if (achievement.contains("third")) {
-                                    Icon(
-                                        imageVector = Icons.Default.EmojiEvents,
-                                        contentDescription = null,
-                                        tint = Color(0xFFCD7F32)
-                                    )
-                                }
-                            }
-
-                        }
-
+                        InfoSportCard(item)
                     }
                     Column(
                         Modifier
@@ -742,17 +544,7 @@ fun Achievements(
                         verticalArrangement = Arrangement.Center
                     ) {
 
-                        IconButton(onClick = {
-                            vm.deleteProfileSport(item)
-                            profileSportList.remove(item)
-                        }, Modifier.fillMaxSize()) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = null,
-                                tint = Color.Red,
-                            )
-                        }
-
+                        ButtonDeleteCard(vm,profileSportList,item)
                     }
                 }
 
@@ -764,11 +556,165 @@ fun Achievements(
 
 }
 
-
-/*@Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
-    MadTheme {
-        ProfileSportScreen()
+fun ButtonDeleteCard(vm:UserViewModel,profileSportList:MutableList<ProfileSport>,item:ProfileSport) {
+    IconButton(onClick = {
+        vm.deleteProfileSport(item)
+        profileSportList.remove(item)
+    }, Modifier.fillMaxSize()) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = null,
+            tint = Color.Red,
+        )
     }
-}*/
+}
+
+@Composable
+fun InfoSportCard(item: ProfileSport) {
+
+    Text(
+        text = item.sport.replaceFirstChar { it.uppercase() },
+        style = MaterialTheme.typography.h5
+    )
+
+    if (item.level != null) {
+        Row(
+            Modifier.padding(vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "Level ", modifier = Modifier.padding(end = 2.dp))
+
+            LevelRow(item.level)
+
+        }
+    }
+
+    if (item.achievement != "null" && item.achievement != null) {
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            Text(text = "Achievement ")
+
+            AchievementIcon(color = getColorFromAchievement(item.achievement))
+
+        }
+    }
+
+
+}
+
+@Composable
+fun LevelRow(level: Int) {
+
+    if (level != 0) {
+        LazyRow {
+            items(5) { index ->
+
+                if (index < level)
+                    LevelIcon(gold)
+                else
+                    LevelIcon(Color.Gray)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun ButtonLevelDialog(selectedLevel: Int, setSelectedLevel: (Int) -> Unit) {
+
+    LazyRow(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        items(5) { index ->
+            IconButton(onClick = {
+                //selectedScore
+                setSelectedLevel(index + 1)
+            }) {
+                if (index < selectedLevel)
+                    LevelIcon(gold)
+                else
+                    LevelIcon(Color.Gray)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun ButtonAchievementDialog(setSelectedAchievement: (Int) -> Unit) {
+
+
+    val selected = remember {
+        mutableStateOf(listOf(false, false, false))
+    }
+
+    fun selectOne(index: Int) {
+
+        val l = mutableListOf(false, false, false)
+        l[index] = true
+
+        selected.value = l.toList()
+
+    }
+
+    fun changeColor(index: Int): Color {
+        return when (index + 1) {
+            1 -> {
+                gold
+            }
+
+            2 -> {
+                Color.DarkGray
+            }
+
+            else -> {
+                bronze
+            }
+        }
+    }
+
+    LazyRow(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        items(3) { index ->
+            IconButton(onClick = {
+                setSelectedAchievement(index + 1)
+                selectOne(index)
+            }) {
+                AchievementIcon(if (!selected.value[index]) Color.Gray else changeColor(index))
+            }
+
+        }
+    }
+}
+
+@Composable
+fun LevelIcon(color: Color) {
+    Icon(
+        imageVector = Icons.Default.Star,
+        contentDescription = null,
+        tint = color
+    )
+}
+
+@Composable
+fun AchievementIcon(color: Color) {
+    Icon(
+        imageVector = Icons.Default.EmojiEvents,
+        contentDescription = null,
+        tint = color
+    )
+}
+
+
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        ProfileSportScreen()
+//    }
+//}

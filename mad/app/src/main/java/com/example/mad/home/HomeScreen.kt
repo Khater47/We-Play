@@ -1,11 +1,6 @@
 package com.example.mad.home
 
 
-/*TODO:
-   Add Animation for click card
-   Insert navigation when click card
-*/
-
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

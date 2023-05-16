@@ -14,10 +14,7 @@ import com.example.mad.UserViewModel
 import com.example.mad.ui.theme.MadTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-/*
-* TODO():
-*   Splash Screen + Animation
-* */
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @AndroidEntryPoint

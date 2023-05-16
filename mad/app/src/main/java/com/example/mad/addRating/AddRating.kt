@@ -1,7 +1,6 @@
 package com.example.mad.addRating
 
 import android.content.res.Configuration
-import android.graphics.Bitmap.Config
 import android.widget.Toast
 import androidx.compose.material.Card
 import androidx.compose.foundation.BorderStroke
@@ -29,7 +28,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -47,10 +45,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mad.ui.theme.MadTheme
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -59,13 +55,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.model.Playgrounds
 import com.example.mad.utils.getIconPlayground
 import com.example.mad.utils.getIconSport
-import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.ui.platform.LocalConfiguration
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.ProfileRating
@@ -135,7 +129,6 @@ fun DialogSetRating(
 
     val playgrounds = vm.playgrounds.observeAsState().value ?: emptyList()
 
-    val context = LocalContext.current
 
     var selected by remember { mutableStateOf<Playgrounds?>(null) }
 

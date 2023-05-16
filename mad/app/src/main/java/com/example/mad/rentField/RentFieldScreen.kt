@@ -5,7 +5,6 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.res.Configuration
 import android.icu.util.Calendar
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,24 +31,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mad.model.Playgrounds
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.Switch
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.navigation.NavHostController
@@ -57,45 +50,15 @@ import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.AvailablePlayground
 import com.example.mad.model.Reservation
-import com.example.mad.model.TimeSlot
 import com.example.mad.utils.getIconPlayground
 import com.example.mad.utils.getIconSport
 import java.util.Locale
 
-
-//adjust start-end time row above the available playground card
-fun formatSetTime(
-    startTime: String,
-    endTime: String,
-    setStartTime: (String) -> Unit,
-    setEndTime: (String) -> Unit
-): String {
-
-    return if (startTime.isNotEmpty() && endTime.isNotEmpty()) {
-
-        if (startTime > endTime) {
-            val tmp = startTime
-            setStartTime(endTime)
-            setEndTime(tmp)
-        }
-        "$startTime-$endTime"
-    } else if (startTime.isNotEmpty() && endTime.isEmpty())
-        startTime
-    else if (startTime.isEmpty() && endTime.isNotEmpty())
-        endTime
-    else ""
-
-}
-
-
-//fix the date format
-fun formatDate(day: Int, month: Int, year: Int): String {
-
-
-    val d = if (day < 10) "0${day}" else "$day"
-    val m = if (month < 9) "0${month + 1}" else "${month + 1}"
-
-    return "$d/$m/$year"
+fun formatDate(day:Int,month:Int,year:Int):String{
+    val d = if(day<9) "09" else day.toString()
+    val m = if(month<9) "0${month+1}" else month.toString()
+    val y = year.toString()
+    return "$d/$m/$y"
 }
 
 
@@ -103,14 +66,12 @@ fun formatDate(day: Int, month: Int, year: Int): String {
 fun RentFieldScreen(navController: NavHostController, vm: UserViewModel) {
 
 
-//    val calendar = Calendar.getInstance(Locale.ITALY)
-//    val year = calendar.get(Calendar.YEAR)
-//    val month = calendar.get(Calendar.MONTH)
-//    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val calendar = Calendar.getInstance(Locale.ITALY)
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-//    val today = formatDate(day, month, year)
-
-    val today = "21/04/2023"
+    val today = formatDate(day, month, year)
 
     val (openDateDialog, setOpenDateDialog) = remember { mutableStateOf(false) }
     val (openTimeDialog, setOpenTimeDialog) = remember { mutableStateOf(false) }
@@ -119,28 +80,17 @@ fun RentFieldScreen(navController: NavHostController, vm: UserViewModel) {
     val (time, setTime) = remember { mutableStateOf("") }
 
 
-    var playgrounds: List<AvailablePlayground> = emptyList()
-
-    if (date.isEmpty() && time.isEmpty()) {
-        Log.d("TAG", "null")
-        playgrounds = vm.getAvailablePlaygroundOrdered().observeAsState().value ?: emptyList()
-        Log.d("TAG", playgrounds.size.toString())
+    val playgrounds = if (date.isEmpty() && time.isEmpty()) {
+        vm.getAvailablePlaygroundOrdered().observeAsState().value ?: emptyList()
 
     } else if (date.isNotEmpty() && time.isEmpty()) {
-        Log.d("TAG", "date")
-        playgrounds = vm.getAvailablePlaygroundByDate(date).observeAsState().value ?: emptyList()
-        Log.d("TAG", playgrounds.size.toString())
+        vm.getAvailablePlaygroundByDate(date).observeAsState().value ?: emptyList()
 
     } else if (date.isEmpty() && time.isNotEmpty()) {
-        Log.d("TAG", "time")
-        playgrounds = vm.getAvailablePlaygroundByTime(time).observeAsState().value ?: emptyList()
-        Log.d("TAG", playgrounds.size.toString())
+        vm.getAvailablePlaygroundByTime(time).observeAsState().value ?: emptyList()
 
     } else {
-        Log.d("TAG", "all")
-        playgrounds =
-            vm.getAvailablePlaygroundsByAllFilter(time, date).observeAsState().value ?: emptyList()
-        Log.d("TAG", playgrounds.size.toString())
+        vm.getAvailablePlaygroundsByAllFilter(time, date).observeAsState().value ?: emptyList()
 
     }
 
@@ -161,7 +111,9 @@ fun RentFieldScreen(navController: NavHostController, vm: UserViewModel) {
                 setDate,
                 playgrounds,
                 setTime,
-                vm
+                vm,
+                date,
+                time
             )
 
         }
@@ -179,7 +131,9 @@ fun RentFieldScreenPage(
     setDate: (String) -> Unit,
     availablePlaygrounds: List<AvailablePlayground>,
     setTime: (String) -> Unit,
-    vm: UserViewModel
+    vm: UserViewModel,
+    date:String,
+    time:String
 ) {
 
     val orientation = LocalConfiguration.current.orientation
@@ -192,8 +146,39 @@ fun RentFieldScreenPage(
             setOpenDateDialog,
             setTime,
             setDate,
-
         )
+
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarMonth,
+                        contentDescription = "Selected Date",
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Text(
+                        text = if(date=="") "dd/mm/yyyy" else  date,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+
+            }
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = "Selected Time",
+                        modifier = Modifier.padding(5.dp)
+                    )
+                    Text(
+                        text = if(time=="") "--:--" else time,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            }
+        }
         LazyColumn {
             items(availablePlaygrounds) { item ->
                 when (orientation) {
@@ -229,9 +214,11 @@ fun ButtonGroup(
 
     val orientation = LocalConfiguration.current.orientation
 
-    var verticalAlignment: Alignment.Vertical
-    var horizontalAlignment: Arrangement.Horizontal
-    var modifier: Modifier
+    var verticalAlignment: Alignment.Vertical = Alignment.Top
+    var horizontalAlignment: Arrangement.Horizontal = Arrangement.SpaceBetween
+    var modifier: Modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 10.dp)
 
     if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         verticalAlignment = Alignment.CenterVertically
@@ -239,14 +226,7 @@ fun ButtonGroup(
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
-    } else {
-        verticalAlignment = Alignment.Top
-        horizontalAlignment = Arrangement.SpaceBetween
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp)
     }
-
 
     Row(
         modifier = modifier,
@@ -292,6 +272,8 @@ fun ButtonGroup(
                 //Clear Button
                 setDate("")
                 setTime("")
+                setOpenDateDialog(false)
+                setOpenDateDialog(false)
             }
 
         ) {
@@ -314,7 +296,7 @@ fun CardAvailablePlayground(
     vm: UserViewModel,
 ) {
 
-    var checkedState = remember {
+    val checkedState = remember {
         mutableStateOf(false)
     }
 
@@ -371,18 +353,20 @@ fun CardAvailablePlayground(
                     }
                 }
             }
+
             Row(modifier = Modifier.fillMaxWidth()) {
 
                 Column(Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "IconLocation",
+                            contentDescription = "IconDate",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
                             text = availablePlaygrounds.date,
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(10.dp),
+
                         )
                     }
 
@@ -391,18 +375,17 @@ fun CardAvailablePlayground(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.AccessTime,
-                            contentDescription = "IconLocation",
+                            contentDescription = "IconTime",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
                             text = availablePlaygrounds.startTime + "-" + availablePlaygrounds.endTime,
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(10.dp),
+
                         )
                     }
                 }
             }
-
-
 
             Row(
                 Modifier
@@ -458,7 +441,7 @@ fun CardAvailablePlaygroundLandscape(
     vm: UserViewModel,
 
 ) {
-    var checkedState = remember {
+    val checkedState = remember {
         mutableStateOf(false)
     }
 
@@ -515,7 +498,7 @@ fun CardAvailablePlaygroundLandscape(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = getIconSport(availablePlaygrounds.sport),
-                            contentDescription = "IconLocation",
+                            contentDescription = "IconSport",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
@@ -533,7 +516,7 @@ fun CardAvailablePlaygroundLandscape(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.CalendarMonth,
-                            contentDescription = "IconLocation",
+                            contentDescription = "IconDate",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
@@ -548,7 +531,7 @@ fun CardAvailablePlaygroundLandscape(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             imageVector = Icons.Default.AccessTime,
-                            contentDescription = "IconLocation",
+                            contentDescription = "IconTime",
                             modifier = Modifier.padding(5.dp)
                         )
                         Text(
@@ -618,8 +601,8 @@ fun OpenDateDialog(setDate: (String) -> Unit, setOpenDateDialog: (Boolean) -> Un
             val monthOfYear = if (month < 9) "0${month + 1}" else month.toString()
             val dayOfMonth = if (day < 10) "0${day}" else day.toString()
 
-            val d = "$dayOfMonth/$monthOfYear/$year"
-            setDate(d)
+            val newDate = "$dayOfMonth/$monthOfYear/$year"
+            setDate(newDate)
             setOpenDateDialog(false)
         }, y, m, d)
 

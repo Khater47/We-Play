@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
 import com.example.mad.utils.getImageFromInternalStorage
@@ -51,7 +50,7 @@ fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String
         "Description" to "worker"
     ) }
 
-    vm.getProfileById(userId?.toInt()?:2).observe(lifecycleOwner, Observer {
+    vm.getProfileById(userId?.toInt()?:2).observe(lifecycleOwner){
             user ->
                 if(user!=null){
                     userObject["userId"] = user.id.toString()
@@ -61,7 +60,7 @@ fun ProfileScreen(navController:NavHostController,vm:UserViewModel,userId:String
                     userObject["PhoneNumber"] = user.phone
                     userObject["Description"] = user.description
                 }
-    })
+    }
 
     Scaffold(
         topBar = { TopAppBarProfile(navController,userId?:"2") }

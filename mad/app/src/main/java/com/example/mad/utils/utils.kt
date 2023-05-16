@@ -33,6 +33,7 @@ import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.Color
 import com.example.mad.R
 import java.io.File
 import java.io.FileOutputStream
@@ -143,32 +144,6 @@ fun saveImageUriOnInternalStorage(imageUri: Uri?, context: Context): Bitmap {
     return bitmap ?: BitmapFactory.decodeResource(context.resources, R.drawable.profile)
 }
 
-@RequiresApi(Build.VERSION_CODES.P)
-fun saveImageBitmapOnInternalStorage(bitmap: Bitmap?, context: Context): Bitmap {
-
-    val directory = context.filesDir
-    val imageFile = File(directory, "profilePicture")
-    val savedBitmap =
-
-        //select picture
-        bitmap
-
-        //set previous image, if user don't select picture
-            ?: if (imageFile.totalSpace > 0) {
-                BitmapFactory.decodeFile(imageFile.absolutePath)
-            }
-            //no image provided, set default image
-            else {
-                BitmapFactory.decodeResource(context.resources, R.drawable.profile)
-            }
-
-    val outputStream = FileOutputStream(imageFile)
-    savedBitmap?.compress(Bitmap.CompressFormat.JPEG, QUALITY, outputStream)
-    outputStream.flush()
-    outputStream.close()
-    return savedBitmap
-
-}
 
 fun getImageFromInternalStorage(context: Context): Bitmap {
 
@@ -219,23 +194,33 @@ fun invalidField(user: Bundle): Boolean {
 
 fun convertAchievement(achievement: Int): String? {
     return when (achievement) {
-        0 -> {
+        1-> {
             "first"
         }
 
-        1 -> {
+        2 -> {
             "second"
         }
 
-        2 -> {
+        3 -> {
             "third"
         }
 
         else -> {
-            "null"
+            null
         }
     }
 }
+
+fun getColorFromAchievement(achievement:String): Color {
+
+    return when(achievement){
+        "first"-> Color(0xFFFFB600)
+        "second"-> Color.Gray
+        else ->  Color(0xFFCD7F32)
+    }
+}
+
 
 fun getIconPlayground(sport: String): Int {
     return when (sport.lowercase()) {
@@ -253,41 +238,6 @@ fun getIconPlayground(sport: String): Int {
 }
 
 
-fun getColorListFromLevel(level: Int): List<Int> {
-
-
-    when (level) {
-        0 -> {
-            return listOf<Int>(0, 0, 0, 0, 0)
-        }
-
-        1 -> {
-            return listOf<Int>(1, 0, 0, 0, 0)
-
-        }
-
-        2 -> {
-            return listOf<Int>(1, 1, 0, 0, 0)
-
-        }
-
-        3 -> {
-            return listOf<Int>(1, 1, 1, 0, 0)
-
-        }
-
-        4 -> {
-            return listOf<Int>(1, 1, 1, 1, 0)
-
-        }
-
-        else -> {
-            return listOf<Int>(1, 1, 1, 1, 1)
-
-        }
-
-    }
-}
 
 //launch intent for camera
 fun openCamera(
@@ -307,7 +257,6 @@ fun openCamera(
 }
 
 fun openGallery(
-    context: Context,
     galleryActivityResultLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>
 ) {
     val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
