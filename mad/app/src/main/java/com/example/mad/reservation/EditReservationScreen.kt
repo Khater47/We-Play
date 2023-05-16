@@ -1,7 +1,7 @@
 package com.example.mad.reservation
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,15 +26,21 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
+import com.example.mad.activity.BottomBarScreen
+import com.example.mad.model.Reservation
 import com.example.mad.model.TimeSlot
 import com.example.mad.utils.getIconSport
 
@@ -46,18 +52,20 @@ fun EditReservationScreen(
 ) {
 
     val configuration = LocalConfiguration.current
-    Log.d("Tag", reservationId?: "")
+
+
+
     Scaffold(
-        topBar = { TopAppBarEditReservation() }
+        topBar = { TopAppBarEditReservation(navController) }
     ) {
         Box(Modifier.padding(it)) {
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitEditReservation()
+                    PortraitEditReservation(vm,reservationId,navController)
                 }
 
                 else -> {
-                    LandscapeEditReservation()
+//                    LandscapeEditReservation()
                 }
             }
         }
@@ -67,51 +75,50 @@ fun EditReservationScreen(
 
 }
 
-@Composable
-fun TopAppBarEditReservation(
-//    navController: NavHostController
-) {
-
-
-    TopAppBar(
-        title = {
-            Text(
-                text = "Edit Reservation",
-                fontSize = 24.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = {
-//                navController.navigate(BottomBarScreen.ProfileRating.route)
-            }) {
-                androidx.compose.material.Icon(Icons.Filled.ArrowBack, "backIcon")
-            }
-        },
-        actions = {}
-
-    )
-}
 
 @Composable
-fun PortraitEditReservation() {
+fun PortraitEditReservation(vm:UserViewModel,reservationId: String?,navController: NavHostController) {
+
+    val timeSlot = vm.timeSlot().observeAsState().value?: emptyList()
+
+    val id = reservationId?.toInt()?:0
+
+    val reservation = vm.getReservationById(id).observeAsState().value
+
+    val (selectedTimeSlot,setSelectedTimeSlot) = remember {
+        mutableStateOf("")
+    }
 
     Column(
         Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        Column(Modifier.weight(2f)){
-            ReservationPlaygroundContainer()
+        if(reservation!=null){
 
+            Column(Modifier.weight(2f)){
+                ReservationPlaygroundContainer(reservation,vm)
+
+            }
+        }
+
+        if(selectedTimeSlot.isNotEmpty()){
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text(text=selectedTimeSlot, fontSize = 20.sp)
+            }
         }
 
         Column(
             Modifier
                 .weight(1f)
                 .fillMaxWidth()){
-            TimeSlotRow()
+            TimeSlotRow(timeSlot,setSelectedTimeSlot)
         }
 
         Column(
@@ -120,68 +127,66 @@ fun PortraitEditReservation() {
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center){
-            ButtonEdit()
+            ButtonEdit(reservation,selectedTimeSlot,vm, navController)
         }
     }
 }
 
-@Composable
-fun LandscapeEditReservation() {
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        Column(Modifier.weight(1f)){
-            ReservationPlaygroundContainer()
-
-        }
-        Column(Modifier.weight(1f)){
-            ButtonEdit()
-        }
-    }
-
-}
 
 
 @Composable
-fun ReservationPlaygroundContainer() {
+fun ReservationPlaygroundContainer(reservation: Reservation,vm: UserViewModel) {
 
-    val playground = "Campo Admond"
-    val sport = "Soccer"
-    val location = "Torino"
-    val date = "16/05/2023"
-    val time = "10:00"
+    val p = vm.getPlaygroundById(reservation.idPlayground).observeAsState().value
 
-
-    androidx.compose.material3.Card(
-        Modifier
-            .fillMaxWidth())
-    {
-        Column(Modifier.fillMaxWidth()) {
-            Text(text=playground,fontSize=22.sp,
-                modifier=Modifier.padding(horizontal=10.dp,vertical=20.dp))
-
-//                    Image(painter = painterResource(id = getIconPlayground(sport)),
-//                        contentDescription = "Image Playground",
-//                        modifier= Modifier
-//                            .height(150.dp)
-//                            .padding(vertical = 10.dp))
+    if(p!=null){
+        val playground = p.playground
+        val sport = p.sport
+        val location = p.location
+        val date = reservation.date
+        val time = reservation.startTime+"-"+reservation.endTime
 
 
-            ReservationInfo(sport,location, date, time)
+        androidx.compose.material3.Card(
+            Modifier
+                .fillMaxWidth())
+        {
+            Column(Modifier.fillMaxWidth()) {
+                Text(text=playground,fontSize=22.sp,
+                    modifier=Modifier.padding(horizontal=10.dp,vertical=20.dp))
+
+
+
+                ReservationInfo(sport,location, date, time)
+            }
         }
     }
+
+
 
 
 
 }
 
 @Composable
-fun ButtonEdit(){
+fun ButtonEdit(reservation:Reservation?,selectedTimeSlot:String,vm:UserViewModel,navController: NavHostController){
 
     Button(onClick = {
+             if(reservation!=null && selectedTimeSlot!=""){
+                 val startTime = selectedTimeSlot.substringBefore("-")
+                 val endTime = selectedTimeSlot.substringAfter("-")
+                        val r = Reservation(
+                            id=reservation.id,
+                            date=reservation.date,
+                            equipment=reservation.equipment,
+                            idPlayground=reservation.idPlayground,
+                            startTime,
+                            endTime,
+                            idProfile=reservation.idProfile
+                        )
+                 vm.insertReservation(r)
+                 navController.navigate(BottomBarScreen.Reservation.route)
+             }
 
     },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF32CD32))
@@ -197,25 +202,24 @@ fun ButtonEdit(){
 
 }
 
-@Composable
-fun TimeSlotRow(){
 
-    val timeSlot = listOf(
-        TimeSlot(1,"09:00"),
-        TimeSlot(1,"10:00"),
-        TimeSlot(1,"11:00"),
-        TimeSlot(1,"12:00"),
-        TimeSlot(1,"13:00"),
-    )
+
+@Composable
+fun TimeSlotRow(timeSlot:List<TimeSlot>,setSelectedTimeSlot:(String)->Unit){
 
     LazyRow{
         items(timeSlot){ item ->
+            val time = item.startTime+"-"+item.endTime
             Card(
                 elevation=10.dp,
-                modifier=Modifier.padding(10.dp)
+                modifier= Modifier
+                    .padding(10.dp)
+                    .clickable {
+                        setSelectedTimeSlot(time)
+                    }
             ) {
                 Column {
-                    Text(text=item.time,fontSize=18.sp,modifier=Modifier.padding(10.dp))
+                    Text(text= time,fontSize=18.sp,modifier=Modifier.padding(10.dp))
                 }
             }
         }
@@ -302,8 +306,53 @@ fun ReservationInfo(
 
 }
 
+//@Composable
+//fun LandscapeEditReservation() {
+//
+//    Column(
+//        Modifier
+//            .fillMaxWidth()
+//            .padding(16.dp)
+//    ) {
+//        Column(Modifier.weight(1f)){
+//            ReservationPlaygroundContainer()
+//
+//        }
+//        Column(Modifier.weight(1f)){
+//            ButtonEdit()
+//        }
+//    }
+//
+//}
+//
+//
+
+@Composable
+fun TopAppBarEditReservation(
+    navController: NavHostController
+) {
 
 
+    TopAppBar(
+        title = {
+            Text(
+                text = "Edit Reservation",
+                fontSize = 24.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = {
+                navController.navigate(BottomBarScreen.Reservation.route)
+            }) {
+                androidx.compose.material.Icon(Icons.Filled.ArrowBack, "backIcon")
+            }
+        },
+        actions = {}
+
+    )
+}
 
 
 /*

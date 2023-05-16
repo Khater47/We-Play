@@ -13,7 +13,7 @@ interface TimeSlotDao {
     @Query("SELECT * FROM timeSlot ORDER BY id ASC")
     fun getAll() : LiveData<List<TimeSlot>>
 
-    @Query("SELECT * FROM timeSlot WHERE time=:time")
+    @Query("SELECT * FROM timeSlot WHERE startTime=:time")
     fun getTimeSlotByTime(time:String) : LiveData<TimeSlot>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

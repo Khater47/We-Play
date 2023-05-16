@@ -25,6 +25,9 @@ class UserViewModel @Inject constructor(
     //Reservation functions
     //--------------------------------------------
 
+    fun getReservationById(id:Int): LiveData<Reservation> = repo.getReservationById(id)
+
+
     val reservations: LiveData<List<Reservation>> = repo.reservations()
     val reservationsDate: LiveData<List<String>> = repo.reservationsDate()
     fun getReservationByDate(dateText: String): LiveData<List<Reservation>> {
@@ -49,6 +52,8 @@ class UserViewModel @Inject constructor(
     //--------------------------------------------
     val playgrounds: LiveData<List<Playgrounds>> = repo.playgrounds()
     val sports: LiveData<List<String>> = repo.getAllSport()
+
+    fun getPlaygroundById(id:Int): LiveData<Playgrounds> = repo.getPlaygroundById(id)
 
     //--------------------------------------------
     //Profile functions

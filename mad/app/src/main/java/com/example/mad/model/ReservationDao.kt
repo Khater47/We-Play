@@ -17,6 +17,10 @@ interface ReservationDao {
     @Query("SELECT date FROM reservations")
     fun getAllDate() : LiveData<List<String>>
 
+
+    @Query("SELECT * FROM reservations WHERE id=:id")
+    fun getReservationById(id:Int) : LiveData<Reservation>
+
     @Query("SELECT * FROM reservations WHERE date = :date")
     fun getReservationByDate(date:String) : LiveData<List<Reservation>>
 

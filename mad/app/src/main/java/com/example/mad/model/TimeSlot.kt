@@ -8,5 +8,7 @@ import androidx.room.PrimaryKey
 data class TimeSlot(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
-    val time: String,
-)
+    val startTime: String,
+    val endTime: String,
+
+    )

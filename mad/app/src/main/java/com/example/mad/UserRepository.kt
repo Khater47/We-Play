@@ -18,6 +18,9 @@ class UserRepository @Inject constructor(
     //Reservation functions
     //--------------------------------------------
 
+    fun getReservationById(id:Int): LiveData<Reservation> = reservationDao.getReservationById(id)
+
+
     fun reservations(): LiveData<List<Reservation>> = reservationDao.getAll()
     fun reservationsDate(): LiveData<List<String>> = reservationDao.getAllDate()
     fun getReservationByDate(date: String): LiveData<List<Reservation>> =
@@ -36,6 +39,9 @@ class UserRepository @Inject constructor(
     //Playground functions
     //--------------------------------------------
     fun playgrounds(): LiveData<List<Playgrounds>> = playgroundsDao.getAll()
+
+    fun getPlaygroundById(id:Int): LiveData<Playgrounds> = playgroundsDao.getPlaygroundById(id)
+
 
     fun getAllSport(): LiveData<List<String>> = playgroundsDao.getAllSport()
 

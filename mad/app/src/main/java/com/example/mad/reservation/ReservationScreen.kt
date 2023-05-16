@@ -2,7 +2,6 @@ package com.example.mad.reservation
 
 
 import android.os.Build
-import android.util.Log
 import android.widget.CalendarView
 import androidx.annotation.RequiresApi
 import androidx.compose.material.Card
@@ -24,23 +23,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.example.mad.UserViewModel
-import java.time.LocalDate
 import androidx.compose.runtime.livedata.observeAsState
 import com.example.mad.model.Reservation
+import com.example.mad.utils.getIconSport
 import java.util.Calendar
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -56,12 +57,12 @@ fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
         val p = playgroundList.firstOrNull { r.idPlayground == it.id }
         if (p != null) {
             reservationPlayground.add(
-                ReservationPlayground(r.id, r.date, p.sport, p.playground, p.location)
+                ReservationPlayground(r.id, r.date, p.sport, p.playground,r.idPlayground, p.location, r.equipment, r.startTime, r.endTime, r.idProfile)
+
             )
         }
     }
 
-    Log.d("tag", reservationList.size.toString())
 
     //reservationList.addAll(vm.reservations)
 
@@ -96,7 +97,7 @@ fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
             })
             Text(text = date)
 
-            ReservationCard(reservationPlayground.filter { (it.date == date) }, navController)
+            ReservationCard(reservationPlayground.filter { (it.date == date) }, navController,vm)
 
 
         }
@@ -109,9 +110,13 @@ data class ReservationPlayground(
     val date: String,
     val sport: String,
     val playground: String,
-    val location: String
+    val idPlayground:Int,
+    val location: String,
+    val equipment: Int,
+    val startTime: String,
+    val endTime: String,
+    val idProfile: Int
 )
-
 fun formatDate(day: Int, month: Int, year: Int): String {
     val m = if (month < 9) "0${month + 1}" else "${month + 1}"
     val d = if (day < 10) "0${day}" else "$day"
@@ -121,8 +126,9 @@ fun formatDate(day: Int, month: Int, year: Int): String {
 @Composable
 fun ReservationCard(
     reservationList: List<ReservationPlayground>,
-    navController: NavHostController
-) {
+    navController: NavHostController,
+    vm: UserViewModel,
+    ) {
 
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
@@ -146,8 +152,8 @@ fun ReservationCard(
                                 .fillMaxWidth()
                         ) {
                             Text(
-                                text = item.date,
-                                style = MaterialTheme.typography.bodyLarge,
+                                text = item.playground,
+                                fontSize=20.sp
                             )
 
                         }
@@ -155,33 +161,53 @@ fun ReservationCard(
                             Column(modifier = Modifier
                                 .weight(1f)
                                 .padding(8.dp)) {
-                                Text(
-                                    text = item.playground,
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
+                                Row{
+                                    Icon(imageVector = getIconSport(item.sport), contentDescription = "Sport")
+
+                                    Text(text = item.sport,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier=Modifier.padding(horizontal=5.dp)
+                                    )
+
+                                }
                             }
 
-
-                        }
-                        Row(modifier = Modifier.fillMaxWidth()) {
                             Column(modifier = Modifier
                                 .weight(1f)
                                 .padding(8.dp)) {
-                                Text(text = item.sport, style = MaterialTheme.typography.bodyLarge)
+                                Row{
+                                    Icon(imageVector = Icons.Default.LocationOn, contentDescription = "Location")
+                                    Text(
+                                        text = item.location,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        modifier=Modifier.padding(horizontal=5.dp)
+                                    )
+                                }
                             }
 
+
                         }
-                        Row(modifier = Modifier.fillMaxWidth()) {
-                            Column(modifier = Modifier
-                                .weight(1f)
-                                .padding(8.dp)) {
+
+
+                        Column(modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        verticalArrangement = Arrangement.Center) {
+                            Row{
+                                Icon(imageVector = Icons.Default.AccessTime, contentDescription = "Time")
+
                                 Text(
-                                    text = item.location,
-                                    style = MaterialTheme.typography.bodyLarge
+                                    text = item.startTime+"-"+item.endTime,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier=Modifier.padding(horizontal=10.dp)
                                 )
                             }
 
                         }
+
+
+
+
 
                     }
                     Column(
@@ -192,11 +218,18 @@ fun ReservationCard(
                     ) {
                         IconButton(
                             onClick = {
-                                      //DELETE RESERVATION
-//                                      val r = Reservation(
-//
-//                                      )
 
+                                //DELETE RESERVATION
+                                val r = Reservation(
+                                    item.id,
+                                    item.date,
+                                    item.equipment,
+                                    item.idPlayground,
+                                    item.startTime,
+                                    item.endTime,
+                                    item.idProfile
+                                )
+                                vm.deleteReservation(r)
                             },
 
                             ) {
@@ -219,27 +252,21 @@ fun ReservationCard(
 
 @Composable
 fun TopAppBarReservation(
-    //navController: NavHostController
 ) {
 
 
     TopAppBar(
         title = {
-            androidx.compose.material.Text(
+            Text(
                 text = "Reservation",
                 fontSize = 24.sp,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                color = Color.White
             )
 
         },
-        navigationIcon = {
-            IconButton(onClick = {
-//                navController.navigate(BottomBarScreen.Home.route)
-            }) {
-                Icon(Icons.Filled.ArrowBack, "backIcon")
-            }
-        },
+        navigationIcon = {},
         actions = {},
         elevation = 10.dp
 

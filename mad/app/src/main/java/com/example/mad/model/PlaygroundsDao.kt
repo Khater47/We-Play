@@ -11,6 +11,9 @@ interface PlaygroundsDao {
     @Query("SELECT * FROM playgrounds ORDER BY id ASC")
     fun getAll() : LiveData<List<Playgrounds>>
 
+    @Query("SELECT * FROM playgrounds WHERE id=:id")
+    fun getPlaygroundById(id:Int) : LiveData<Playgrounds>
+
     @Query("SELECT DISTINCT sport FROM playgrounds")
     fun getAllSport() : LiveData<List<String>>
 
