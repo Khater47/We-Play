@@ -94,11 +94,7 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 
-/*
-TODO():
-    fix rotate camera intent
 
-*/
 
 
 
