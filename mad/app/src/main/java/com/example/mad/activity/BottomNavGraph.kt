@@ -19,6 +19,7 @@ import com.example.mad.profile.ProfileRatingScreen
 import com.example.mad.reservation.ReservationScreen
 import com.example.mad.profile.ProfileSportScreen
 import com.example.mad.rentField.RentFieldScreen
+import com.example.mad.reservation.EditReservationScreen
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -30,7 +31,7 @@ fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
             HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Reservation.route) {
-            ReservationScreen()
+            ReservationScreen(navController,vm)
         }
         composable(route = BottomBarScreen.ProfileSport.route) {
             ProfileSportScreen(navController, vm)
@@ -55,6 +56,10 @@ fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
         }
         composable(route = BottomBarScreen.AddRating.route) {
             AddRatingScreen(navController,vm)
+        }
+        composable(route=BottomBarScreen.EditReservation.route,
+            arguments = listOf(navArgument("reservationId") { defaultValue = "0" })){
+                backStackEntry -> EditReservationScreen(navController, vm, backStackEntry.arguments?.getString("reservationId"))
         }
 
     }

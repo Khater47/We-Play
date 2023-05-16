@@ -59,6 +59,12 @@ sealed class BottomBarScreen(
         title="Rating Playground",
         icon= Icons.Default.Sports
     )
+    object EditReservation: BottomBarScreen(
+        route = "editReservation/{reservationId}",
+        title="Edit Reservation",
+        icon= Icons.Default.Sports
+    )
+
 
 
 }
