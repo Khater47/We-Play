@@ -1,4 +1,4 @@
-package com.example.mad.addRating
+package com.example.mad.profile
 
 import android.content.res.Configuration
 import android.widget.Toast

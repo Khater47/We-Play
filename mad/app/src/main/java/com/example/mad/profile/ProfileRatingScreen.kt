@@ -1,4 +1,4 @@
-package com.example.mad.profileRating
+package com.example.mad.profile
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image

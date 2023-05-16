@@ -11,13 +11,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mad.UserViewModel
-import com.example.mad.addRating.AddRatingScreen
+import com.example.mad.profile.AddRatingScreen
 import com.example.mad.home.HomeScreen
 import com.example.mad.profile.ProfileScreen
-import com.example.mad.profileEdit.ProfileEditScreen
-import com.example.mad.profileRating.ProfileRatingScreen
+import com.example.mad.profile.ProfileEditScreen
+import com.example.mad.profile.ProfileRatingScreen
 import com.example.mad.reservation.ReservationScreen
-import com.example.mad.profileSport.ProfileSportScreen
+import com.example.mad.profile.ProfileSportScreen
 import com.example.mad.rentField.RentFieldScreen
 
 

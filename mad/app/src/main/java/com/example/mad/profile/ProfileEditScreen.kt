@@ -1,4 +1,4 @@
-package com.example.mad.profileEdit
+package com.example.mad.profile
 
 
 import android.app.Activity

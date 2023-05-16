@@ -1,4 +1,4 @@
-package com.example.mad.profileSport
+package com.example.mad.profile
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
