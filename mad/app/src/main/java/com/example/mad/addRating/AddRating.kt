@@ -100,7 +100,7 @@ fun TopAppBarAddRating(
 
     TopAppBar(title = {
         Text(
-            text = " Add Rating",
+            text = BottomBarScreen.AddRating.title,
             fontSize = 24.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

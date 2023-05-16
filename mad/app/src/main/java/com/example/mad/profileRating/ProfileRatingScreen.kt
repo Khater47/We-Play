@@ -40,6 +40,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +76,22 @@ import com.example.mad.utils.getIconSport
 fun ProfileRatingScreen(navController: NavHostController, vm: UserViewModel) {
 
     Scaffold(
-        topBar = { TopAppBarRating(navController) }
+        topBar = { TopAppBarRating(navController) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(BottomBarScreen.AddRating.route)
+                },
+                containerColor = Color(0xFF6750A4),
+                modifier=Modifier.clip(CircleShape)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    tint = Color(0xFFFFFFFF)
+                )
+            }
+        }
     ) {
         Box(
             Modifier
@@ -421,7 +437,7 @@ fun TopAppBarRating(navController: NavHostController) {
     TopAppBar(
         title = {
             Text(
-                text = "User Profile Rating",
+                text = BottomBarScreen.ProfileRating.title,
                 fontSize = 24.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -435,13 +451,7 @@ fun TopAppBarRating(navController: NavHostController) {
                 Icon(Icons.Filled.ArrowBack, "backIcon")
             }
         },
-        actions = {
-            IconButton(onClick = {
-                navController.navigate(BottomBarScreen.AddRating.route)
-            }) {
-                Icon(Icons.Filled.Add, "backIcon",Modifier.size(25.dp))
-            }
-        },
+        actions = {},
         elevation = 10.dp
 
     )

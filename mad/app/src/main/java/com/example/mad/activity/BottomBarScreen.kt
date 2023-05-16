@@ -56,7 +56,7 @@ sealed class BottomBarScreen(
 
     object AddRating:BottomBarScreen(
         route = "addProfileRating",
-        title="Add Profile Rating",
+        title="Rating Playground",
         icon= Icons.Default.Sports
     )
 
