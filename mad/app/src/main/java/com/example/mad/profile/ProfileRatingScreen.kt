@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -64,7 +65,7 @@ fun ProfileRatingScreen(navController: NavHostController, vm: UserViewModel) {
                     navController.navigate(BottomBarScreen.AddRating.route)
                 },
                 containerColor = Color(0xFF6750A4),
-                modifier=Modifier.clip(CircleShape)
+                modifier = Modifier.clip(CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -125,7 +126,7 @@ fun PlaygroundRating(vm: UserViewModel) {
                         .weight(1f)
                 ) {
                     items(ratingPlaygrounds, itemContent = { item ->
-                        Row{
+                        Row {
                             Column(Modifier.weight(1f)) {
                                 CardPlaygroundLandscape(
                                     playgrounds,
@@ -133,26 +134,30 @@ fun PlaygroundRating(vm: UserViewModel) {
                                 )
 
                             }
-                            Column(Modifier.weight(1f),
+                            Column(
+                                Modifier.weight(1f),
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
+                            ) {
 
-                                val playground = playgrounds.firstOrNull { it.id == item.idPlayground }
+                                val playground =
+                                    playgrounds.firstOrNull { it.id == item.idPlayground }
                                 val idPlayground = playground?.id ?: -1
 
 
                                 Column(Modifier.padding(10.dp)) {
-                                    RatingRow(item.quality,"Quality")
+                                    RatingRow(item.quality, "Quality")
                                 }
 
                                 Column(Modifier.padding(10.dp)) {
-                                    RatingRow(item.facilities,"Facilities")
+                                    RatingRow(item.facilities, "Facilities")
                                 }
 
-                                Column(modifier=Modifier.padding(vertical=10.dp),
+                                Column(
+                                    modifier = Modifier.padding(vertical = 10.dp),
                                     verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally){
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
                                     DeleteRatingPlaygroundButton(
                                         vm,
                                         ratingPlaygrounds,
@@ -257,9 +262,9 @@ fun CardPlaygroundPortrait(
 
                 InfoPlayground(playgroundLocation, playgroundSport)
 
-                RatingRow(item.quality,"Quality")
+                RatingRow(item.quality, "Quality")
 
-                RatingRow(item.facilities,"Facilities")
+                RatingRow(item.facilities, "Facilities")
 
                 DeleteRatingPlaygroundButton(
                     vm,
@@ -303,8 +308,10 @@ fun DeleteRatingPlaygroundButton(
 
                     vm.deleteProfileRating(p)
                 }
+            },
+            colors = ButtonDefaults.buttonColors(backgroundColor = Color.Red)
 
-            }) {
+        ) {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -314,7 +321,7 @@ fun DeleteRatingPlaygroundButton(
                     contentDescription = "Delete Rating Playground",
                     modifier = Modifier.padding(horizontal = 10.dp)
                 )
-                Text(text = "Delete")
+                Text(text = "Delete", fontSize = 20.sp)
             }
         }
     }
@@ -355,7 +362,7 @@ fun InfoPlayground(playgroundLocation: String, playgroundSport: String) {
 }
 
 @Composable
-fun RatingRow(score: Int?,text:String) {
+fun RatingRow(score: Int?, text: String) {
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -367,8 +374,9 @@ fun RatingRow(score: Int?,text:String) {
             Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(text = text, modifier = Modifier.padding(10.dp), fontSize = 18.sp)
         }
         Column(
@@ -376,7 +384,8 @@ fun RatingRow(score: Int?,text:String) {
                 .weight(2f)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
+            verticalArrangement = Arrangement.Center
+        ) {
 
             StarIcon(score = score)
         }
@@ -446,22 +455,3 @@ fun TopAppBarRating(navController: NavHostController) {
 //}
 
 
-//        Column(
-//            Modifier
-//                .weight(1f)
-//                .fillMaxWidth()
-//                .padding(horizontal = 10.dp),
-//            horizontalAlignment = Alignment.End,
-//            verticalArrangement = Arrangement.Center
-//        ) {
-//            Button(
-//                onClick = {
-//                    navController.navigate(BottomBarScreen.AddRating.route)
-//                },
-//                Modifier
-//                    .clip(CircleShape)
-//                    .size(60.dp)
-//            ) {
-//                Icon(imageVector = Icons.Default.Add, contentDescription = "addIcon")
-//            }
-//        }

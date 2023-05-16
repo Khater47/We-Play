@@ -2,10 +2,8 @@ package com.example.mad.home
 
 
 import android.content.res.Configuration
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -165,7 +163,9 @@ fun CardContainerNavigationPage(navController: NavHostController) {
         Column(
             Modifier
                 .weight(1f)
-                .padding(10.dp)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             CardNavigationPage(searchIcon, searchImage, textSearch, navController)
         }
@@ -173,7 +173,9 @@ fun CardContainerNavigationPage(navController: NavHostController) {
         Column(
             Modifier
                 .weight(1f)
-                .padding(10.dp)
+                .padding(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             CardNavigationPage(rateIcon, ratingImage, textRating, navController)
         }
@@ -199,7 +201,6 @@ fun CardNavigationPage(
 
     Card(
         Modifier
-            .border(BorderStroke(1.dp, Color.LightGray))
             .clickable(
                 interactionSource = interactionSource,
                 indication = rippleIndication,
@@ -253,7 +254,6 @@ fun CardUserPreferences(navController: NavHostController) {
             .fillMaxWidth()
             .height(100.dp),
         shape = RoundedCornerShape(16.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
         elevation = 10.dp
 
     ) {
