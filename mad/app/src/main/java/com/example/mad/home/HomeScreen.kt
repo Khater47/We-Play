@@ -232,7 +232,7 @@ fun TopAppBarHome() {
     TopAppBar(
         title = {
             Text(
-                text = "Court Reservation Application",
+                text = "Court Application",
                 fontSize = 24.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

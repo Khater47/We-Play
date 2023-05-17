@@ -42,18 +42,38 @@ import com.example.mad.UserViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import com.example.mad.model.Reservation
 import com.example.mad.utils.getIconSport
+import com.stacktips.view.CalendarListener
+import com.stacktips.view.CustomCalendarView
+import com.stacktips.view.DayDecorator
+import com.stacktips.view.DayView
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
 
-    val reservationList = vm.reservations.observeAsState().value ?: emptyList()
+    val calendar = Calendar.getInstance()
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+    val month = calendar.get(Calendar.MONTH)
+    val year = calendar.get(Calendar.YEAR)
+    val today = formatDate(day,month,year)
+
+    val dateState = remember {
+        mutableStateOf(
+            today
+        )
+    }
+
     val playgroundList = vm.playgrounds.observeAsState().value ?: emptyList()
 
     val reservationPlayground = mutableListOf<ReservationPlayground>()
 
-    reservationList.forEach { r ->
+    val reservationDate = vm.getReservationByDate(dateState.value).observeAsState().value?:emptyList()
+
+    reservationDate.forEach { r ->
         val p = playgroundList.firstOrNull { r.idPlayground == it.id }
         if (p != null) {
             reservationPlayground.add(
@@ -63,20 +83,8 @@ fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
         }
     }
 
-
-    //reservationList.addAll(vm.reservations)
-
-    val calendar = Calendar.getInstance()
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-    val month = calendar.get(Calendar.MONTH)
-    val year = calendar.get(Calendar.YEAR)
-    val today = formatDate(day,month,year)
-
-    var date by remember {
-        mutableStateOf(
-            today
-        )
-    }
+    //get all date from existing reservation for highlight days
+    val dates = vm.reservationsDate.observeAsState().value?: emptyList()
 
     Scaffold(topBar = {
         TopAppBarReservation()
@@ -89,21 +97,66 @@ fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
 
         ) {
-            AndroidView(factory = { CalendarView(it) }, update = {
+            AndroidView(factory = { CustomCalendarView(it) }, update = {
 
-                it.setOnDateChangeListener { _, year, month, day ->
-                    date = formatDate(day, month, year)
+                if(dates.isNotEmpty()){
+                    val listDecorator: MutableList<DayDecorator> = mutableListOf()
+                    listDecorator.add(ColorDayDecorator(dates))
+                    it.decorators = listDecorator
+                    it.refreshCalendar(Calendar.getInstance(Locale.getDefault()))
                 }
-            })
-            Text(text = date)
 
-            ReservationCard(reservationPlayground.filter { (it.date == date) }, navController,vm)
+                it.setCalendarListener(object : CalendarListener {
+
+                    override fun onDateSelected(date: Date?) {
+                        val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+                        val dateText = date?.let { d -> df.format(d) }
+
+                        val formattedDate = if (dateText.isNullOrEmpty()) today else dateText
+
+                        dateState.value = formattedDate
+
+                        //Invoke vm.getReservationByDate
+                    }
+
+                    override fun onMonthChanged(date: Date?) {}
+                })
+
+            })
+            Text(text = dateState.value)
+
+            ReservationCard(reservationPlayground.filter { (it.date == dateState.value) }, navController,vm)
 
 
         }
     }
 
 }
+
+
+//vm.reservationsDate.observe(this, Observer {
+//    val listDecorator: MutableList<DayDecorator> = mutableListOf()
+//    listDecorator.add(ColorDayDecorator(it))
+//    calendarView.decorators = listDecorator
+//    calendarView.refreshCalendar(currentCalendar)
+//})
+
+
+class ColorDayDecorator(private val dates: List<String>) : DayDecorator {
+    override fun decorate(dayView: DayView) {
+        val date = dayView.date
+        val df = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val formattedDate = date?.let { df.format(it) }
+
+        if (dates.contains(formattedDate)) {
+            val color: Int = android.graphics.Color.parseColor("#a9afb9")
+            dayView.setBackgroundColor(color)
+        }
+
+    }
+}
+
 
 data class ReservationPlayground(
     val id: Int,
