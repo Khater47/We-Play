@@ -124,11 +124,10 @@ fun LandscapeHome(navController: NavHostController) {
         }
 
         Row(
-            Modifier.padding(top = 10.dp, start = 30.dp, end = 30.dp, bottom = 10.dp),
-            horizontalArrangement = Arrangement.SpaceAround
+            Modifier.fillMaxWidth().padding(top = 10.dp, start = 30.dp, end = 30.dp, bottom = 10.dp),
         ) {
             Column(
-                Modifier
+                Modifier.padding(horizontal=10.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
@@ -136,7 +135,7 @@ fun LandscapeHome(navController: NavHostController) {
             }
 
             Column(
-                Modifier
+                Modifier.padding(horizontal=10.dp)
                     .weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
@@ -248,11 +247,17 @@ fun TopAppBarHome() {
 @Composable
 fun CardUserPreferences(navController: NavHostController) {
 
+    val orientation = LocalConfiguration.current.orientation
+
+    val modifier = if(orientation==Configuration.ORIENTATION_PORTRAIT){
+        Modifier.fillMaxWidth().height(100.dp)
+    }
+    else {
+        Modifier.fillMaxWidth().height(70.dp)
+    }
 
     Card(
-        Modifier
-            .fillMaxWidth()
-            .height(100.dp),
+        modifier=modifier,
         shape = RoundedCornerShape(16.dp),
         elevation = 10.dp
 

@@ -53,6 +53,13 @@ fun getIconSport(sportText: String): ImageVector {
     }
 }
 
+fun formatDate(day: Int, month: Int, year: Int): String {
+    val m = if (month < 9) "0${month + 1}" else "${month + 1}"
+    val d = if (day < 10) "0${day}" else "$day"
+    return "$d/$m/$year"
+}
+
+
 fun getIconUserInfo(userInfo: String): ImageVector {
     return when (userInfo) {
         "FullName" -> Icons.Default.Person

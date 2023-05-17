@@ -52,16 +52,11 @@ import com.example.mad.UserViewModel
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.model.AvailablePlayground
 import com.example.mad.model.Reservation
+import com.example.mad.utils.formatDate
 import com.example.mad.utils.getIconPlayground
 import com.example.mad.utils.getIconSport
 import java.util.Locale
 
-fun formatDate(day:Int,month:Int,year:Int):String{
-    val d = if(day<9) "09" else day.toString()
-    val m = if(month<9) "0${month+1}" else month.toString()
-    val y = year.toString()
-    return "$d/$m/$y"
-}
 
 
 @Composable
