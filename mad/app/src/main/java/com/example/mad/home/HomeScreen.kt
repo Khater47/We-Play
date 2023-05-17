@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Sports
+import androidx.compose.material.icons.filled.SportsCricket
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.remember
@@ -70,7 +70,7 @@ fun PortraitHome(navController: NavHostController) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 10.dp, end = 10.dp)
+                .padding(horizontal=20.dp)
                 .weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -102,7 +102,7 @@ fun LandscapeHome(navController: NavHostController) {
     val searchImage = R.drawable.field
     val rateIcon = Icons.Default.ThumbUp
     val ratingImage = R.drawable.field_rating
-    val textSearch = "Book field"
+    val textSearch = "Rent field"
     val textRating = "Rate field"
 
 
@@ -117,14 +117,15 @@ fun LandscapeHome(navController: NavHostController) {
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(top = 10.dp, start = 30.dp, end = 30.dp),
+                .padding(top = 10.dp, start = 40.dp, end = 40.dp),
             verticalArrangement = Arrangement.Center
         ) {
+
             CardUserPreferences(navController)
         }
 
         Row(
-            Modifier.fillMaxWidth().padding(top = 10.dp, start = 30.dp, end = 30.dp, bottom = 10.dp),
+            Modifier.fillMaxWidth().padding(vertical=10.dp, horizontal = 30.dp),
         ) {
             Column(
                 Modifier.padding(horizontal=10.dp)
@@ -155,7 +156,7 @@ fun CardContainerNavigationPage(navController: NavHostController) {
     val searchImage = R.drawable.field
     val rateIcon = Icons.Default.ThumbUp
     val ratingImage = R.drawable.field_rating
-    val textSearch = "Book field"
+    val textSearch = "Rent field"
     val textRating = "Rate field"
 
     Row {
@@ -274,7 +275,7 @@ fun CardUserPreferences(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                Icon(Icons.Default.Sports, "Sport Image")
+                Icon(Icons.Default.SportsCricket, "Sport Image")
 
             }
             Column(

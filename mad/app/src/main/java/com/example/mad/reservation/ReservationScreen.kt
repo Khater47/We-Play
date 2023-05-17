@@ -48,6 +48,7 @@ import com.example.mad.home.TopAppBarHome
 import com.example.mad.model.Reservation
 import com.example.mad.utils.formatDate
 import com.example.mad.utils.getIconSport
+import com.example.mad.utils.getToday
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
@@ -63,11 +64,7 @@ import java.util.Locale
 @Composable
 fun ReservationScreen(navController: NavHostController, vm: UserViewModel) {
 
-    val calendar = Calendar.getInstance()
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-    val month = calendar.get(Calendar.MONTH)
-    val year = calendar.get(Calendar.YEAR)
-    val today = formatDate(day,month,year)
+    val today = getToday()
 
     val dateState = remember {
         mutableStateOf(

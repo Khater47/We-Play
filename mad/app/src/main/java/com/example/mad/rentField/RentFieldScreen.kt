@@ -55,25 +55,18 @@ import com.example.mad.model.Reservation
 import com.example.mad.utils.formatDate
 import com.example.mad.utils.getIconPlayground
 import com.example.mad.utils.getIconSport
+import com.example.mad.utils.getToday
 import java.util.Locale
-
 
 
 @Composable
 fun RentFieldScreen(navController: NavHostController, vm: UserViewModel) {
 
 
-    val calendar = Calendar.getInstance(Locale.ITALY)
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-    val today = formatDate(day, month, year)
-
     val (openDateDialog, setOpenDateDialog) = remember { mutableStateOf(false) }
     val (openTimeDialog, setOpenTimeDialog) = remember { mutableStateOf(false) }
 
-    val (date, setDate) = remember { mutableStateOf(today) }
+    val (date, setDate) = remember { mutableStateOf("") }
     val (time, setTime) = remember { mutableStateOf("") }
 
 
@@ -406,7 +399,7 @@ fun CardAvailablePlayground(
                     vm.deleteAvailablePlayground(availablePlaygrounds)
 
                 }) {
-                    Text("Book Field", fontSize = 20.sp)
+                    Text("Rent Field", fontSize = 20.sp)
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -561,7 +554,7 @@ fun CardAvailablePlaygroundLandscape(
                     vm.insertReservation(r)
                     vm.deleteAvailablePlayground(availablePlaygrounds)
                 }) {
-                    Text("Book Field", fontSize = 20.sp)
+                    Text("Rent Field", fontSize = 20.sp)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
 

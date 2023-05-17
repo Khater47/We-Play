@@ -21,6 +21,7 @@ import com.example.mad.UserViewModel
 fun MainScreen(vm:UserViewModel) {
     val navController = rememberNavController()
 
+
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
@@ -32,19 +33,24 @@ fun MainScreen(vm:UserViewModel) {
 
 @Composable
 fun BottomBar(navController: NavHostController) {
-    val screens = listOf(
-        BottomBarScreen.Home,
-        BottomBarScreen.Reservation,
-        BottomBarScreen.Profile,
-    )
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    BottomNavigation {
-        screens.forEach { screen ->
-            AddItem(screen = screen, currentDestination = currentDestination, navController = navController)
+    if (currentDestination?.route != "splashScreen"){
+
+        val screens = listOf(
+            BottomBarScreen.Home,
+            BottomBarScreen.Reservation,
+            BottomBarScreen.Profile,
+        )
+        BottomNavigation {
+            screens.forEach { screen ->
+                AddItem(screen = screen, currentDestination = currentDestination, navController = navController)
+            }
         }
     }
+
 }
 
 @Composable

@@ -25,6 +25,7 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.icu.util.Calendar
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.mad.R
 import java.io.File
 import java.io.FileOutputStream
+import java.util.Locale
 
 fun getIconSport(sportText: String): ImageVector {
     return when (sportText.lowercase()) {
@@ -59,6 +61,14 @@ fun formatDate(day: Int, month: Int, year: Int): String {
     return "$d/$m/$year"
 }
 
+fun getToday():String{
+    val calendar = Calendar.getInstance(Locale.ITALY)
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    return formatDate(day, month, year)
+}
 
 fun getIconUserInfo(userInfo: String): ImageVector {
     return when (userInfo) {
