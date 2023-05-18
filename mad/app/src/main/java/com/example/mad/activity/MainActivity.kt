@@ -14,12 +14,7 @@ import com.example.mad.UserViewModel
 import com.example.mad.ui.theme.MadTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-/*
-TODO():
-    Adding filter for sport in Rent Field Screen
-    Loading in every page
-    Adding animation
-*/
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @AndroidEntryPoint

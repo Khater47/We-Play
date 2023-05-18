@@ -65,6 +65,17 @@ sealed class BottomBarScreen(
         icon= Icons.Default.Sports
     )
 
+    object Login: BottomBarScreen(
+        route = "login",
+        title="Login",
+        icon= Icons.Default.Sports
+    )
+
+    object Playground: BottomBarScreen(
+        route = "login",
+        title="Login",
+        icon= Icons.Default.Sports
+    )
 
 
 }

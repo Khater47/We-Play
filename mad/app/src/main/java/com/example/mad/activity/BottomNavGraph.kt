@@ -9,10 +9,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
@@ -25,11 +28,13 @@ import com.example.mad.R
 import com.example.mad.UserViewModel
 import com.example.mad.profile.AddRatingScreen
 import com.example.mad.home.HomeScreen
+import com.example.mad.home.LoginScreen
 import com.example.mad.profile.ProfileScreen
 import com.example.mad.profile.ProfileEditScreen
 import com.example.mad.profile.ProfileRatingScreen
 import com.example.mad.reservation.ReservationScreen
 import com.example.mad.profile.ProfileSportScreen
+import com.example.mad.rentField.PlaygroundScreen
 import com.example.mad.rentField.RentFieldScreen
 import com.example.mad.reservation.EditReservationScreen
 import kotlinx.coroutines.delay
@@ -78,8 +83,18 @@ fun BottomNavGraph(navController: NavHostController, vm: UserViewModel) {
                 backStackEntry -> EditReservationScreen(navController, vm, backStackEntry.arguments?.getString("reservationId"))
         }
 
+        composable(route = BottomBarScreen.Login.route) {
+            LoginScreen()
+        }
+
+        composable(route = BottomBarScreen.Playground.route) {
+            PlaygroundScreen()
+        }
+
     }
 }
+
+
 
 @Composable
 fun SplashScreen(navController: NavHostController){
@@ -93,8 +108,8 @@ fun SplashScreen(navController: NavHostController){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        Image(painter = painterResource(id = R.drawable.profile),
+        Image(painter = painterResource(id = R.drawable.logo_25),
             contentDescription = "Logo",
-        modifier=Modifier.size(200.dp))
+        )
     }
 }
