@@ -27,6 +27,7 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.common.composable.ButtonBasic
 import com.example.mad.common.composable.CardReservation
+import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.TextBasicBody
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
@@ -96,8 +97,17 @@ fun PortraitEditReservation(
     }
     val checkedState = remember { mutableStateOf(true) }
 
-    fun onClick() {
+    val (isOpenDialog,openDialog) = remember {
+        mutableStateOf(false)
+    }
 
+
+    if(isOpenDialog){
+        DialogList(timeSlot , openDialog , setSelectedTimeSlot)
+    }
+
+    fun onClick() {
+        openDialog(true)
     }
 
     val r = Reservation(
@@ -129,7 +139,7 @@ fun PortraitEditReservation(
                 .fillMaxWidth(), horizontalArrangement = Arrangement.Center
         ) {
 
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { onClick() }) {
                 TextBasicHeadLine(text = stringResource(R.string.selectTimeSlot))
             }
 
@@ -137,7 +147,10 @@ fun PortraitEditReservation(
         }
 
         if (selectedTimeSlot != "") {
-            Column(Modifier.weight(1f).fillMaxWidth(),
+            Column(
+                Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally) {
                 TextBasicHeadLine(text = selectedTimeSlot)
             }

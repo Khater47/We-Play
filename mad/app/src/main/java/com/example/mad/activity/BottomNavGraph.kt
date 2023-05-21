@@ -44,7 +44,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun BottomNavGraph(navController: NavHostController, vm: MainViewModel) {
 
-    NavHost(navController = navController, startDestination = "splashScreen") {
+    //splashScreen
+    NavHost(navController = navController, startDestination = BottomBarScreen.EditReservation.route) {
         composable(route="splashScreen"){
             SplashScreen(navController)
         }
@@ -72,7 +73,7 @@ fun BottomNavGraph(navController: NavHostController, vm: MainViewModel) {
         ) { backStackEntry ->
             ProfileScreen(/*navController, vm, backStackEntry.arguments?.getString("userId")*/)
         }
-        composable(route = BottomBarScreen.RentField.route) {
+        composable(route = BottomBarScreen.SearchField.route) {
             SearchPlaygroundScreen(/*navController,vm*/)
         }
         composable(route = BottomBarScreen.AddRating.route) {

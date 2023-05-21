@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.mad.R
 import com.example.mad.common.composable.CardPlayground
+import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.model.Playground
@@ -109,12 +110,25 @@ fun SearchPlaygroundContainer(
             }
         }
 
-//    if (isOpenSportDialog) {
-//        OpenSportDialog(setSport,openSportDialog)
-//    }
-//    if (isOpenLocationDialog) {
-//        OpenLocationDialog(setLocation,openLocationDialog)
-//    }
+    val sportList = listOf(
+        "Soccer",
+        "Volleyball",
+        "Basket",
+        "Cricket",
+    )
+    val locationList = listOf(
+        "Turin",
+        "Milan",
+        "Rome",
+        "Venice",
+    )
+
+    if (isOpenSportDialog) {
+        DialogList(sportList,openSportDialog,setSport)
+        }
+    if (isOpenLocationDialog) {
+        DialogList(locationList,openLocationDialog,setLocation)
+        }
     }
 }
 

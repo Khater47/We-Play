@@ -48,9 +48,9 @@ sealed class BottomBarScreen(
         icon= Icons.Default.CalendarMonth
     )
 
-    object RentField:BottomBarScreen(
-        route = "rentField",
-        title="Rent Field",
+    object SearchField:BottomBarScreen(
+        route = "searchField",
+        title="Search Field",
         icon= Icons.Default.CarRental
     )
 
