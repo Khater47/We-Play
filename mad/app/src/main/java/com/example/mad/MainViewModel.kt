@@ -1,7 +1,5 @@
 package com.example.mad
 
-
-
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.mad.model.Playground
@@ -10,8 +8,6 @@ import com.example.mad.model.Reservation
 import com.example.mad.model.TimeSlot
 import com.example.mad.model.UserReservation
 import com.example.mad.model.UserSport
-
-
 
 class MainViewModel : ViewModel() {
 

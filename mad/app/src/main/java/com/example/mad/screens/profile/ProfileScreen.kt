@@ -16,6 +16,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.AlternateEmail
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Email
@@ -31,19 +32,25 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircleImage
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarAction
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.composable.TopBarComplete
+import com.example.mad.common.composable.TopBarProfile
 import com.example.mad.common.getImageFromInternalStorage
 import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun ProfileScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
+    vm:MainViewModel,
+    rootNavController:NavHostController
 ) {
 
     val orientation = LocalConfiguration.current.orientation
@@ -51,12 +58,12 @@ fun ProfileScreen(
     val fullName = "Mario Rossi"
 
     fun getEditProfile() {
-        val route = "/editProfile"
-//        navController.navigate(route)
+        val route = BottomBarScreen.ProfileEdit.route
+        navController.navigate(route)
     }
 
     Scaffold(
-        topBar = { TopBarAction(R.string.topBarUserProfile,Icons.Default.Check ,::getEditProfile) }
+        topBar = { TopBarProfile(vm,navController, rootNavController)}
     ) {
         Box(Modifier.padding(it)) {
 
@@ -64,7 +71,6 @@ fun ProfileScreen(
                 Configuration.ORIENTATION_PORTRAIT -> {
                     PortraitProfile(image,
                         fullName,
-
                     )
                 }
 
@@ -93,7 +99,7 @@ fun PortraitProfile(
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .weight(1.5f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             ImageContainer(image, fullName)
@@ -133,24 +139,37 @@ fun UserInfo(
 
     val modifier=Modifier.padding(vertical=20.dp)
 
+    val userObject = mapOf(
+        "email" to "mariorossi@gmail.com",
+        "nickname" to "mario",
+        "phone" to "3456781921",
+        "description" to "student",
+
+    )
+
     Card(elevation=CardDefaults.cardElevation(),
     shape= RoundedCornerShape(10.dp),
         modifier= Modifier
             .padding(10.dp)
     ){
 
+        Column(modifier=Modifier.padding(10.dp)){
+            TextBasicHeadLine(text = "Personal Info")
+        }
+        Divider(Modifier.padding(top=10.dp))
+
         Spacer(modifier=Modifier.padding(top=20.dp))
 
-        TextBasicIcon(text = "Email", icon = Icons.Outlined.Email)
+        TextBasicIcon(text = userObject.getValue("email"), icon = Icons.Outlined.Email)
         Divider(modifier=modifier)
 
-        TextBasicIcon(text = "Nickname", icon = Icons.Outlined.AlternateEmail)
+        TextBasicIcon(text = userObject.getValue("nickname"), icon = Icons.Outlined.AlternateEmail)
         Divider(modifier=modifier)
 
-        TextBasicIcon(text = "PhoneNumber", icon = Icons.Outlined.Phone)
+        TextBasicIcon(text = userObject.getValue("phone"), icon = Icons.Outlined.Phone)
         Divider(modifier=modifier)
 
-        TextBasicIcon(text = "Description", icon = Icons.Outlined.Description)
+        TextBasicIcon(text = userObject.getValue("description"), icon = Icons.Outlined.Description)
         Spacer(modifier=Modifier.padding(bottom=20.dp))
     }
 
@@ -190,20 +209,20 @@ fun LandscapeProfile(
     }
 }
 
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewProfile() {
-    MadTheme {
-        ProfileScreen()
-    }
-}
-
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewProfileLandscape() {
-    MadTheme {
-        ProfileScreen()
-    }
-}
+//
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewProfile() {
+//    MadTheme {
+//        ProfileScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewProfileLandscape() {
+//    MadTheme {
+//        ProfileScreen()
+//    }
+//}

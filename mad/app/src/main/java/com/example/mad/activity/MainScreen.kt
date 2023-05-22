@@ -1,6 +1,7 @@
 package com.example.mad.activity
 
 import android.os.Build
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
@@ -18,15 +19,15 @@ import com.example.mad.MainViewModel
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainScreen(vm:MainViewModel) {
-    val navController = rememberNavController()
+fun MainScreen(vm:MainViewModel,rootNavController:NavHostController) {
 
+    val navController = rememberNavController()
 
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
         Box(Modifier.padding(it)) {
-            BottomNavGraph(navController = navController,vm)
+            MainNavGraph(navController,vm,rootNavController)
         }
     }
 }

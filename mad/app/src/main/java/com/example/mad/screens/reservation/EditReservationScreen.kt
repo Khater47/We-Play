@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ButtonBasic
 import com.example.mad.common.composable.CardReservation
 import com.example.mad.common.composable.DialogList
@@ -37,15 +38,14 @@ import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun EditReservationScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm : MainViewModel,
 //    reservationId : String?
 ) {
     val configuration = LocalConfiguration.current
 
     fun goToPreviousPage() {
-//        val route = ""
-//        navController.navigate(route)
+        navController.navigate(BottomBarScreen.Reservation.route)
     }
 
     fun saveData() {
@@ -177,13 +177,13 @@ fun PortraitEditReservation(
 
 
 //Portrait Preview
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewEditReservation() {
-    MadTheme {
-        EditReservationScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewEditReservation() {
+//    MadTheme {
+//        EditReservationScreen()
+//    }
+//}
 
 //Landscape Preview
 

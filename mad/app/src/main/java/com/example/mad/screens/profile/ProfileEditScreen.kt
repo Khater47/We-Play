@@ -63,7 +63,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.navigation.NavHostController
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircleImage
 import com.example.mad.common.composable.ConfirmAlertButton
 import com.example.mad.common.composable.DismissAlertButton
@@ -93,18 +95,18 @@ const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileEditScreen(
-
+navController: NavHostController
 ) {
 
     val orientation = LocalConfiguration.current.orientation
+    val route = BottomBarScreen.Profile.route
 
     fun goToProfile() {
-//        val route = "/profile/{}"
-//        navController.navigate(route)
+        navController.navigate(route)
     }
 
     fun saveProfile() {
-
+        navController.navigate(route)
     }
 
     Scaffold(
@@ -509,20 +511,20 @@ fun MultiplePermissions() {
 }
 
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewProfileEdit() {
-    MadTheme {
-        ProfileEditScreen()
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewProfileEditLandscape() {
-    MadTheme {
-        ProfileEditScreen()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewProfileEdit() {
+//    MadTheme {
+//        ProfileEditScreen()
+//    }
+//}
+//
+//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewProfileEditLandscape() {
+//    MadTheme {
+//        ProfileEditScreen()
+//    }
+//}

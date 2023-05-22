@@ -40,6 +40,7 @@ import com.example.mad.common.composable.IconButtonDelete
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
+import com.example.mad.common.composable.TopBarBasic
 import com.example.mad.common.getIconSport
 import com.example.mad.common.getToday
 import com.example.mad.ui.theme.MadTheme
@@ -56,7 +57,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ReservationScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm: MainViewModel
 ) {
     val today = getToday()
@@ -68,10 +69,6 @@ fun ReservationScreen(
         )
     }
 
-    fun goToPreviousPage() {
-//        val route = ""
-//        navController.navigate(route)
-    }
 
     val dates = listOf<String>(
         "25/05/2023",
@@ -83,9 +80,8 @@ fun ReservationScreen(
 
     Scaffold(
         topBar = {
-            TopBarBackButton(
+            TopBarBasic(
                 id = R.string.topBarReservation,
-                ::goToPreviousPage
             )
         }
     ) {
@@ -104,7 +100,7 @@ fun ReservationScreen(
                         )
                     }
                     Column(Modifier.weight(1f)) {
-                        ReservationCard()
+                        ReservationCard(navController)
                     }
                 }
 
@@ -127,7 +123,7 @@ fun ReservationScreen(
                         }
                         Column(Modifier.weight(1f)) {
 
-                            ReservationCard()
+                            ReservationCard(navController)
                         }
                     }
                 }
@@ -184,7 +180,7 @@ fun CalendarCard(
 @Composable
 fun ReservationCard(
 //    reservationList: List<Reservation>,
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm: UserViewModel,
 ) {
     val playground = "Campo Admond"
@@ -202,7 +198,7 @@ fun ReservationCard(
         items(5) {
             Card(
                 onClick = {
-//                navController.navigate("editReservation/${item.id}")
+                navController.navigate("editReservation/1")
                 },
                 elevation = CardDefaults.cardElevation(),
                 shape = RoundedCornerShape(16.dp),
@@ -290,14 +286,14 @@ class ColorDayDecorator(private val dates: List<String>) : DayDecorator {
 
 //Portrait Preview
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        ReservationScreen()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        ReservationScreen()
+//    }
+//}
 
 
 //Landscape Preview

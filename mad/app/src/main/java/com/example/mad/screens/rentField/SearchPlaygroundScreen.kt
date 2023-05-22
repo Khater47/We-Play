@@ -22,7 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
 import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.TextBasicIcon
@@ -33,13 +35,12 @@ import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun SearchPlaygroundScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm: MainViewModel
 ) {
 
     fun goToPreviousPage() {
-//        val route=""
-//        navController.navigate(route)
+        navController.navigate(BottomBarScreen.Home.route)
     }
 
     val (sport, setSport) = remember {
@@ -180,20 +181,19 @@ fun ButtonGroup(
 
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        SearchPlaygroundScreen()
-    }
-}
-
-//Landscape Preview
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewLandscape() {
-    MadTheme {
-        SearchPlaygroundScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        SearchPlaygroundScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewLandscape() {
+//    MadTheme {
+//        SearchPlaygroundScreen()
+//    }
+//}

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.FloatingButtonAdd
 import com.example.mad.common.composable.Score
@@ -42,12 +43,11 @@ import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun ProfileRatingScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm: MainViewModel
 ) {
     fun goHome() {
-//        val route = "/home"
-//        navController.navigate(route)
+        navController.navigate(BottomBarScreen.Home.route)
     }
 
     fun goToAddRating() {
@@ -223,19 +223,19 @@ fun InfoReservation(playgroundDate:String,playgroundTime:String){
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewProfileRating() {
-    MadTheme {
-        ProfileRatingScreen()
-    }
-}
-
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewProfileRatingLandscape() {
-    MadTheme {
-        ProfileRatingScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewProfileRating() {
+//    MadTheme {
+//        ProfileRatingScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewProfileRatingLandscape() {
+//    MadTheme {
+//        ProfileRatingScreen()
+//    }
+//}

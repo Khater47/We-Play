@@ -51,8 +51,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.FloatingButtonAdd
 import com.example.mad.common.composable.IconButtonDelete
 import com.example.mad.common.composable.Score
@@ -120,15 +122,15 @@ fun SelectSportDropDownMenu(
 
 @Composable
 fun ProfileSportScreen(
-
+    navController: NavHostController
 ) {
 
     fun goHome() {
-
+        navController.navigate(BottomBarScreen.Home.route)
     }
 
     fun add() {
-
+        //show Dialog
     }
 
     Scaffold(
@@ -225,19 +227,19 @@ fun InfoSportCard(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewProfileSport() {
-    MadTheme {
-        ProfileSportScreen()
-    }
-}
-
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewProfileSportLandscape() {
-    MadTheme {
-        ProfileSportScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewProfileSport() {
+//    MadTheme {
+//        ProfileSportScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewProfileSportLandscape() {
+//    MadTheme {
+//        ProfileSportScreen()
+//    }
+//}

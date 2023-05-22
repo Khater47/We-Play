@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
 import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.IconButtonRating
@@ -51,12 +52,11 @@ import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun AddRatingScreen(
-//    navController: NavHostController,
+    navController: NavHostController,
 //    vm: MainViewModel
 ) {
     fun goToPreviousPage() {
-//        val route = ""
-//        navController.navigate(route)
+        navController.navigate(BottomBarScreen.ProfileRating.route)
     }
 
     fun saveData() {
@@ -222,19 +222,19 @@ fun RatingRow(score: Int, setScore: (Int) -> Unit, text: String) {
 }
 
 //Portrait Preview
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewAddRating() {
-    MadTheme {
-        AddRatingScreen()
-    }
-}
-
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewAddRatingLandscape() {
-    MadTheme {
-        AddRatingScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewAddRating() {
+//    MadTheme {
+//        AddRatingScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewAddRatingLandscape() {
+//    MadTheme {
+//        AddRatingScreen()
+//    }
+//}

@@ -35,7 +35,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ImageCardHome
 import com.example.mad.common.composable.TextBasicBody
 import com.example.mad.common.composable.TextBasicHeadLine
@@ -45,7 +47,7 @@ import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun HomeScreen(
-//navController: NavHostController
+navController: NavHostController
 ) {
     val configuration = LocalConfiguration.current
 
@@ -57,11 +59,11 @@ fun HomeScreen(
 
             when (configuration.orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitHome()
+                    PortraitHome(navController)
                 }
 
                 else -> {
-                    LandscapeHome()
+                    LandscapeHome(navController)
                 }
             }
         }
@@ -72,7 +74,7 @@ fun HomeScreen(
 
 @Composable
 fun PortraitHome(
-    //navController: NavHostController
+    navController: NavHostController
 
 ){
 
@@ -84,7 +86,7 @@ fun PortraitHome(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            CardUserPreferences()
+            CardUserPreferences(navController)
         }
 
         Column(
@@ -96,7 +98,7 @@ fun PortraitHome(
             verticalArrangement = Arrangement.Center
         ) {
 
-            CardContainerNavigationPage()
+            CardContainerNavigationPage(navController)
         }
 
     }
@@ -104,7 +106,7 @@ fun PortraitHome(
 
 @Composable
 fun LandscapeHome(
-    //navController: NavHostController
+    navController: NavHostController
 
 ){
 
@@ -120,7 +122,7 @@ fun LandscapeHome(
             verticalArrangement = Arrangement.Center
         ) {
 
-            CardUserPreferences(/*navController*/)
+            CardUserPreferences(navController)
         }
 
         Column(
@@ -128,7 +130,7 @@ fun LandscapeHome(
                 .fillMaxWidth()
                 .padding(vertical = 10.dp, horizontal = 30.dp),
         ){
-            CardContainerNavigationPage(/*navController*/)
+            CardContainerNavigationPage(navController)
         }
     }
 }
@@ -136,7 +138,7 @@ fun LandscapeHome(
 
 @Composable
 fun CardContainerNavigationPage(
-//    navController: NavHostController
+    navController: NavHostController
 ) {
 
     val searchIcon = Icons.Default.Search
@@ -153,7 +155,7 @@ fun CardContainerNavigationPage(
             verticalArrangement = Arrangement.Center
         ) {
             CardNavigationPage(searchIcon, R.drawable.field, idSearch,
-                /*navController*/)
+                navController)
         }
 
         Column(
@@ -164,7 +166,7 @@ fun CardContainerNavigationPage(
             verticalArrangement = Arrangement.Center
         ) {
             CardNavigationPage(rateIcon, R.drawable.field_rating, idRating,
-                /*navController*/)
+                navController)
         }
 
     }
@@ -174,7 +176,7 @@ fun CardContainerNavigationPage(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUserPreferences(
-    //navController: NavHostController
+    navController: NavHostController
 ) {
 
     val orientation = LocalConfiguration.current.orientation
@@ -190,7 +192,9 @@ fun CardUserPreferences(
             .height(70.dp)
     }
 
-    Card(onClick={},
+    Card(onClick={
+                 navController.navigate(BottomBarScreen.ProfileSport.route)
+    },
         modifier=modifier,
         shape = RoundedCornerShape(16.dp),
         elevation =  CardDefaults.cardElevation(
@@ -238,16 +242,17 @@ fun CardNavigationPage(
     searchIcon: ImageVector,
     imageCard: Int,
     id: Int,
-//    navController: NavHostController
+    navController: NavHostController
 ) {
 
-    val route = "route"
-//        if (imageCard == R.drawable.field) BottomBarScreen.RentField.route else BottomBarScreen.ProfileRating.route
+    val route =
+        if (imageCard == R.drawable.field) BottomBarScreen.SearchField.route
+        else BottomBarScreen.ProfileRating.route
 
 
     Card(
         onClick = {
-            //navController.navigate(route)
+            navController.navigate(route)
         },
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         shape = RoundedCornerShape(16.dp),
@@ -282,19 +287,19 @@ fun TextCard(id:Int) {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    MadTheme {
-        HomeScreen()
-    }
-}
-
-
-@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-@Composable
-fun DefaultPreviewLandscape() {
-    MadTheme {
-        HomeScreen()
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreview() {
+//    MadTheme {
+//        HomeScreen()
+//    }
+//}
+//
+//
+//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
+//@Composable
+//fun DefaultPreviewLandscape() {
+//    MadTheme {
+//        HomeScreen()
+//    }
+//}

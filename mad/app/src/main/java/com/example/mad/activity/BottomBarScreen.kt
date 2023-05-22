@@ -16,51 +16,51 @@ sealed class BottomBarScreen(
     val icon: ImageVector
 ){
     object Home:BottomBarScreen(
-        route = "home",
+        route = "${Graph.MAIN}/home",
         title="Home",
         icon= Icons.Default.Home
     )
 
     object Profile:BottomBarScreen(
-        route = "profile?userId={userId}",
+        route = "${Graph.MAIN}/profile?userId={userId}",
         title="Profile",
         icon= Icons.Default.Person
     )
     object ProfileEdit:BottomBarScreen(
-        route = "profileEdit/{userId}",
+        route = "${Graph.MAIN}/profileEdit/{userId}",
         title="Edit Profile",
         icon= Icons.Default.Person
     )
 
     object ProfileSport:BottomBarScreen(
-        route = "profileSport",
+        route = "${Graph.MAIN}/profileSport",
         title="Profile Sport",
         icon= Icons.Default.Sports
     )
     object ProfileRating:BottomBarScreen(
-        route = "profileRating",
+        route = "${Graph.MAIN}/profileRating",
         title="Profile Rating",
         icon= Icons.Default.ThumbUp
     )
     object Reservation:BottomBarScreen(
-        route = "reservations",
+        route = "${Graph.MAIN}/reservations",
         title="Reservation",
         icon= Icons.Default.CalendarMonth
     )
 
     object SearchField:BottomBarScreen(
-        route = "searchField",
+        route = "${Graph.MAIN}/searchField",
         title="Search Field",
         icon= Icons.Default.CarRental
     )
 
     object AddRating:BottomBarScreen(
-        route = "addProfileRating",
+        route = "${Graph.MAIN}/addProfileRating",
         title="Rating Playground",
         icon= Icons.Default.Sports
     )
     object EditReservation: BottomBarScreen(
-        route = "editReservation/{reservationId}",
+        route = "${Graph.MAIN}/editReservation/{reservationId}",
         title="Edit Reservation",
         icon= Icons.Default.Sports
     )
@@ -72,8 +72,8 @@ sealed class BottomBarScreen(
     )
 
     object Playground: BottomBarScreen(
-        route = "login",
-        title="Login",
+        route = "${Graph.MAIN}/playground",
+        title="Playground",
         icon= Icons.Default.Sports
     )
 

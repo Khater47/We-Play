@@ -36,9 +36,13 @@ class MainRepository {
     fun onSignInClick(email:String,password:String){
 
         auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
+            Log.d("TAG_REPO","$email $password")
+
             currentUser.value=it.user
         }
         .addOnFailureListener {
+            Log.d("TAG","FAILURE")
+
             currentUser.value=null
         }
     }
