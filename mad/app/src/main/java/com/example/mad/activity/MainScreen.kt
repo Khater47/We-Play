@@ -3,6 +3,7 @@ package com.example.mad.activity
 import android.os.Build
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
@@ -16,18 +17,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mad.MainViewModel
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
+@OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainScreen(vm:MainViewModel,rootNavController:NavHostController) {
+fun MainScreen(vm:MainViewModel) {
 
-    val navController = rememberNavController()
+    val navController = rememberAnimatedNavController()
 
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
         Box(Modifier.padding(it)) {
-            MainNavGraph(navController,vm,rootNavController)
+            MainNavGraph(navController,vm)
         }
     }
 }
@@ -59,6 +62,8 @@ fun RowScope.AddItem(
     screen: BottomBarScreen,
     currentDestination: NavDestination?,
     navController: NavHostController
+
+
 ) {
     currentDestination?.hierarchy?.let { s ->
         BottomNavigationItem(label = {

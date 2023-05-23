@@ -13,6 +13,9 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -23,6 +26,8 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -104,6 +109,39 @@ fun TextFieldDefaultIcon(text: String, setText: (String) -> Unit,placeholder:Int
         }
     )
 
+}
+
+@Composable
+fun PasswordTextField(text:String,setText: (String) -> Unit){
+    val passwordVisible = remember {
+        mutableStateOf(false)
+    }
+
+    val placeholderText = "Password"
+
+    OutlinedTextField(
+        value = text,
+        onValueChange = {
+            setText(it)
+        },
+        label = {
+            Text(text = placeholderText)
+        },
+        visualTransformation = if (passwordVisible.value) VisualTransformation.None
+                                else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        leadingIcon = { Icon(imageVector = getIconUserInfo(placeholderText),
+            contentDescription = "leadingIcon") },
+        singleLine = true,
+        trailingIcon = {
+
+        val image = if (passwordVisible.value)   Icons.Default.Visibility  else Icons.Default.VisibilityOff
+        val description =        if (passwordVisible.value) "Hide password" else "Show password"
+        IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+            Icon(image, description)    }
+
+        }
+    )
 }
 
 

@@ -50,7 +50,6 @@ import com.example.mad.ui.theme.MadTheme
 fun ProfileScreen(
     navController: NavHostController,
     vm:MainViewModel,
-    rootNavController:NavHostController
 ) {
 
     val orientation = LocalConfiguration.current.orientation
@@ -63,7 +62,7 @@ fun ProfileScreen(
     }
 
     Scaffold(
-        topBar = { TopBarProfile(vm,navController, rootNavController)}
+        topBar = { TopBarProfile(vm,navController)}
     ) {
         Box(Modifier.padding(it)) {
 

@@ -1,6 +1,7 @@
 package com.example.mad
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mad.model.Playground
@@ -34,21 +35,32 @@ class MainRepository {
     val currentUser = MutableStateFlow(auth.currentUser)
 
     fun onSignInClick(email:String,password:String){
+//
+        auth.signInWithEmailAndPassword(email,password).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Sign in success, update UI with the signed-in user's information
+                currentUser.value=task.result.user
+            } else {
+                // If sign in fails, display a message to the user.
+                currentUser.value=null
+            }
 
-        auth.signInWithEmailAndPassword(email,password).addOnSuccessListener {
-            Log.d("TAG_REPO","$email $password")
-
-            currentUser.value=it.user
-        }
-        .addOnFailureListener {
-            Log.d("TAG","FAILURE")
-
-            currentUser.value=null
         }
     }
 
-    fun onSignOutInClick() = auth.signOut()
 
+//    .addOnSuccessListener {
+//        Log.d("TAG_REPO","$email $password")
+//
+//        currentUser.value=it.user
+//    }
+//    .addOnFailureListener {
+//        Log.d("TAG","FAILURE")
+//
+//        currentUser.value=null
+//    }
+
+    fun onSignOutInClick() = auth.signOut()
 
 
 

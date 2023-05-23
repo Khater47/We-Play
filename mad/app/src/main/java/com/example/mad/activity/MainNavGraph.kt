@@ -3,14 +3,23 @@ package com.example.mad.activity
 import android.os.Build
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.navArgument
 import com.example.mad.MainViewModel
+import com.example.mad.screens.SplashScreen
 import com.example.mad.screens.home.HomeScreen
+import com.example.mad.screens.home.LoginScreen
 import com.example.mad.screens.profile.AddRatingScreen
 import com.example.mad.screens.profile.ProfileEditScreen
 import com.example.mad.screens.profile.ProfileRatingScreen
@@ -20,21 +29,26 @@ import com.example.mad.screens.rentField.PlaygroundScreen
 import com.example.mad.screens.rentField.SearchPlaygroundScreen
 import com.example.mad.screens.reservation.EditReservationScreen
 import com.example.mad.screens.reservation.ReservationScreen
+import com.google.accompanist.navigation.animation.AnimatedNavHost
 
+@OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainNavGraph(navController: NavHostController,vm:MainViewModel,rootNavController:NavHostController) {
+fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
 
-    NavHost(navController = navController,
-        startDestination = BottomBarScreen.Profile.route,
+    AnimatedNavHost(navController = navController,
+        startDestination = BottomBarScreen.Login.route,
     ) {
+        composable(route=BottomBarScreen.SplashScreen.route){
+            SplashScreen(navController,vm)
+        }
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Playground.route) {
             PlaygroundScreen()
         }
-        composable(route = BottomBarScreen.Reservation.route) {
+        composable(route = BottomBarScreen.Reservation.route,) {
             ReservationScreen(navController/*navController,vm*/)
         }
         composable(route = BottomBarScreen.ProfileSport.route) {
@@ -49,11 +63,8 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel,rootNavContro
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen(navController/*navController,vm*/)
         }
-        composable(
-            route = BottomBarScreen.Profile.route,
-            arguments = listOf(navArgument("userId") { defaultValue = "2" })
-        ) { backStackEntry ->
-            ProfileScreen(navController,vm,rootNavController/*navController, vm, backStackEntry.arguments?.getString("userId")*/)
+        composable(route = BottomBarScreen.Profile.route) { backStackEntry ->
+            ProfileScreen(navController,vm/*navController, vm, backStackEntry.arguments?.getString("userId")*/)
         }
         composable(route = BottomBarScreen.SearchField.route) {
             SearchPlaygroundScreen(navController/*navController,vm*/)
@@ -64,6 +75,10 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel,rootNavContro
         composable(route=BottomBarScreen.EditReservation.route,
             arguments = listOf(navArgument("reservationId") { defaultValue = "0" })){
                 backStackEntry -> EditReservationScreen(navController/*navController, vm, backStackEntry.arguments?.getString("reservationId")*/)
+        }
+        composable(route = BottomBarScreen.Login.route,
+        ) {
+            LoginScreen(vm,navController)
         }
 
     }

@@ -2,7 +2,6 @@ package com.example.mad.screens.home
 
 import android.content.res.Configuration
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -20,28 +18,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
-import com.example.mad.activity.Graph
 import com.example.mad.common.composable.ButtonBasic
-import com.example.mad.common.composable.CircleImage
+import com.example.mad.common.composable.PasswordTextField
 import com.example.mad.common.composable.TextFieldDefaultIcon
 import com.example.mad.ui.theme.MadTheme
 
 @Composable
 fun LoginScreen(
-    vm: MainViewModel,
-    navController: NavHostController
+//    vm: MainViewModel,
+//    navController: NavHostController
 ) {
 
     val (email, setEmail) = remember {
@@ -52,10 +45,10 @@ fun LoginScreen(
     }
 
     fun login() {
-        Log.d("TAG","$email $password")
-        vm.onSignInClick(email,password)
-        if(vm.currentUser.value!=null)
-            navController.navigate(Graph.MAIN)
+//        Log.d("TAG","$email $password")
+//        vm.onSignInClick(email,password)
+//        if(vm.currentUser.value!=null)
+//            navController.navigate(BottomBarScreen.Home.route)
 
     }
 
@@ -77,10 +70,9 @@ fun LoginScreen(
 
                 TextFieldDefaultIcon(email, setEmail, R.string.email)
 
-                Spacer(Modifier.padding(vertical=15.dp))
+                Spacer(Modifier.padding(vertical=5.dp))
 
-                TextFieldDefaultIcon(password, setPassword, R.string.password)
-
+                PasswordTextField(password, setPassword)
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -91,6 +83,7 @@ fun LoginScreen(
                             RoundedCornerShape(10.dp)
                         )
                 ) {
+
 
                     ButtonBasic(R.string.login, ::login)
 
@@ -149,23 +142,23 @@ fun LoginScreen(
 }
 
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun DefaultPreviewLogin() {
-//
-//    MadTheme {
-//        LoginScreen()
-//    }
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun DefaultPreviewLogin() {
 
-//@Preview(
-//    showBackground = true,
-//    showSystemUi = true,
-//    device = "spec:width=411dp,height=891dp,orientation=landscape"
-//)
-//@Composable
-//fun DefaultPreviewLoginLandscape() {
-//    MadTheme {
-//        LoginScreen()
-//    }
-//}
+    MadTheme {
+        LoginScreen()
+    }
+}
+
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+    device = "spec:width=411dp,height=891dp,orientation=landscape"
+)
+@Composable
+fun DefaultPreviewLoginLandscape() {
+    MadTheme {
+        LoginScreen()
+    }
+}

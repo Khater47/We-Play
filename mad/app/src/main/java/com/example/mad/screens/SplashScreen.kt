@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
-import com.example.mad.activity.Graph
 import kotlinx.coroutines.delay
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -22,8 +21,8 @@ import kotlinx.coroutines.delay
 fun SplashScreen(navController: NavHostController,vm:MainViewModel){
 
     val route =
-    if(vm.currentUser.value?.isAnonymous == true) Graph.AUTH
-    else Graph.MAIN
+    if(vm.currentUser.value?.isAnonymous == true) BottomBarScreen.Login.route
+    else BottomBarScreen.Home.route
 
     LaunchedEffect(key1 = true){
         delay(3000L)

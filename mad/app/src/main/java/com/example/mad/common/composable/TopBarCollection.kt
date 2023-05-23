@@ -32,7 +32,6 @@ import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
-import com.example.mad.activity.Graph
 import com.example.mad.ui.theme.MadTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,7 +51,6 @@ fun TopBarBasic(id: Int) {
 fun TopBarProfile(
     vm:MainViewModel,
     navController: NavHostController,
-    rootNavController:NavHostController
 ) {
 
     val context = LocalContext.current
@@ -85,9 +83,7 @@ fun TopBarProfile(
                 DropdownMenuItem(text = { Text("Logout") }, onClick = {
 //                    Toast.makeText(context,"Logout",Toast.LENGTH_SHORT).show()
                     vm.onSignOutInClick()
-                    if(vm.currentUser.value==null){
-                        rootNavController.navigate(Graph.AUTH)
-                    }
+                    navController.navigate(BottomBarScreen.Login.route)
                 })
             }
         }

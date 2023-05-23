@@ -16,51 +16,51 @@ sealed class BottomBarScreen(
     val icon: ImageVector
 ){
     object Home:BottomBarScreen(
-        route = "${Graph.MAIN}/home",
+        route = "home",
         title="Home",
         icon= Icons.Default.Home
     )
 
     object Profile:BottomBarScreen(
-        route = "${Graph.MAIN}/profile?userId={userId}",
+        route = "profile?userId={userId}",
         title="Profile",
         icon= Icons.Default.Person
     )
     object ProfileEdit:BottomBarScreen(
-        route = "${Graph.MAIN}/profileEdit/{userId}",
+        route = "profileEdit/{userId}",
         title="Edit Profile",
         icon= Icons.Default.Person
     )
 
     object ProfileSport:BottomBarScreen(
-        route = "${Graph.MAIN}/profileSport",
+        route = "profileSport",
         title="Profile Sport",
         icon= Icons.Default.Sports
     )
     object ProfileRating:BottomBarScreen(
-        route = "${Graph.MAIN}/profileRating",
+        route = "profileRating",
         title="Profile Rating",
         icon= Icons.Default.ThumbUp
     )
     object Reservation:BottomBarScreen(
-        route = "${Graph.MAIN}/reservations",
+        route = "reservations",
         title="Reservation",
         icon= Icons.Default.CalendarMonth
     )
 
     object SearchField:BottomBarScreen(
-        route = "${Graph.MAIN}/searchField",
+        route = "searchField",
         title="Search Field",
         icon= Icons.Default.CarRental
     )
 
     object AddRating:BottomBarScreen(
-        route = "${Graph.MAIN}/addProfileRating",
+        route = "addProfileRating",
         title="Rating Playground",
         icon= Icons.Default.Sports
     )
     object EditReservation: BottomBarScreen(
-        route = "${Graph.MAIN}/editReservation/{reservationId}",
+        route = "editReservation/{reservationId}",
         title="Edit Reservation",
         icon= Icons.Default.Sports
     )
@@ -72,8 +72,13 @@ sealed class BottomBarScreen(
     )
 
     object Playground: BottomBarScreen(
-        route = "${Graph.MAIN}/playground",
+        route = "playground",
         title="Playground",
+        icon= Icons.Default.Sports
+    )
+    object SplashScreen: BottomBarScreen(
+        route = "splashScreen",
+        title="Splash Screen",
         icon= Icons.Default.Sports
     )
 
