@@ -8,4 +8,7 @@ class PlaygroundRating(
     val comment:Map<String,String>
 ) {
 
+    override fun toString(): String {
+        return "$quality $facilities $comment"
+    }
 }

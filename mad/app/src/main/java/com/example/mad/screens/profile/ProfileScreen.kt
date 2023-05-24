@@ -2,6 +2,8 @@ package com.example.mad.screens.profile
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -131,7 +133,14 @@ fun PortraitProfile(
 @Composable
 fun ImageContainer(image: Bitmap, fullName: String) {
 
-    Spacer(modifier = Modifier.padding(vertical = 10.dp))
+    val orientation = LocalConfiguration.current.orientation
+
+    val modifier =
+        if (orientation == Configuration.ORIENTATION_PORTRAIT)
+            Modifier.padding(vertical = 10.dp)
+        else Modifier.padding(vertical = 2.dp)
+
+    Spacer(modifier = modifier)
 
     CircleImage(image.asImageBitmap())
 
@@ -190,12 +199,19 @@ fun UserInfo(
 }
 
 @Composable
-fun TextIcon(text:String,icon: ImageVector){
+fun TextIcon(text: String, icon: ImageVector) {
 
-    Row(verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center){
-        Icon(icon,contentDescription = "iconLabel",modifier=Modifier.padding(horizontal=10.dp))
-        Text(text, style = MaterialTheme.typography.bodyLarge,
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Icon(
+            icon,
+            contentDescription = "iconLabel",
+            modifier = Modifier.padding(horizontal = 10.dp)
+        )
+        Text(
+            text, style = MaterialTheme.typography.bodyLarge,
             fontSize = 18.sp
         )
     }
@@ -212,10 +228,12 @@ fun LandscapeProfile(
         Column(
             Modifier
                 .weight(2f)
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
 
-            ) {
+        ) {
             ImageContainer(image, fullName)
         }
 
@@ -224,7 +242,7 @@ fun LandscapeProfile(
                 .weight(3f)
                 .fillMaxHeight()
                 .clip(RoundedCornerShape(16.dp))
-                .padding(16.dp)
+                .padding(2.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             UserInfo(/*userObject*/)

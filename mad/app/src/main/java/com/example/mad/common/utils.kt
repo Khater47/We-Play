@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.SportsBaseball
@@ -36,7 +35,6 @@ import androidx.compose.material.icons.filled.SportsTennis
 import androidx.compose.material.icons.filled.SportsVolleyball
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.navigation.NavHostController
 import com.example.mad.R
 import java.io.File
 import java.io.FileOutputStream
@@ -56,6 +54,13 @@ fun getToday():String{
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     return formatDate(day, month, year)
+}
+
+fun getMonth(): String {
+
+    val month = Calendar.getInstance(Locale.ITALY).get(Calendar.MONTH) + 1
+    if(month<10) return "0$month"
+    return "$month"
 }
 
 fun getIconUserInfo(userInfo: String): ImageVector {

@@ -97,13 +97,13 @@ fun PortraitEditReservation(
     }
     val checkedState = remember { mutableStateOf(true) }
 
-    val (isOpenDialog,openDialog) = remember {
+    val (isOpenDialog, openDialog) = remember {
         mutableStateOf(false)
     }
 
 
-    if(isOpenDialog){
-        DialogList(timeSlot , openDialog , setSelectedTimeSlot)
+    if (isOpenDialog) {
+        DialogList(timeSlot, openDialog, setSelectedTimeSlot)
     }
 
     fun onClick() {
@@ -121,7 +121,7 @@ fun PortraitEditReservation(
         phone = "34567643243",
         playground = "Campo Admond",
         sport = "Soccer",
-        startTime = "11:00"
+        startTime = "11:00",
     )
 
 
@@ -151,7 +151,8 @@ fun PortraitEditReservation(
                 Modifier
                     .weight(1f)
                     .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 TextBasicHeadLine(text = selectedTimeSlot)
             }
         }
