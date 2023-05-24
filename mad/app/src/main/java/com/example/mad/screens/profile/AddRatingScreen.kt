@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +34,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
@@ -193,9 +196,9 @@ fun RatingRow(score: Int, setScore: (Int) -> Unit, text: String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(Modifier.weight(1f)) {
-                    TextBasicHeadLine(text = text)
+                    Text(text=text,fontSize=20.sp,style=MaterialTheme.typography.bodyMedium)
                 }
-                Column(Modifier.weight(1f)) {
+                Column(Modifier.weight(1.5f)) {
                     IconButtonRating(score, setScore)
                 }
             }

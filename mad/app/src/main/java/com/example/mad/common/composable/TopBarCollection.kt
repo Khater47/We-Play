@@ -16,7 +16,10 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +44,10 @@ fun TopBarBasic(id: Int) {
     TopAppBar(
         title = {
             TextTopBar(id)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 
 }
@@ -59,7 +65,10 @@ fun TopBarProfile(
         mutableStateOf(false)
     }
 
-    TopAppBar(title = { TextBasicHeadLine(text = "User Profile") },
+    TopAppBar(title = { TextTopBar(R.string.topBarUserProfile) },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
         actions = {
             IconButton(onClick = {
                 expanded.value = true
@@ -83,6 +92,7 @@ fun TopBarProfile(
                 DropdownMenuItem(text = { Text("Logout") }, onClick = {
 //                    Toast.makeText(context,"Logout",Toast.LENGTH_SHORT).show()
                     vm.onSignOutInClick()
+                    vm.currentUser.value=null
                     navController.navigate(BottomBarScreen.Login.route)
                 })
             }
@@ -102,7 +112,10 @@ fun TopBarBackButton(id: Int, backAction: () -> Unit) {
         },
         navigationIcon = {
             NavigationIconButtonTopBar(backAction)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 
@@ -116,7 +129,10 @@ fun TopBarAction(id: Int, icon: ImageVector, action: () -> Unit) {
         },
         actions = {
             ActionButtonTopBar(icon, action)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 
@@ -138,7 +154,10 @@ fun TopBarComplete(
         },
         actions = {
             ActionButtonTopBar(icon, action)
-        }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
     )
 }
 

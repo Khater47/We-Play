@@ -159,7 +159,7 @@ fun CardPlaygroundReservationPortrait() {
     val playgroundSport = "Soccer"
     val playgroundLocation = "Turin"
     val playgroundDate = "20/05/2023"
-    val playgroundTime = "10:00"
+    val playgroundTime = "10:00-11:00"
 
     Card(
         onClick = {

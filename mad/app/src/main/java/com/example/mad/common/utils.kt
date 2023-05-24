@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Patterns
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.annotation.RequiresApi
@@ -66,6 +67,15 @@ fun getIconUserInfo(userInfo: String): ImageVector {
         "Password" -> Icons.Default.Lock
         else -> Icons.Default.Phone
 
+    }
+}
+
+fun validationTextField(type:String,text:String):Boolean{
+    return when(type.lowercase()){
+        "email" -> { Patterns.EMAIL_ADDRESS.matcher(text).matches() }
+        "password"->{ text.isNotEmpty() }
+        "phone" -> { Patterns.PHONE.matcher(text).matches()}
+        else -> { true }
     }
 }
 

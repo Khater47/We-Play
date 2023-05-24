@@ -1,5 +1,7 @@
 package com.example.mad.common.composable
 
+import android.util.Log
+import android.util.Patterns
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +37,9 @@ import com.example.mad.R
 import com.example.mad.common.getIconUserInfo
 import com.example.mad.common.getKeyboard
 import com.example.mad.ui.theme.MadTheme
+
+
+
 
 @Composable
 fun TextFieldDefault(text: String, setText: (String) -> Unit,placeholder:Int) {

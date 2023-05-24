@@ -20,7 +20,7 @@ class MainViewModel : ViewModel() {
     fun onSignInClick(email:String,password:String) {
         repo.onSignInClick(email,password)
     }
-    fun onSignOutInClick() = repo.onSignOutInClick()
+    fun onSignOutInClick() =  repo.onSignOutInClick()
 
 
     //---------------------

@@ -30,7 +30,7 @@ import com.example.mad.ui.theme.MadTheme
 fun TextTopBar(@StringRes id:Int){
     Text(
         text = stringResource(id),
-        color = Color.White,
+//        color = Color.White,
         fontSize = 24.sp,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,

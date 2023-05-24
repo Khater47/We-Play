@@ -37,7 +37,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
 
     AnimatedNavHost(navController = navController,
-        startDestination = BottomBarScreen.Login.route,
+        startDestination = BottomBarScreen.ProfileRating.route,
     ) {
         composable(route=BottomBarScreen.SplashScreen.route){
             SplashScreen(navController,vm)
@@ -56,15 +56,14 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
         }
         composable(
             route = BottomBarScreen.ProfileEdit.route,
-            arguments = listOf(navArgument("userId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            ProfileEditScreen(navController /*vm, navController, backStackEntry.arguments?.getString("userId")*/)
+        ) {
+            ProfileEditScreen(navController /*vm, navController, */)
         }
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen(navController/*navController,vm*/)
         }
-        composable(route = BottomBarScreen.Profile.route) { backStackEntry ->
-            ProfileScreen(navController,vm/*navController, vm, backStackEntry.arguments?.getString("userId")*/)
+        composable(route = BottomBarScreen.Profile.route) {
+            ProfileScreen(navController,vm/*navController, vm, */)
         }
         composable(route = BottomBarScreen.SearchField.route) {
             SearchPlaygroundScreen(navController/*navController,vm*/)
@@ -83,3 +82,8 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
 
     }
 }
+
+//
+//arguments = listOf(navArgument("userId") { type = NavType.StringType })
+//backStackEntry ->
+//ProfileScreen(navController,vm/*navController, vm, backStackEntry.arguments?.getString("userId")*/)

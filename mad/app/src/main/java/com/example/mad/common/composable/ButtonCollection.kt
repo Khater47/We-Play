@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -20,7 +21,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +41,7 @@ import com.example.mad.R
 import com.example.mad.ui.theme.Gold
 import com.example.mad.ui.theme.MadTheme
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun ButtonBasic(
@@ -62,7 +66,7 @@ fun FloatingButtonAdd(action: ()->Unit){
 
     FloatingActionButton(
         onClick = { action() },
-        containerColor = Color(0xFF6750A4),
+        containerColor = MaterialTheme.colorScheme.primary,
         modifier = Modifier.clip(CircleShape)
     ) {
         Icon(
@@ -96,6 +100,9 @@ fun ButtonDialog(
     confirm: () -> Unit
 ) {
 
+    val confirmText = stringResource(id = R.string.confirm)
+    val cancelText = stringResource(id = R.string.cancel)
+
     Row(
         Modifier
             .padding(horizontal = 10.dp)
@@ -104,13 +111,25 @@ fun ButtonDialog(
             Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ButtonBasic(R.string.cancel, action = cancel)
+//            ButtonBasic(R.string.cancel, action = cancel)
+            Button(onClick = { cancel() }, colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.outline,
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )) {
+                Text(text = cancelText,fontSize=18.sp,style=MaterialTheme.typography.bodyMedium)
+            }
         }
         Column(
             Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ButtonBasic(R.string.confirm, action = confirm)
+//            ButtonBasic(R.string.confirm, action = confirm)
+            Button(onClick = { confirm() }, colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )) {
+                Text(text = confirmText,fontSize=18.sp,style=MaterialTheme.typography.bodyMedium)
+            }
         }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -197,6 +198,9 @@ fun ReservationCard(
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(5) {
             Card(
+                colors = CardDefaults.cardColors(
+
+                ),
                 onClick = {
                 navController.navigate("editReservation/1")
                 },
@@ -221,14 +225,14 @@ fun ReservationCard(
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(8.dp)
+                                    .padding(vertical = 8.dp)
                             ) {
                                 TextBasicIcon(text = sport, icon = getIconSport(sport))
                             }
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(8.dp)
+                                    .padding(vertical = 8.dp)
                             ) {
                                 TextBasicIcon(text = location, icon = Icons.Default.LocationOn)
                             }
@@ -239,14 +243,14 @@ fun ReservationCard(
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(8.dp)
+                                    .padding(vertical = 8.dp)
                             ) {
                                 TextBasicIcon(text = date, icon = Icons.Default.CalendarMonth)
                             }
                             Column(
                                 modifier = Modifier
                                     .weight(1f)
-                                    .padding(8.dp)
+                                    .padding(vertical = 8.dp)
                             ) {
                                 TextBasicIcon(text = time, icon = Icons.Default.AccessTime)
                             }

@@ -1,6 +1,7 @@
 package com.example.mad.activity
 
 import android.os.Build
+import androidx.compose.material3.MaterialTheme
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -27,7 +30,7 @@ fun MainScreen(vm:MainViewModel) {
     val navController = rememberAnimatedNavController()
 
     Scaffold(
-        bottomBar = { BottomBar(navController = navController)}
+        bottomBar = { BottomBar(navController = navController) }
     ) {
         Box(Modifier.padding(it)) {
             MainNavGraph(navController,vm)
@@ -41,14 +44,16 @@ fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    if (currentDestination?.route != "splashScreen"){
+    if (currentDestination?.route != BottomBarScreen.SplashScreen.route
+        && currentDestination?.route!=BottomBarScreen.Login.route){
 
         val screens = listOf(
             BottomBarScreen.Home,
             BottomBarScreen.Reservation,
             BottomBarScreen.Profile,
         )
-        BottomNavigation {
+        BottomNavigation(backgroundColor = MaterialTheme.colorScheme.primary,
+        contentColor = MaterialTheme.colorScheme.onPrimary) {
             screens.forEach { screen ->
                 AddItem(screen = screen, currentDestination = currentDestination, navController = navController)
             }

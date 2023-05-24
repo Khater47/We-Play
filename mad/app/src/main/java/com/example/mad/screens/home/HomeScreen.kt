@@ -25,6 +25,8 @@ import androidx.compose.material.icons.filled.SportsCricket
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +37,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ImageCardHome
@@ -75,7 +79,6 @@ navController: NavHostController
 @Composable
 fun PortraitHome(
     navController: NavHostController
-
 ){
 
     Column {
@@ -225,7 +228,10 @@ fun CardUserPreferences(
                     .fillMaxWidth()
                     .weight(5f)
             ) {
-                TextBasicHeadLine(stringResource(R.string.sportCard))
+                Text(text = stringResource(R.string.sportCard),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontSize = 20.sp)
+
             }
 
 
@@ -282,7 +288,7 @@ fun TextCard(id:Int) {
             .padding(10.dp)
             .fillMaxSize(),
     ) {
-        TextBasicTitle(text)
+        Text(text = text, style = MaterialTheme.typography.bodyMedium, fontSize = 20.sp)
     }
 
 }
@@ -294,11 +300,12 @@ fun TextCard(id:Int) {
 //        HomeScreen()
 //    }
 //}
-//
-//
+////
+////
 //@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
 //@Composable
 //fun DefaultPreviewLandscape() {
+//
 //    MadTheme {
 //        HomeScreen()
 //    }

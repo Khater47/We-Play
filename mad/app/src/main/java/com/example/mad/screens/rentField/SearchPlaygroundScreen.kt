@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.SportsCricket
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -160,7 +163,12 @@ fun ButtonGroup(
         verticalAlignment = verticalAlignment,
         horizontalArrangement = horizontalAlignment
     ) {
-        Button(onClick = {
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+            ,onClick = {
             //DateDialog
             openSportDialog(true)
             }
@@ -168,7 +176,12 @@ fun ButtonGroup(
                 TextBasicIcon(text = "Sport", icon = Icons.Default.SportsCricket)
         }
 
-        Button(onClick = {
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+            ,onClick = {
             //DateDialog
             openLocationDialog(true)
         }
