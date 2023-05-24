@@ -64,12 +64,12 @@ fun getMonth(): String {
 }
 
 fun getIconUserInfo(userInfo: String): ImageVector {
-    return when (userInfo) {
-        "FullName" -> Icons.Default.Person
-        "Email" -> Icons.Default.Email
-        "Nickname" -> Icons.Default.AlternateEmail
-        "Description" -> Icons.Default.Description
-        "Password" -> Icons.Default.Lock
+    return when (userInfo.lowercase()) {
+        "fullName" -> Icons.Default.Person
+        "email" -> Icons.Default.Email
+        "nickname" -> Icons.Default.AlternateEmail
+        "description" -> Icons.Default.Description
+        "password" -> Icons.Default.Lock
         else -> Icons.Default.Phone
 
     }
@@ -85,9 +85,9 @@ fun validationTextField(type:String,text:String):Boolean{
 }
 
 fun getKeyboard(userInfo: String): KeyboardType {
-    return when (userInfo) {
-        "PhoneNumber" -> KeyboardType.Number
-        "Email" -> KeyboardType.Email
+    return when (userInfo.lowercase()) {
+        "phoneNumber" -> KeyboardType.Number
+        "email" -> KeyboardType.Email
         else -> KeyboardType.Text
     }
 }

@@ -2,6 +2,7 @@ package com.example.mad.screens.profile
 
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +31,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +42,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -63,11 +68,30 @@ fun ProfileScreen(
 
     val orientation = LocalConfiguration.current.orientation
     val image = getImageFromInternalStorage(LocalContext.current)
-    val fullName = "Mario Rossi"
+    val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
 
-    fun getEditProfile() {
-        val route = BottomBarScreen.ProfileEdit.route
-        navController.navigate(route)
+    val user = remember {
+        mutableStateOf(
+            mapOf(
+                "FullName" to "",
+                "Nickname" to "",
+                "Email" to "",
+                "PhoneNumber" to "",
+                "Description" to ""
+            )
+        )
+
+    }
+    vm.getProfileById(userId).observe(LocalLifecycleOwner.current){
+        if(it!=null){
+            user.value = mapOf(
+                "FullName" to it.fullName,
+                "Nickname" to it.nickname,
+                "Email" to it.email,
+                "PhoneNumber" to it.phone,
+                "Description" to it.description,
+            )
+        }
     }
 
     Scaffold(
@@ -79,16 +103,15 @@ fun ProfileScreen(
                 Configuration.ORIENTATION_PORTRAIT -> {
                     PortraitProfile(
                         image,
-                        fullName,
+                        user.value
                     )
                 }
 
                 else -> {
                     LandscapeProfile(
                         image,
-                        fullName,
-
-                        )
+                        user.value
+                    )
                 }
             }
         }
@@ -99,10 +122,8 @@ fun ProfileScreen(
 @Composable
 fun PortraitProfile(
     image: Bitmap,
-    fullName: String,
-//    userObject: Map<String, String>
+    user: Map<String, String>
 ) {
-
 
     Column {
 
@@ -112,7 +133,7 @@ fun PortraitProfile(
                 .weight(1.5f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ImageContainer(image, fullName)
+            ImageContainer(image, user.getOrDefault("FullName", "Mario Rossi"))
         }
 
         Column(
@@ -123,7 +144,7 @@ fun PortraitProfile(
                 .padding(16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            UserInfo(/*userObject*/)
+            UserInfo(user)
 
         }
 
@@ -131,7 +152,10 @@ fun PortraitProfile(
 }
 
 @Composable
-fun ImageContainer(image: Bitmap, fullName: String) {
+fun ImageContainer(
+    image: Bitmap,
+    fullName: String
+) {
 
     val orientation = LocalConfiguration.current.orientation
 
@@ -146,23 +170,17 @@ fun ImageContainer(image: Bitmap, fullName: String) {
 
     Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
+    Log.d("TAG_FULL_NAME",fullName)
+
     TextBasicHeadLine(fullName)
 }
 
 @Composable
 fun UserInfo(
-//    userObject:Map<String,String>
+    user: Map<String, String>
 ) {
 
     val modifier = Modifier.padding(vertical = 20.dp)
-
-    val userObject = mapOf(
-        "email" to "mariorossi@gmail.com",
-        "nickname" to "mario",
-        "phone" to "3456781921",
-        "description" to "student",
-
-        )
 
     Card(
         elevation = CardDefaults.cardElevation(),
@@ -180,17 +198,17 @@ fun UserInfo(
 
         Spacer(modifier = Modifier.padding(top = 20.dp))
 
-        TextIcon(text = userObject.getValue("email"), icon = Icons.Outlined.Email)
+        TextIcon(text = user.getOrDefault("Email","mariorossi@gmail.com"), icon = Icons.Outlined.Email)
 
         Divider(modifier = modifier)
 
-        TextIcon(text = userObject.getValue("nickname"), icon = Icons.Outlined.AlternateEmail)
+        TextIcon(text = user.getOrDefault("Nickname","mario"), icon = Icons.Outlined.AlternateEmail)
         Divider(modifier = modifier)
 
-        TextIcon(text = userObject.getValue("phone"), icon = Icons.Outlined.Phone)
+        TextIcon(text = user.getOrDefault("PhoneNumber","3456789871"), icon = Icons.Outlined.Phone)
         Divider(modifier = modifier)
 
-        TextIcon(text = userObject.getValue("description"), icon = Icons.Outlined.Description)
+        TextIcon(text = user.getOrDefault("Description","student"), icon = Icons.Outlined.Description)
 
         Spacer(modifier = Modifier.padding(bottom = 20.dp))
     }
@@ -220,8 +238,7 @@ fun TextIcon(text: String, icon: ImageVector) {
 @Composable
 fun LandscapeProfile(
     image: Bitmap,
-    fullName: String,
-//    userObject:Map<String,String>
+    user: Map<String, String>
 ) {
 
     Row {
@@ -234,7 +251,7 @@ fun LandscapeProfile(
             verticalArrangement = Arrangement.Center
 
         ) {
-            ImageContainer(image, fullName)
+            ImageContainer(image, user.getOrDefault("FullName", "Mario Rossi"))
         }
 
         Column(
@@ -245,7 +262,7 @@ fun LandscapeProfile(
                 .padding(2.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            UserInfo(/*userObject*/)
+            UserInfo(user)
 
         }
     }

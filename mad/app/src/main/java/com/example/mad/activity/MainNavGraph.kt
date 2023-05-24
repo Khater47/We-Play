@@ -37,7 +37,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
 
     AnimatedNavHost(navController = navController,
-        startDestination = BottomBarScreen.Reservation.route,
+        startDestination = BottomBarScreen.ProfileEdit.route,
     ) {
         composable(route=BottomBarScreen.SplashScreen.route){
             SplashScreen(navController,vm)
@@ -57,7 +57,7 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
         composable(
             route = BottomBarScreen.ProfileEdit.route,
         ) {
-            ProfileEditScreen(navController /*vm, navController, */)
+            ProfileEditScreen(navController,vm)
         }
         composable(route=BottomBarScreen.ProfileRating.route){
             ProfileRatingScreen(navController/*navController,vm*/)

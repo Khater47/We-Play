@@ -7,10 +7,15 @@ import androidx.lifecycle.ViewModel
 import com.example.mad.model.Playground
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
+import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.TimeSlot
 import com.example.mad.model.UserReservation
 import com.example.mad.model.UserSport
+import com.example.mad.model.toPlayground
+import com.example.mad.model.toPlaygroundRating
+import com.example.mad.model.toProfile
+import com.example.mad.model.toProfileSport
 import com.example.mad.model.toReservation
 import com.example.mad.model.toUserReservation
 import com.google.firebase.auth.FirebaseAuth
@@ -77,6 +82,237 @@ class MainViewModel : ViewModel() {
                 }
         }
 
+    fun getProfileById(id:String): LiveData<Profile?> {
+
+        val resultLiveData = MutableLiveData<Profile?>()
+
+        db.collection(USERS)
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                    document -> resultLiveData.postValue(document.toProfile())
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
+            }
+        return resultLiveData
+    }
+
+
+
+    //---------------------
+    //Function User Sport
+    //---------------------
+    fun insertUserProfileSport(userId: String, profileSport: ProfileSport) =
+        CoroutineScope(Dispatchers.IO).launch {
+
+            db.collection(USERS)
+                .document(userId)
+                .collection(USER_SPORT)
+                .document(profileSport.sport)
+                .set(profileSport)
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+    fun deleteUserProfileSport(userId: String, sport: String) =
+        CoroutineScope(Dispatchers.IO).launch {
+
+            db.collection(USERS)
+                .document(userId)
+                .collection(USER_SPORT)
+                .document(sport)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+    fun getAllUserProfileSport(
+        userId: String,
+    ): LiveData<List<ProfileSport?>> {
+
+        val resultLiveData = MutableLiveData<List<ProfileSport?>>()
+
+        db.collection(USERS)
+            .document(userId)
+            .collection(USER_SPORT)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val profileSport =
+                        value?.documents?.map {
+                            it.toProfileSport()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(profileSport)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+
+    //---------------------
+    //Function Rating Playground
+    //---------------------
+    fun getAllPlaygroundRating(id:String
+    ): LiveData<List<PlaygroundRating?>> {
+
+        val resultLiveData = MutableLiveData<List<PlaygroundRating?>>()
+
+        db.collection(PLAYGROUNDS)
+            .document(id)
+            .collection(PLAYGROUND_RATING)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playgroundRating =
+                        value?.documents?.map {
+                            it.toPlaygroundRating()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(playgroundRating)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+    fun insertUserPlaygroundRating(id:String,playgroundRating: PlaygroundRating) =
+        CoroutineScope(Dispatchers.IO).launch {
+
+            db.collection(PLAYGROUNDS)
+                .document(id)
+                .collection(PLAYGROUND_RATING)
+                .document(playgroundRating.nickname)
+                .set(playgroundRating)
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+
+
+    //---------------------
+    //Function Playground
+    //---------------------
+    fun getPlaygrounds(
+    ): LiveData<List<Playground?>> {
+
+        val resultLiveData = MutableLiveData<List<Playground?>>()
+
+        db.collection(PLAYGROUNDS)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playground =
+                        value?.documents?.map {
+                            it.toPlayground()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(playground)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+    fun getPlaygroundsBySport(sport:String
+    ): LiveData<List<Playground?>> {
+
+        val resultLiveData = MutableLiveData<List<Playground?>>()
+
+        db.collection(PLAYGROUNDS)
+            .whereEqualTo("sport",sport)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playground =
+                        value?.documents?.map {
+                            it.toPlayground()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(playground)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+    fun getPlaygroundsByLocation(location:String
+    ): LiveData<List<Playground?>> {
+
+        val resultLiveData = MutableLiveData<List<Playground?>>()
+
+        db.collection(PLAYGROUNDS)
+            .whereEqualTo("location",location)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playground =
+                        value?.documents?.map {
+                            it.toPlayground()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(playground)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+    fun getPlaygroundsByLocationAndSport(sport:String,location:String
+    ): LiveData<List<Playground?>> {
+
+        val resultLiveData = MutableLiveData<List<Playground?>>()
+
+        db.collection(PLAYGROUNDS)
+            .whereEqualTo("location",location)
+            .whereEqualTo("sport",sport)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playground =
+                        value?.documents?.map {
+                            it.toPlayground()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(playground)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+    fun getPlaygroundById(id:String): LiveData<Playground?> {
+
+        val resultLiveData = MutableLiveData<Playground?>()
+
+        db.collection(PLAYGROUNDS)
+            .document(id)
+            .get()
+            .addOnSuccessListener {
+                document -> resultLiveData.postValue(document.toPlayground())
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
+            }
+        return resultLiveData
+    }
 
 
     //---------------------

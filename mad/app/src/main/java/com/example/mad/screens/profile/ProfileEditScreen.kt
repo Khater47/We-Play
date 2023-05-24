@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -64,6 +65,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavHostController
+import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircleImage
@@ -80,6 +82,7 @@ import com.example.mad.common.openGallery
 import com.example.mad.common.rotateBitmap
 import com.example.mad.common.saveImageUriOnInternalStorage
 import com.example.mad.common.uriToBitmap
+import com.example.mad.model.Profile
 import com.example.mad.ui.theme.MadTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -95,17 +98,40 @@ const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileEditScreen(
-navController: NavHostController
+navController: NavHostController,
+vm:MainViewModel
 ) {
 
     val orientation = LocalConfiguration.current.orientation
     val route = BottomBarScreen.Profile.route
+    val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+
+    val user = remember{
+        mutableStateOf(
+            mapOf(
+                "FullName" to "",
+                "Nickname" to "",
+                "Email" to "",
+                "PhoneNumber" to "",
+                "Description" to ""
+            )
+        )
+    }
 
     fun goToProfile() {
         navController.navigate(route)
     }
 
     fun saveProfile() {
+        val p = Profile(
+            description=user.value.getOrDefault("Description","student"),
+            fullName=user.value.getOrDefault("FullName","Mario Rossi") ,
+            nickname =user.value.getOrDefault("Nickname","mario") ,
+            phone=user.value.getOrDefault("PhoneNumber","3456789871"),
+            email=user.value.getOrDefault("Email","mariorossi@gmail.com")
+        )
+        Log.d("TAG",p.toString())
+        vm.insertUserProfile(userId,p)
         navController.navigate(route)
     }
 
@@ -122,11 +148,11 @@ navController: NavHostController
         Box(Modifier.padding(it)) {
             when (orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    PortraitEditProfile(/*userObject*/)
+                    PortraitEditProfile(user)
                 }
 
                 else -> {
-                    LandscapeEditProfile(/*userObject*/)
+                    LandscapeEditProfile(user)
                 }
             }
         }
@@ -138,7 +164,8 @@ navController: NavHostController
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PortraitEditProfile(
-    //    userObject: MutableState<Bundle>
+    user: MutableState<Map<String,String>>
+
 ) {
     Column(
         Modifier.fillMaxWidth()
@@ -160,14 +187,15 @@ fun PortraitEditProfile(
                 .padding(start = 20.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            EditUserInfo(/*userObject*/)
+            EditUserInfo(user)
         }
     }
 }
 
 @Composable
 fun EditUserInfo(
-//    userObject: MutableState<Bundle>
+    user: MutableState<Map<String,String>>
+
 ) {
     val userInfo = listOf(
         "FullName",
@@ -179,7 +207,7 @@ fun EditUserInfo(
 
     LazyColumn {
         items(userInfo, itemContent = { item ->
-            EditInfo(item, getIconUserInfo(item) /*userObject*/)
+            EditInfo(item, getIconUserInfo(item) ,user)
         })
     }
 
@@ -189,11 +217,15 @@ fun EditUserInfo(
 fun EditInfo(
     text: String,
     icon: ImageVector,
-    /*userObject: MutableState<Bundle>*/
+    user: MutableState<Map<String,String>>
+
 ) {
 
-    val info = remember { /*mutableStateOf(userObject.value.getString(text) ?: "")*/
-    mutableStateOf("")
+
+
+    val info = remember {
+        mutableStateOf(user.value.getValue(text))
+//        mutableStateOf("")
     }
 
     Row(
@@ -216,6 +248,14 @@ fun EditInfo(
             value = info.value,
             onValueChange = {
                 info.value = it
+                val p:Map<String,String> = mapOf(
+                    "FullName" to if(text!="FullName") user.value.getValue("FullName") else it,
+                    "Nickname" to if(text!="Nickname") user.value.getValue("Nickname") else it,
+                    "Email" to if(text!="Email") user.value.getValue("Email") else it,
+                    "PhoneNumber" to if(text!="PhoneNumber") user.value.getValue("PhoneNumber") else it,
+                    "Description" to if(text!="Description") user.value.getValue("Description") else it,
+                )
+                user.value = p
 //                userObject.value.putString(text, it)
             },
             label = { Text(text = text) },
@@ -385,7 +425,8 @@ fun EditImageProfile() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun LandscapeEditProfile(
-//    userObject: MutableState<Bundle>
+    user: MutableState<Map<String,String>>
+
 ) {
 
     Row(
@@ -410,7 +451,7 @@ fun LandscapeEditProfile(
                 .padding(start = 20.dp),
             verticalArrangement = Arrangement.Center,
         ) {
-            EditUserInfo(/*userObject*/)
+            EditUserInfo(user)
         }
 
 
