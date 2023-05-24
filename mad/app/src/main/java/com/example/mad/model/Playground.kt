@@ -6,10 +6,11 @@ import com.google.firebase.firestore.QuerySnapshot
 class Playground(
     val playground:String,
     val sport:String,
-    val location:String
+    val city:String,
+    val address:String
 ){
     override fun toString(): String {
-        return "$playground $sport $location"
+        return "$playground $sport $city $address"
     }
 
 
@@ -19,8 +20,9 @@ fun DocumentSnapshot.toPlayground(): Playground?{
     return try {
         val playground = get("playground") as String
         val sport = get("sport") as String
-        val location = get("location") as String
-        Playground(playground,sport,location)
+        val city = get("city") as String
+        val address = get("address") as String
+        Playground(playground,sport,city,address)
 
     }
     catch (e:Exception){

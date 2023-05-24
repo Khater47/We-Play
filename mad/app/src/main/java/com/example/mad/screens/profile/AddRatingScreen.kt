@@ -66,7 +66,7 @@ fun AddRatingScreen(
         //viewModel stuff
     }
 
-    val p = Playground("Campo Admonds", "Soccer", "Turin")
+    val p = Playground("Campo Admonds", "Soccer", "Turin","")
     val (quality, setQuality) = remember {
         mutableStateOf(0)
     }

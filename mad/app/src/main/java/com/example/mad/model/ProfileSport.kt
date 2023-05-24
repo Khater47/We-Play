@@ -1,11 +1,12 @@
 package com.example.mad.model
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 
 class ProfileSport(
     val sport:String,
-    val level:Int,
-    val trophies:Int,
+    val level:Long,
+    val trophies:Long,
 ) {
     override fun toString(): String {
         return "$sport $level $trophies"
@@ -15,9 +16,9 @@ class ProfileSport(
 fun DocumentSnapshot.toProfileSport(): ProfileSport? {
     return try {
 
-        val sport:String = get("sport") as String
-        val level:Int = get("level") as Int
-        val trophies:Int = get("trophies") as Int
+        val sport = get("sport") as String
+        val level = get("level") as Long
+        val trophies = get("trophies") as Long
 
         ProfileSport(
             sport,level,trophies

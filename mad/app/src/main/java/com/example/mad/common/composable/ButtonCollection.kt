@@ -171,7 +171,7 @@ fun IconButtonRating(
 }
 
 @Composable
-fun Score(score: Int) {
+fun Score(score: Long) {
     LazyRow {
         items(5) { index ->
             Icon(
@@ -207,30 +207,30 @@ fun ActionButtonTopBar(
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewButton() {
-    val id = R.string.confirm
-    fun action() {}
-    val (score, setScore) = remember {
-        mutableStateOf(3)
-    }
-
-    MadTheme {
-
-        Column {
-            ButtonBasic(id, ::action)
-            Spacer(Modifier.padding(vertical = 10.dp))
-            ButtonDialog(::action, ::action)
-            Spacer(Modifier.padding(vertical = 10.dp))
-            IconButtonDelete(::action)
-            Spacer(Modifier.padding(vertical = 10.dp))
-            IconButtonEdit(::action)
-            Spacer(Modifier.padding(vertical = 10.dp))
-            IconButtonRating(score, setScore)
-            Spacer(Modifier.padding(vertical = 10.dp))
-            Score(score)
-
-        }
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewButton() {
+//    val id = R.string.confirm
+//    fun action() {}
+//    val (score, setScore) = remember {
+//        mutableStateOf(3)
+//    }
+//
+//    MadTheme {
+//
+//        Column {
+//            ButtonBasic(id, ::action)
+//            Spacer(Modifier.padding(vertical = 10.dp))
+//            ButtonDialog(::action, ::action)
+//            Spacer(Modifier.padding(vertical = 10.dp))
+//            IconButtonDelete(::action)
+//            Spacer(Modifier.padding(vertical = 10.dp))
+//            IconButtonEdit(::action)
+//            Spacer(Modifier.padding(vertical = 10.dp))
+//            IconButtonRating(score, setScore)
+//            Spacer(Modifier.padding(vertical = 10.dp))
+//            Score(score)
+//
+//        }
+//    }
+//}

@@ -153,6 +153,7 @@ class MainViewModel : ViewModel() {
                             it.toProfileSport()
                         } ?: emptyList()
 
+
                     resultLiveData.postValue(profileSport)
                 } else {
                     Log.d("TAG", "ERROR")
@@ -259,7 +260,7 @@ class MainViewModel : ViewModel() {
         val resultLiveData = MutableLiveData<List<Playground?>>()
 
         db.collection(PLAYGROUNDS)
-            .whereEqualTo("location",location)
+            .whereEqualTo("city",location)
             .addSnapshotListener { value, error ->
                 if (error == null) {
                     val playground =
@@ -281,7 +282,7 @@ class MainViewModel : ViewModel() {
         val resultLiveData = MutableLiveData<List<Playground?>>()
 
         db.collection(PLAYGROUNDS)
-            .whereEqualTo("location",location)
+            .whereEqualTo("city",location)
             .whereEqualTo("sport",sport)
             .addSnapshotListener { value, error ->
                 if (error == null) {

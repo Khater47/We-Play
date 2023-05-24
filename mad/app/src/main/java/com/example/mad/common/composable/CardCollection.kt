@@ -64,7 +64,7 @@ fun CardPlayground(playground: Playground){
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
                     Spacer(Modifier.padding(vertical=5.dp))
-                    TextBasicIcon(text = playground.location, icon = Icons.Default.LocationOn)
+                    TextBasicIcon(text = playground.city, icon = Icons.Default.LocationOn)
                     Spacer(Modifier.padding(vertical=5.dp))
                 }
                 Column(Modifier.weight(1f)) {
