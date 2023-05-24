@@ -77,5 +77,5 @@ val seed = Color(0xFF1ED760)
 
 
 val Gold = Color(0xFFFFB600)
-//val silver = Color(0xFFC0C0C0)
+val Silver = Color(0xFFC0C0C0)
 val Bronze = Color(0xFFCD7F32)

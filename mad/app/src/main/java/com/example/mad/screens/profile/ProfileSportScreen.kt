@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,7 +71,10 @@ import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.model.ProfileSport
+import com.example.mad.ui.theme.Bronze
+import com.example.mad.ui.theme.Gold
 import com.example.mad.ui.theme.MadTheme
+import com.example.mad.ui.theme.Silver
 
 //TODO() Dialog add/edit sport
 
@@ -218,13 +222,6 @@ fun ProfileSportScreen(
         mutableStateOf(false)
     }
 
-//    val (level,setLevel) = remember {
-//        mutableStateOf(0)
-//    }
-//
-//    val (trophies,setTrophies) = remember {
-//        mutableStateOf(0)
-//    }
 
 
     val profileSport = remember {
@@ -249,7 +246,7 @@ fun ProfileSportScreen(
 
 
     if (isOpenDialog) {
-        FullDialogSport(openDialog)
+        FullDialogSport(openDialog,vm)
     }
 
 
@@ -292,6 +289,8 @@ fun Achievements(
                     .fillMaxWidth()
                     .padding(10.dp),
                 elevation = CardDefaults.cardElevation(),
+                colors=CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface
+                , contentColor = MaterialTheme.colorScheme.onSurface),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Row {
@@ -343,7 +342,6 @@ fun InfoSportCard(
     Spacer(Modifier.padding(vertical = 5.dp))
 
     TextBasicTitle("Trophies $trophies")
-
 
 }
 
