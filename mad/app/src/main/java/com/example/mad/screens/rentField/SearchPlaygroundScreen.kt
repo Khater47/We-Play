@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Scaffold
@@ -18,6 +19,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.SportsCricket
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -34,13 +38,20 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
+import com.example.mad.common.composable.CardPlaygroundFullLocation
+import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.DialogList
+import com.example.mad.common.composable.InfoSearchPlayground
 import com.example.mad.common.composable.ListContainerDialog
+import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
+import com.example.mad.common.getIconSport
 import com.example.mad.common.getLocation
 import com.example.mad.common.getSport
 import com.example.mad.model.Playground
+import com.example.mad.model.Reservation
+import com.example.mad.screens.profile.InfoPlayground
 import com.example.mad.ui.theme.MadTheme
 
 
@@ -76,7 +87,7 @@ fun SearchPlaygroundScreen(
 
 @Composable
 fun SearchPlaygroundContainer(
-    vm:MainViewModel
+    vm: MainViewModel
 ) {
 
     val (sport, setSport) = remember {
@@ -93,34 +104,35 @@ fun SearchPlaygroundContainer(
 
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    val orientation = LocalConfiguration.current.orientation
 
 
     //Not filter
-    if(sport.isEmpty() && location.isEmpty()){
-        vm.getPlaygrounds().observe(lifecycleOwner){
-            playgrounds.value=it.filterNotNull()
+    if (sport.isEmpty() && location.isEmpty()) {
+        vm.getPlaygrounds().observe(lifecycleOwner) {
+            playgrounds.value = it.filterNotNull()
         }
     }
     //Filter by sport
-    else if(sport.isNotBlank() && location.isEmpty()){
+    else if (sport.isNotBlank() && location.isEmpty()) {
 
-        vm.getPlaygroundsBySport(sport).observe(lifecycleOwner){
-            playgrounds.value=it.filterNotNull()
+        vm.getPlaygroundsBySport(sport).observe(lifecycleOwner) {
+            playgrounds.value = it.filterNotNull()
 
         }
     }
     //Filter by location
-    else if(sport.isEmpty() && location.isNotBlank()){
+    else if (sport.isEmpty() && location.isNotBlank()) {
 
-        vm.getPlaygroundsByLocation(location).observe(lifecycleOwner){
-            playgrounds.value=it.filterNotNull()
+        vm.getPlaygroundsByLocation(location).observe(lifecycleOwner) {
+            playgrounds.value = it.filterNotNull()
 
         }
     }
     //Filter by sport and location
     else {
-        vm.getPlaygroundsByLocationAndSport(sport, location).observe(lifecycleOwner){
-            playgrounds.value=it.filterNotNull()
+        vm.getPlaygroundsByLocationAndSport(sport, location).observe(lifecycleOwner) {
+            playgrounds.value = it.filterNotNull()
         }
     }
 
@@ -137,21 +149,76 @@ fun SearchPlaygroundContainer(
             openLocationDialog,
             openSportDialog
         )
-        LazyColumn {
-            items(playgrounds.value) {item ->
-                CardPlayground(item)
+        when(orientation){
+            Configuration.ORIENTATION_PORTRAIT->{
+                LazyColumn {
+                    items(playgrounds.value) { item ->
+                        CardPlaygroundFullLocation(item)
+                    }
+                }
+            }
+            else -> {
+                LazyColumn{
+                    items(playgrounds.value){
+                        item ->
+                        Row {
+                            Column(Modifier.weight(1f)) {
+                                CardPlaygroundLandscape(item)
+                            }
+                            Column(Modifier.weight(1f),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally) {
+                                Column(Modifier.padding(10.dp)) {
+                                    InfoSearchPlayground(item.address+","+item.city,item.sport)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+    }
+
+
+
+
+
 
     val sportList = getSport()
 
     val locationList = getLocation()
 
     if (isOpenSportDialog) {
-        DialogList(sportList,"Select Sport",openSportDialog,setSport)
-        }
+        DialogList(sportList, "Select Sport", openSportDialog, setSport)
+    }
     if (isOpenLocationDialog) {
-        DialogList(locationList,"Select Location",openLocationDialog,setLocation)
+        DialogList(locationList, "Select Location", openLocationDialog, setLocation)
+    }
+}
+
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardPlaygroundLandscape(playground: Playground){
+    val playgroundTitle = playground.playground
+    val playgroundSport = playground.sport
+
+    Card(
+        onClick = {
+            //ADD RATING
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        elevation = CardDefaults.cardElevation(),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        Column {
+            Column(Modifier.padding(10.dp)) {
+                TextBasicHeadLine(text = playgroundTitle)
+            }
+            DefaultImage(image = playgroundSport)
         }
     }
 }
@@ -187,31 +254,28 @@ fun ButtonGroup(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-            ,onClick = {
-            //DateDialog
-            openSportDialog(true)
+            ), onClick = {
+                //DateDialog
+                openSportDialog(true)
             }
         ) {
-                TextBasicIcon(text = "Sport", icon = Icons.Default.SportsCricket)
+            TextBasicIcon(text = "Sport", icon = Icons.Default.SportsCricket)
         }
 
         Button(
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
-            )
-            ,onClick = {
-            //DateDialog
-            openLocationDialog(true)
-        }
+            ), onClick = {
+                //DateDialog
+                openLocationDialog(true)
+            }
         ) {
-                TextBasicIcon(text = "Location", icon = Icons.Default.LocationOn)
+            TextBasicIcon(text = "Location", icon = Icons.Default.LocationOn)
         }
     }
 
 }
-
 
 
 //@Preview(showBackground = true)

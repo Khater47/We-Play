@@ -137,7 +137,7 @@ fun ButtonDialog(
 @Composable
 fun IconButtonDelete(action: () -> Unit) {
     IconButton(onClick = { action() }) {
-        Icon(Icons.Default.Delete, contentDescription = "deleteButton")
+        Icon(Icons.Default.Delete,tint=MaterialTheme.colorScheme.error, contentDescription = "deleteButton")
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.mad.common.composable
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +62,7 @@ fun CardPlayground(playground: Playground){
                     .fillMaxWidth()
             )
 
+
             Row(modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.weight(1f)) {
                     Spacer(Modifier.padding(vertical=5.dp))
@@ -76,6 +78,62 @@ fun CardPlayground(playground: Playground){
 
         }
     }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CardPlaygroundFullLocation(playground: Playground){
+
+    val heightImage =
+        if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            200.dp
+        } else {
+            140.dp
+        }
+
+
+    Card(
+        onClick = { /*TODO*/ },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation()
+    ) {
+        Column {
+            Column(Modifier.padding(10.dp)) {
+                TextBasicHeadLine(text = playground.playground)
+            }
+
+            Image(
+                painter = painterResource(id = getIconPlayground(playground.sport)),
+                contentDescription = "Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(heightImage)
+                    .fillMaxWidth()
+            )
+
+            InfoSearchPlayground(location = playground.address+", "+playground.city, sport = playground.sport)
+
+        }
+    }
+
+}
+
+@Composable
+fun InfoSearchPlayground(location:String,sport:String){
+
+    Column(Modifier.padding(10.dp).fillMaxWidth(),
+        verticalArrangement = Arrangement.Center) {
+        TextBasicIcon(location, Icons.Default.LocationOn)
+    }
+    Column(Modifier.padding(10.dp).fillMaxWidth(),
+        verticalArrangement = Arrangement.Center) {
+        TextBasicIcon(sport, getIconSport(sport))
+    }
+
 
 }
 

@@ -2,7 +2,6 @@ package com.example.mad.activity
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
@@ -11,14 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.example.mad.MainViewModel
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
@@ -44,8 +40,7 @@ fun BottomBar(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    if (currentDestination?.route != BottomBarScreen.SplashScreen.route
-        && currentDestination?.route!=BottomBarScreen.Login.route){
+    if (currentDestination?.route!=BottomBarScreen.Login.route){
 
         val screens = listOf(
             BottomBarScreen.Home,

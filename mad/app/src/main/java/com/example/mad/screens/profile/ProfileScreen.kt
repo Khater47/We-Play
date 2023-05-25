@@ -170,8 +170,6 @@ fun ImageContainer(
 
     Spacer(modifier = Modifier.padding(vertical = 5.dp))
 
-    Log.d("TAG_FULL_NAME",fullName)
-
     TextBasicHeadLine(fullName)
 }
 

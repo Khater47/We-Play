@@ -76,11 +76,7 @@ sealed class BottomBarScreen(
         title="Playground",
         icon= Icons.Default.Sports
     )
-    object SplashScreen: BottomBarScreen(
-        route = "splashScreen",
-        title="Splash Screen",
-        icon= Icons.Default.Sports
-    )
+
 
 
 }

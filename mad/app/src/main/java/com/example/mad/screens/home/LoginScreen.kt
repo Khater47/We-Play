@@ -82,6 +82,7 @@ fun LoginScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
+
     //TODO: isError state for handling not existing user (wrong credentials)
 
     fun login() {
@@ -91,22 +92,19 @@ fun LoginScreen(
         if (!emailValid || !passwordValid) {
             scope.launch {
                 snackBarHostState.showSnackbar(
-                    "Email or password wrong"
+                    "Invalid email or password"
                 )
             }
         } else {
+//            Log.d("TAG","ON SIGN IN CLICK")
             vm.onSignInClick(email, password)
-                            Log.d("TAG",vm.currentUser.value?.uid?:"Wrong Logged")
 
             if (vm.currentUser.value!=null){
-                navController.navigate(BottomBarScreen.Home.route)
-//                Log.d("TAG",vm.currentUser.value?.uid?:"Wrong Logged")
+//                Log.d("TAG_USER_LOGIN_NOT_NULL", vm.currentUser.value?.uid?:"NULL")
+                navController.navigate(BottomBarScreen.Profile.route)
             }
             else {
-                Log.d("TAG","Wrong not logged")
-
-                //TODO: (wrong credentials) Toast
-
+                Toast.makeText(context,"Wrong Credentials",Toast.LENGTH_SHORT).show()
             }
 
         }

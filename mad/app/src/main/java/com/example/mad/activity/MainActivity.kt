@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.example.mad.MainViewModel
 import com.example.mad.model.Playground
@@ -35,10 +36,16 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val vm by viewModels<MainViewModel>()
-    @OptIn(ExperimentalAnimationApi::class)
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        installSplashScreen().apply {
+            setKeepOnScreenCondition{
+                vm.isLoading.value
+            }
+        }
+
         setContent {
             MadTheme(darkTheme = false) {
                 // A surface container using the 'background' color from the theme

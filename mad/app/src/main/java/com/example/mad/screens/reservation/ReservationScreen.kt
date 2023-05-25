@@ -212,7 +212,8 @@ fun ReservationCard(
     val context = LocalContext.current
 
     fun onDelete() {
-        //
+//        vm.deleteReservation(reservationId="4")
+//        vm.deleteUserReservation(userId="",reservationId="4")
     }
 
     if(reservations.isNotEmpty()){

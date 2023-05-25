@@ -1,9 +1,12 @@
 package com.example.mad
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mad.model.Playground
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
@@ -25,7 +28,9 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 const val PLAYGROUNDS = "playgrounds"
@@ -36,32 +41,47 @@ const val RESERVATION = "reservation"
 
 class MainViewModel : ViewModel() {
 
+    //splashScreen
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading = _isLoading.asStateFlow()
+
+
     private val db = FirebaseFirestore.getInstance()
 
     private val auth: FirebaseAuth = Firebase.auth
     val currentUser = MutableStateFlow(auth.currentUser)
+    val uid = currentUser.value?.uid
 
-    private val _reservations = MutableLiveData<List<Reservation?>>()
-    val reservations: LiveData<List<Reservation?>> = _reservations
+    //splashScreen
+    init {
+        viewModelScope.launch {
+            delay(3000)
+            _isLoading.value=false
+        }
+    }
 
-//    private val _userReservations = MutableLiveData<List<UserReservation?>>()
-//    val userReservations:LiveData<List<UserReservation?>> = _userReservations
-
-    fun onSignInClick(email: String, password: String) {
+    fun onSignInClick(email: String, password: String) = CoroutineScope(Dispatchers.IO).launch {
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 // Sign in success, update UI with the signed-in user's information
                 currentUser.value = task.result.user
+
             } else {
                 // If sign in fails, display a message to the user.
+//                Log.d("TAG_EXCEPTION",task.exception?.localizedMessage?:"Wrong credentials")
                 currentUser.value = null
             }
 
         }
     }
 
-    fun onSignOutInClick() = auth.signOut()
+    fun onSignOutInClick() =  CoroutineScope(Dispatchers.IO).launch {
+        Log.d("TAG_BEFORE_LOGOUT",currentUser.value?.uid?:"NULL")
+        currentUser.value=null
+        auth.signOut()
+        Log.d("TAG_AFTER_LOGOUT",currentUser.value?.uid?:"NULL")
+    }
 
 
     //---------------------
@@ -478,6 +498,65 @@ class MainViewModel : ViewModel() {
                 .collection(RESERVATION)
                 .document(reservationId)
                 .delete()
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+
+    //---------------------
+    //Function Reservation
+    //---------------------
+    fun insertReservation(reservationId: String, reservation: Reservation) =
+        CoroutineScope(Dispatchers.IO).launch {
+
+            db.collection(RESERVATION)
+                .document(reservationId)
+                .set(reservation)
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+    fun deleteReservation(reservationId: String) =
+        CoroutineScope(Dispatchers.IO).launch {
+            db.collection(RESERVATION)
+                .document(reservationId)
+                .delete()
+                .addOnSuccessListener {
+                    Log.d("TAG", "SUCCESS")
+                }
+                .addOnFailureListener {
+                    Log.d("TAG", "ERROR")
+
+                }
+        }
+
+    fun updateReservation(
+        reservationId: String,
+        equipment: Boolean,
+        startTime: String,
+        endTime: String
+    ) =
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val data = hashMapOf<String, Any>(
+                "equipment" to equipment,
+                "startTime" to startTime,
+                "endTime" to endTime
+            )
+
+            db.collection(RESERVATION)
+                .document(reservationId)
+                .set(data, SetOptions.merge())
                 .addOnSuccessListener {
                     Log.d("TAG", "SUCCESS")
                 }
