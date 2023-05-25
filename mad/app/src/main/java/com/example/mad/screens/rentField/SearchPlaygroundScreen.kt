@@ -35,8 +35,11 @@ import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
 import com.example.mad.common.composable.DialogList
+import com.example.mad.common.composable.ListContainerDialog
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
+import com.example.mad.common.getLocation
+import com.example.mad.common.getSport
 import com.example.mad.model.Playground
 import com.example.mad.ui.theme.MadTheme
 
@@ -140,24 +143,15 @@ fun SearchPlaygroundContainer(
             }
         }
 
-    val sportList = listOf(
-        "Soccer",
-        "Volleyball",
-        "Basket",
-        "Cricket",
-    )
-    val locationList = listOf(
-        "Turin",
-        "Milan",
-        "Rome",
-        "Venice",
-    )
+    val sportList = getSport()
+
+    val locationList = getLocation()
 
     if (isOpenSportDialog) {
-        DialogList(sportList,openSportDialog,setSport)
+        DialogList(sportList,"Select Sport",openSportDialog,setSport)
         }
     if (isOpenLocationDialog) {
-        DialogList(locationList,openLocationDialog,setLocation)
+        DialogList(locationList,"Select Location",openLocationDialog,setLocation)
         }
     }
 }

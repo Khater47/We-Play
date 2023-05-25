@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material.Scaffold
@@ -20,9 +21,12 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -38,17 +42,21 @@ import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconPlayground
 import com.example.mad.common.getIconSport
+import com.example.mad.common.getToday
+import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.MadTheme
 
 
 @Composable
 fun ProfileRatingScreen(
     navController: NavHostController,
-//    vm: MainViewModel
+    vm: MainViewModel
 ) {
     fun goHome() {
         navController.navigate(BottomBarScreen.Home.route)
     }
+
+    val userId = "66bvbnu9zPP3SzKD6W15ax8Ouhv1"
 
     fun goToAddRating() {
 //        val route = "/addRating"
@@ -63,7 +71,7 @@ fun ProfileRatingScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            PlaygroundRating()
+            PlaygroundRating(vm,userId)
         }
     }
 
@@ -71,10 +79,20 @@ fun ProfileRatingScreen(
 
 @Composable
 fun PlaygroundRating(
-//    vm: MainViewModel
+    vm: MainViewModel,
+    userId:String
 ) {
 
-    //ratingPlaygrounds
+    val today = getToday()
+
+    val reservations = remember{
+        mutableStateOf<List<UserReservation>>(emptyList())
+    }
+
+    vm.getAllUserPastReservation(userId, today).observe(LocalLifecycleOwner.current){
+        reservations.value=it.filterNotNull()
+    }
+
 
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
@@ -84,8 +102,8 @@ fun PlaygroundRating(
                         .padding(16.dp)
                         .weight(4f)
                 ) {
-                    items(5) {
-                        CardPlaygroundReservationPortrait()
+                    items(reservations.value) {item ->
+                        CardPlaygroundReservationPortrait(item)
                     }
                 }
             }
@@ -97,10 +115,10 @@ fun PlaygroundRating(
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    items(5) {
+                    items(reservations.value) { item ->
                         Row {
                             Column(Modifier.weight(1f)) {
-                                CardPlaygroundReservationLandscape()
+                                CardPlaygroundReservationLandscape(item)
                             }
                             Column(
                                 Modifier.weight(1f),
@@ -108,11 +126,11 @@ fun PlaygroundRating(
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Column(Modifier.padding(10.dp)) {
-                                    InfoPlayground("Turin", "Soccer" )
+                                    InfoPlayground(item.city, item.sport )
                                 }
 
                                 Column(Modifier.padding(10.dp)) {
-                                    InfoReservation("20/05/2023", "10:00" )
+                                    InfoReservation(item.date, item.startTime+"-"+item.endTime )
                                 }
                             }
 
@@ -127,10 +145,10 @@ fun PlaygroundRating(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundReservationLandscape() {
+fun CardPlaygroundReservationLandscape(reservation:UserReservation) {
 
-    val playgroundTitle = "Campo Admond"
-    val playgroundSport = "Soccer"
+    val playgroundTitle = reservation.playground
+    val playgroundSport = reservation.sport
 
     Card(
         onClick = {
@@ -153,13 +171,13 @@ fun CardPlaygroundReservationLandscape() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundReservationPortrait() {
+fun CardPlaygroundReservationPortrait(reservation:UserReservation) {
 
-    val playgroundTitle = "Campo Admond"
-    val playgroundSport = "Soccer"
-    val playgroundLocation = "Turin"
-    val playgroundDate = "20/05/2023"
-    val playgroundTime = "10:00-11:00"
+    val playgroundTitle = reservation.playground
+    val playgroundSport = reservation.sport
+    val playgroundLocation = reservation.city
+    val playgroundDate = reservation.date
+    val playgroundTime = reservation.startTime+"-"+reservation.endTime
 
     Card(
         onClick = {

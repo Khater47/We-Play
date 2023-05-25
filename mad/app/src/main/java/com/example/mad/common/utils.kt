@@ -122,6 +122,40 @@ fun getIconSport(sportText: String): ImageVector {
     }
 }
 
+fun getSport():List<String>{
+
+    return listOf(
+        "Soccer",
+        "Volleyball",
+        "Basketball",
+        "Cricket",
+        "Baseball",
+        "Football",
+        "Golf",
+        "Gymnastic",
+        "Tennis"
+        )
+
+}
+
+fun getLocation():List<String>{
+    return listOf(
+        "Turin",
+        "Milan",
+        "Rome",
+        "Venice",
+    )
+}
+fun getTimeSlot():List<String>{
+    return listOf(
+        "09:00-11:00",
+        "11:00-13:00",
+        "13:00-15:00",
+        "15:00-17:00",
+        "17:00-19:00",
+    )
+}
+
 fun getImageFromInternalStorage(context: Context): Bitmap {
 
     val fileName = "profilePicture"

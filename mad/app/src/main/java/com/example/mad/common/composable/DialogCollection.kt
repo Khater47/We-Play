@@ -1,6 +1,8 @@
 package com.example.mad.common.composable
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +26,16 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -44,6 +51,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mad.MainViewModel
 import com.example.mad.common.getKeyboard
+import com.example.mad.common.getSport
 import com.example.mad.model.ProfileSport
 import com.example.mad.ui.theme.Bronze
 import com.example.mad.ui.theme.Gold
@@ -53,62 +61,72 @@ import com.example.mad.ui.theme.Silver
 @Composable
 fun DialogList(
     data: List<String>,
+    text: String,
     openDialog: (Boolean) -> Unit,
     setData: (String) -> Unit
 ) {
 
     val selected = remember {
-        mutableStateOf("")
+        mutableStateOf(-1)
     }
 
-    fun dismiss() = openDialog(false)
+
 
     Dialog(
-        onDismissRequest = { dismiss() },
+        onDismissRequest = {openDialog(false) },
     ) {
-
-        Column(Modifier.background(Color.White, shape = RoundedCornerShape(percent = 10))) {
-
-            Column(Modifier.fillMaxWidth()) {
-                LazyColumn(Modifier.padding(10.dp)) {
-                    itemsIndexed(data) { index, item ->
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    selected.value = item
-                                }
-                                .background(
-                                    color = if (selected.value != item) Color.White else Color.Gray,
-                                    shape = if (index == 0) RoundedCornerShape(
-                                        topStart = 5.dp,
-                                        topEnd = 5.dp
-                                    ) else RectangleShape
-                                )) {
-                            Column(Modifier.padding(10.dp)) {
-                                Text(
-                                    text = item,
-                                    fontSize = 16.sp,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                            Divider()
-                        }
-
-                    }
-                }
-            }
-
-            Column(
-                Modifier
+        Card(
+            shape = RoundedCornerShape(10.dp),
+            elevation = CardDefaults.cardElevation(),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            ListContainerDialog(
+                modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 20.dp)
+                    .padding(horizontal = 10.dp), data = data,
+                state = selected,
+                text = text,
+                horizontalAlignment = Alignment.Start
+            )
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(vertical=10.dp),
+                horizontalArrangement = Arrangement.End
             ) {
-                ButtonDialog(cancel = { dismiss() },
-                    confirm = {
-                        setData(selected.value)
-                        openDialog(false)
-                    })
+                Column(Modifier.padding(horizontal = 10.dp)) {
+                    Button(
+                        onClick = { openDialog(false) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text("Cancel", fontSize = 14.sp, style = MaterialTheme.typography.bodySmall)
+                    }
+
+                }
+                Column(Modifier.padding(end = 10.dp)) {
+                    Button(
+                        onClick = {
+                            val dataString = if(selected.value==-1) "" else data[selected.value]
+                            setData(dataString)
+                            openDialog(false) },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        Text(
+                            "Confirm",
+                            fontSize = 14.sp,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                }
             }
         }
 
@@ -119,24 +137,30 @@ fun DialogList(
 @Composable
 fun FullDialogSport(
     openDialog: (Boolean) -> Unit,
-    vm:MainViewModel,
+    vm: MainViewModel,
 ) {
 
-    val (trophiesText,setTrophiesText) = remember {
+    val (trophiesText, setTrophiesText) = remember {
         mutableStateOf("")
     }
 
-    val (score,setScore) = remember {
+    val (score, setScore) = remember {
+        mutableStateOf(0)
+    }
+    val selected = remember {
         mutableStateOf(0)
     }
 
-    val description = "Add your favorites sport and the related statistics, " +
+    val data = getSport()
+
+    val description = "Add or change your favorites sport and the related statistics, " +
             "like level from 1 to 5 and the " +
             "number of trophies that you have earn it"
 
-    Dialog(onDismissRequest = {
-        openDialog(false)
-    },
+    Dialog(
+        onDismissRequest = {
+            openDialog(false)
+        },
         properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Column(
@@ -161,13 +185,16 @@ fun FullDialogSport(
                         .weight(1f)
                         .fillMaxHeight(),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center) {
+                    verticalArrangement = Arrangement.Center
+                ) {
 
                     IconButton(onClick = {
                         openDialog(false)
-                    },modifier=Modifier.fillMaxHeight()) {
-                        Icon(imageVector = Icons.Default.Clear, contentDescription = "close dialog",
-                        tint = MaterialTheme.colorScheme.onSurface)
+                    }, modifier = Modifier.fillMaxHeight()) {
+                        Icon(
+                            imageVector = Icons.Default.Clear, contentDescription = "close dialog",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
                     }
                 }
                 Column(
@@ -175,11 +202,14 @@ fun FullDialogSport(
                         .weight(5f)
                         .padding(horizontal = 10.dp)
                         .fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center) {
+                    verticalArrangement = Arrangement.Center
+                ) {
 
-                    Text(text = "Set sport", color = MaterialTheme.colorScheme.onSurface,
-                    modifier=Modifier.fillMaxWidth(),
-                    fontSize=20.sp,style=MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "Set sport", color = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.fillMaxWidth(),
+                        fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium
+                    )
                 }
                 Column(
                     Modifier
@@ -190,21 +220,26 @@ fun FullDialogSport(
                 ) {
                     Button(
                         onClick = {
-                            val trophies = if(trophiesText=="") 0L else trophiesText.toLong()
 
+                            val trophies = if (trophiesText == "") 0L else trophiesText.toLong()
 
-                            val ps = ProfileSport(sport="Basketball",level=score.toLong(),trophies)
+                            val ps =
+                                ProfileSport(
+                                    sport = data[selected.value],
+                                    level = score.toLong(),
+                                    trophies
+                                )
                             val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
 
-                            vm.insertUserProfileSport(userId,ps)
+                            vm.insertUserProfileSport(userId, ps)
                             openDialog(false)
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary
                         ),
-                        shape= RectangleShape,
-                        modifier=Modifier.fillMaxHeight()
+                        shape = RectangleShape,
+                        modifier = Modifier.fillMaxHeight()
                     ) {
                         Text(text = "Save")
                     }
@@ -215,12 +250,15 @@ fun FullDialogSport(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .padding(15.dp)){
-                Text(description,fontSize=15.sp,style=MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface)
+                    .padding(15.dp)
+            ) {
+                Text(
+                    description, fontSize = 15.sp, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
 
-
+            ListContainerDialog(data, state = selected)
 
             /*LEVEL*/
             Column(
@@ -228,9 +266,12 @@ fun FullDialogSport(
                     .fillMaxWidth()
                     .padding(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                Text(text="Level",fontSize=20.sp,style=MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface)
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Level", fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
 
             Column(
@@ -238,14 +279,12 @@ fun FullDialogSport(
                     .fillMaxWidth()
                     .padding(15.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center) {
-                IconButtonRating(score,setScore)
+                verticalArrangement = Arrangement.Center
+            ) {
+                IconButtonRating(score, setScore)
             }
 
-
-
             MedalItemDialog(text = "Trophies", medal = trophiesText, setMedal = setTrophiesText)
-
 
         }
     }
@@ -254,29 +293,64 @@ fun FullDialogSport(
 }
 
 @Composable
-fun ListContainerDialog(data:List<String>){
+fun ListContainerDialog(
+    data: List<String>,
+    state: MutableState<Int>,
+    text: String = "Select Sport",
+    horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
+    modifier: Modifier = Modifier.fillMaxWidth()
+) {
+
+
+    Column(
+        modifier = modifier, horizontalAlignment = horizontalAlignment,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = text, fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(vertical = 10.dp)
+        )
+        Divider()
+    }
 
     //TODO RADIO BUTTON
-    LazyColumn{
-        items(data){
-            item ->
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        ) {
+    LazyColumn(
+        Modifier
+            .height(200.dp)
+            .fillMaxWidth()
+            .padding(15.dp)
+    ) {
+        itemsIndexed(data) { index, item ->
+            Column(
+                Modifier
+                    .fillMaxWidth()
+            ) {
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { state.value = index }
+                ) {
+                    RadioButton(selected = state.value == index, onClick = {
+                        state.value = index
+                    }, Modifier.padding(horizontal = 10.dp))
+
+                    Text(text = item, fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium)
                 }
+            }
         }
     }
+    Divider()
 }
 
 
 @Composable
 fun MedalItemDialog(
-    text:String,
-    medal:String,
-    setMedal:(String)->Unit,
-){
+    text: String,
+    medal: String,
+    setMedal: (String) -> Unit,
+) {
 
 
     Column(
@@ -284,21 +358,25 @@ fun MedalItemDialog(
             .fillMaxWidth()
             .padding(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
 
-        Text(text = text,fontSize=20.sp,style=MaterialTheme.typography.bodyMedium)
+        Text(text = text, fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium)
     }
     Column(
         Modifier
             .fillMaxWidth()
             .padding(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.Center
+    ) {
 
-        OutlinedTextField(value = medal,
-            onValueChange = {setMedal(it)
+        OutlinedTextField(
+            value = medal,
+            onValueChange = {
+                setMedal(it)
             },
-            label={ Text(text = text)},
+            label = { Text(text = text) },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Done

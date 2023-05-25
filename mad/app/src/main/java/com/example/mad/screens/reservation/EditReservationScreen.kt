@@ -32,6 +32,7 @@ import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.TextBasicBody
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
+import com.example.mad.common.getTimeSlot
 import com.example.mad.model.Reservation
 import com.example.mad.ui.theme.MadTheme
 
@@ -84,13 +85,8 @@ fun PortraitEditReservation(
 //    navController: NavHostController
 ) {
 
-    val timeSlot = listOf<String>(
-        "09:00-11:00",
-        "11:00-13:00",
-        "13:00-15:00",
-        "15:00-17:00",
-        "17:00-19:00",
-    )
+    val timeSlot = getTimeSlot()
+
     val id = 0
     val (selectedTimeSlot, setSelectedTimeSlot) = remember {
         mutableStateOf("10:00-12:00")
@@ -103,7 +99,7 @@ fun PortraitEditReservation(
 
 
     if (isOpenDialog) {
-        DialogList(timeSlot, openDialog, setSelectedTimeSlot)
+        DialogList(timeSlot, "Select Time Slot",openDialog, setSelectedTimeSlot)
     }
 
     fun onClick() {

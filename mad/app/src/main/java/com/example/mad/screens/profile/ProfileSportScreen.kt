@@ -22,11 +22,13 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.WorkspacePremium
@@ -277,20 +279,15 @@ fun Achievements(
 
 ) {
 
-    fun delete() {
-
-    }
-
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(profileSport.value) { item ->
             Card(
-                onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
                 elevation = CardDefaults.cardElevation(),
-                colors=CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface
-                , contentColor = MaterialTheme.colorScheme.onSurface),
+                colors=CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant
+                , contentColor = MaterialTheme.colorScheme.onSurfaceVariant),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Row {
@@ -310,7 +307,12 @@ fun Achievements(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        IconButtonDelete(::delete)
+                        IconButton(onClick = {
+                            val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+                            vm.deleteUserProfileSport(userId,item.sport)
+                        }) {
+                            Icon(Icons.Default.Delete,tint=MaterialTheme.colorScheme.error, contentDescription = "deleteButton")
+                        }
                     }
 
                 }

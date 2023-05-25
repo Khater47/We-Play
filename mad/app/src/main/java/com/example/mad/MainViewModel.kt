@@ -346,6 +346,33 @@ class MainViewModel : ViewModel() {
         return resultLiveData
     }
 
+    fun getAllUserPastReservation(
+        userId: String,
+        today: String
+    ): LiveData<List<UserReservation?>> {
+
+        val resultLiveData = MutableLiveData<List<UserReservation?>>()
+
+        db.collection(USERS)
+            .document(userId)
+            .collection(RESERVATION)
+            .whereLessThan("date", today)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val reservations =
+                        value?.documents?.map {
+                            it.toUserReservation()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(reservations)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+        return resultLiveData
+    }
+
+
     fun getAllUserReservationDatesInMonth(userId: String, month: String): LiveData<Set<String?>> {
 
         val resultLiveData = MutableLiveData<Set<String?>>()
