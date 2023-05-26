@@ -3,6 +3,7 @@
 
     <!--Home Page-->
     <string name="topBarHome">Home Page</string>
+    <string name="topBarPlayground">Playground</string>
     <string name="rateCard">Rate Field</string>
     <string name="rentCard">Rent Field</string>
     <string name="sportCard">Edit your sport preferences</string>

@@ -82,7 +82,6 @@ class MainViewModel : ViewModel() {
 
         loadingProgressBar.value=false
 
-
     }
 
 
