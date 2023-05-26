@@ -1,7 +1,6 @@
 package com.example.mad.model
 
 import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 
 class Playground(
     val playground:String,

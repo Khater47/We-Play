@@ -1,7 +1,6 @@
 package com.example.mad.screens.rentField
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.SportsCricket
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,29 +28,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
-import com.example.mad.common.composable.CardPlayground
 import com.example.mad.common.composable.CardPlaygroundFullLocation
 import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.InfoSearchPlayground
-import com.example.mad.common.composable.ListContainerDialog
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
-import com.example.mad.common.getIconSport
 import com.example.mad.common.getLocation
 import com.example.mad.common.getSport
 import com.example.mad.model.Playground
-import com.example.mad.model.Reservation
-import com.example.mad.screens.profile.InfoPlayground
-import com.example.mad.ui.theme.MadTheme
 
 
 //TODO: change design of dialog list (m3)

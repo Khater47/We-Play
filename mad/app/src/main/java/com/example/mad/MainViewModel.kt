@@ -2,7 +2,6 @@ package com.example.mad
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,14 +11,11 @@ import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
-import com.example.mad.model.TimeSlot
 import com.example.mad.model.UserReservation
-import com.example.mad.model.UserSport
 import com.example.mad.model.toPlayground
 import com.example.mad.model.toPlaygroundRating
 import com.example.mad.model.toProfile
 import com.example.mad.model.toProfileSport
-import com.example.mad.model.toReservation
 import com.example.mad.model.toUserReservation
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -45,12 +41,12 @@ class MainViewModel : ViewModel() {
     private val _isLoading = MutableStateFlow(true)
     val isLoading = _isLoading.asStateFlow()
 
+    val loadingProgressBar = mutableStateOf(false)
 
     private val db = FirebaseFirestore.getInstance()
 
     private val auth: FirebaseAuth = Firebase.auth
     val currentUser = MutableStateFlow(auth.currentUser)
-    val uid = currentUser.value?.uid
 
     //splashScreen
     init {
@@ -60,7 +56,9 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun onSignInClick(email: String, password: String) = CoroutineScope(Dispatchers.IO).launch {
+    fun onSignInClick(email: String, password: String)  {
+
+        loadingProgressBar.value=true
 
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
@@ -73,14 +71,26 @@ class MainViewModel : ViewModel() {
                 currentUser.value = null
             }
 
+            loadingProgressBar.value=false
+
         }
     }
 
-    fun onSignOutInClick() =  CoroutineScope(Dispatchers.IO).launch {
-        Log.d("TAG_BEFORE_LOGOUT",currentUser.value?.uid?:"NULL")
+    fun login(email:String,password: String){
+        loadingProgressBar.value=true
+
+
+        loadingProgressBar.value=false
+
+
+    }
+
+
+    fun onSignOutInClick() {
+        loadingProgressBar.value=true
         currentUser.value=null
         auth.signOut()
-        Log.d("TAG_AFTER_LOGOUT",currentUser.value?.uid?:"NULL")
+        loadingProgressBar.value=false
     }
 
 
@@ -89,6 +99,9 @@ class MainViewModel : ViewModel() {
     //---------------------
     fun insertUserProfile(userId: String, profile: Profile) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
+
+//            delay(2000)
 
             db.collection(USERS)
                 .document(userId)
@@ -100,9 +113,12 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
         }
 
     fun getProfileById(id:String): LiveData<Profile?> {
+
+        loadingProgressBar.value=true
 
         val resultLiveData = MutableLiveData<Profile?>()
 
@@ -115,6 +131,8 @@ class MainViewModel : ViewModel() {
             .addOnFailureListener { exception ->
                 Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
             }
+        loadingProgressBar.value=false
+
         return resultLiveData
     }
 
@@ -125,6 +143,7 @@ class MainViewModel : ViewModel() {
     //---------------------
     fun insertUserProfileSport(userId: String, profileSport: ProfileSport) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
 
             db.collection(USERS)
                 .document(userId)
@@ -138,10 +157,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
     fun deleteUserProfileSport(userId: String, sport: String) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
+
 
             db.collection(USERS)
                 .document(userId)
@@ -155,13 +178,17 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
         }
 
     fun getAllUserProfileSport(
         userId: String,
     ): LiveData<List<ProfileSport?>> {
 
+
         val resultLiveData = MutableLiveData<List<ProfileSport?>>()
+
+        loadingProgressBar.value=true
 
         db.collection(USERS)
             .document(userId)
@@ -179,6 +206,7 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
@@ -190,6 +218,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<PlaygroundRating?>> {
 
         val resultLiveData = MutableLiveData<List<PlaygroundRating?>>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .document(id)
@@ -206,11 +235,13 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
     fun insertUserPlaygroundRating(id:String,playgroundRating: PlaygroundRating) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
 
             db.collection(PLAYGROUNDS)
                 .document(id)
@@ -224,6 +255,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
 
@@ -235,6 +268,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<Playground?>> {
 
         val resultLiveData = MutableLiveData<List<Playground?>>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .addSnapshotListener { value, error ->
@@ -249,6 +283,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
+
         return resultLiveData
     }
 
@@ -256,6 +292,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<Playground?>> {
 
         val resultLiveData = MutableLiveData<List<Playground?>>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("sport",sport)
@@ -271,6 +308,7 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
@@ -278,6 +316,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<Playground?>> {
 
         val resultLiveData = MutableLiveData<List<Playground?>>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("city",location)
@@ -293,6 +332,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
+
         return resultLiveData
     }
 
@@ -300,6 +341,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<Playground?>> {
 
         val resultLiveData = MutableLiveData<List<Playground?>>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("city",location)
@@ -316,12 +358,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
     fun getPlaygroundById(id:String): LiveData<Playground?> {
 
         val resultLiveData = MutableLiveData<Playground?>()
+        loadingProgressBar.value=true
 
         db.collection(PLAYGROUNDS)
             .document(id)
@@ -332,6 +376,7 @@ class MainViewModel : ViewModel() {
             .addOnFailureListener { exception ->
                 Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
@@ -346,6 +391,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<UserReservation?>> {
 
         val resultLiveData = MutableLiveData<List<UserReservation?>>()
+        loadingProgressBar.value=true
 
         db.collection(USERS)
             .document(userId)
@@ -363,6 +409,7 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
@@ -372,6 +419,7 @@ class MainViewModel : ViewModel() {
     ): LiveData<List<UserReservation?>> {
 
         val resultLiveData = MutableLiveData<List<UserReservation?>>()
+        loadingProgressBar.value=true
 
         db.collection(USERS)
             .document(userId)
@@ -389,6 +437,7 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
@@ -396,6 +445,7 @@ class MainViewModel : ViewModel() {
     fun getAllUserReservationDatesInMonth(userId: String, month: String): LiveData<Set<String?>> {
 
         val resultLiveData = MutableLiveData<Set<String?>>()
+        loadingProgressBar.value=true
 
         db.collection(USERS)
             .document(userId)
@@ -417,12 +467,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
         return resultLiveData
     }
 
     fun getAllUserReservationDates(userId: String): LiveData<Set<String?>> {
 
         val resultLiveData = MutableLiveData<Set<String?>>()
+        loadingProgressBar.value=true
 
         db.collection(USERS)
             .document(userId)
@@ -442,11 +494,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
                 }
             }
+        loadingProgressBar.value=false
+
         return resultLiveData
     }
 
     fun insertUserReservation(userId: String, reservationId: String, reservation: UserReservation) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
 
             db.collection(USERS)
                 .document(userId)
@@ -460,6 +515,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
     fun updateUserReservation(
@@ -476,6 +533,7 @@ class MainViewModel : ViewModel() {
                 "startTime" to startTime,
                 "endTime" to endTime
             )
+            loadingProgressBar.value=true
 
             db.collection(USERS)
                 .document(userId)
@@ -489,10 +547,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
     fun deleteUserReservation(userId: String, reservationId: String) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
+
             db.collection(USERS)
                 .document(userId)
                 .collection(RESERVATION)
@@ -505,6 +567,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
 
@@ -513,6 +577,7 @@ class MainViewModel : ViewModel() {
     //---------------------
     fun insertReservation(reservationId: String, reservation: Reservation) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
 
             db.collection(RESERVATION)
                 .document(reservationId)
@@ -524,10 +589,14 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
     fun deleteReservation(reservationId: String) =
         CoroutineScope(Dispatchers.IO).launch {
+            loadingProgressBar.value=true
+
             db.collection(RESERVATION)
                 .document(reservationId)
                 .delete()
@@ -538,6 +607,8 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
+
         }
 
     fun updateReservation(
@@ -553,6 +624,7 @@ class MainViewModel : ViewModel() {
                 "startTime" to startTime,
                 "endTime" to endTime
             )
+            loadingProgressBar.value=true
 
             db.collection(RESERVATION)
                 .document(reservationId)
@@ -564,6 +636,7 @@ class MainViewModel : ViewModel() {
                     Log.d("TAG", "ERROR")
 
                 }
+            loadingProgressBar.value=false
         }
 
 }

@@ -1,7 +1,6 @@
 package com.example.mad.screens.profile
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,10 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -27,15 +23,12 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.WorkspacePremium
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -49,12 +42,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -66,17 +55,12 @@ import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ButtonDialog
 import com.example.mad.common.composable.FloatingButtonAdd
 import com.example.mad.common.composable.FullDialogSport
-import com.example.mad.common.composable.IconButtonDelete
 import com.example.mad.common.composable.IconButtonRating
 import com.example.mad.common.composable.Score
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.model.ProfileSport
-import com.example.mad.ui.theme.Bronze
-import com.example.mad.ui.theme.Gold
-import com.example.mad.ui.theme.MadTheme
-import com.example.mad.ui.theme.Silver
 
 //TODO() Dialog add/edit sport
 

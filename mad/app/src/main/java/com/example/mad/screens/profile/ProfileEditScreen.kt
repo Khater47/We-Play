@@ -7,7 +7,6 @@ import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -57,9 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -72,7 +69,6 @@ import com.example.mad.common.composable.CircleImage
 import com.example.mad.common.composable.ConfirmAlertButton
 import com.example.mad.common.composable.DismissAlertButton
 import com.example.mad.common.composable.TextBasicHeadLine
-import com.example.mad.common.composable.TextFieldDefault
 import com.example.mad.common.composable.TopBarComplete
 import com.example.mad.common.getIconUserInfo
 import com.example.mad.common.getImageFromInternalStorage
@@ -83,7 +79,6 @@ import com.example.mad.common.rotateBitmap
 import com.example.mad.common.saveImageUriOnInternalStorage
 import com.example.mad.common.uriToBitmap
 import com.example.mad.model.Profile
-import com.example.mad.ui.theme.MadTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale

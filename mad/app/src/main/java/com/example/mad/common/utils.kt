@@ -56,12 +56,12 @@ fun getToday():String{
     return formatDate(day, month, year)
 }
 
-fun getMonth(): String {
-
-    val month = Calendar.getInstance(Locale.ITALY).get(Calendar.MONTH) + 1
-    if(month<10) return "0$month"
-    return "$month"
-}
+//fun getMonth(): String {
+//
+//    val month = Calendar.getInstance(Locale.ITALY).get(Calendar.MONTH) + 1
+//    if(month<10) return "0$month"
+//    return "$month"
+//}
 
 fun getIconUserInfo(userInfo: String): ImageVector {
     return when (userInfo.lowercase()) {
