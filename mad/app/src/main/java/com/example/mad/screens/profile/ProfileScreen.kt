@@ -54,10 +54,11 @@ fun ProfileScreen(
     navController: NavHostController,
     vm: MainViewModel,
 ) {
+    val loading = vm.loadingProgressBar.value
 
     val orientation = LocalConfiguration.current.orientation
     val image = getImageFromInternalStorage(LocalContext.current)
-    val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+    val userId = vm.currentUser.value?.uid?:""
 
     val user = remember {
         mutableStateOf(
@@ -71,6 +72,8 @@ fun ProfileScreen(
         )
 
     }
+
+
     vm.getProfileById(userId).observe(LocalLifecycleOwner.current){
         if(it!=null){
             user.value = mapOf(
@@ -82,7 +85,6 @@ fun ProfileScreen(
             )
         }
     }
-    val loading = vm.loadingProgressBar.value
 
     if(vm.currentUser.value?.uid==null){
         navController.navigate(BottomBarScreen.Login.route)

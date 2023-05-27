@@ -68,7 +68,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavHostController
 import com.example.mad.R
+import com.example.mad.activity.BottomBarScreen
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getToday
 import com.example.mad.model.Comment
@@ -83,7 +86,11 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun PlaygroundScreen(){
+fun PlaygroundScreen(navController: NavHostController){
+
+
+//    val loading = vm.loadingProgressBar.value
+
 
     val image = R.drawable.field
     val name = "Playground"
@@ -133,8 +140,7 @@ fun PlaygroundScreen(){
 
 
     fun goToPreviousPage() {
-//        val route=""
-//        navController.navigate(route)
+        navController.navigate(BottomBarScreen.SearchField.route)
     }
 
     Scaffold(
@@ -262,6 +268,8 @@ fun PlaygroundScreen(){
                 }
 
             }
+//            CircularProgressBar(isDisplayed = loading)
+
         }
     }
 
@@ -537,14 +545,14 @@ fun computeOverallRating(quality: Int, facilities: Int): String{
 }
 
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun PlayGroundsScreenPreview() {
-    MadTheme {
-        PlaygroundScreen()
-    }
-}
+//@RequiresApi(Build.VERSION_CODES.O)
+//@Preview(showBackground = true)
+//@Composable
+//fun PlayGroundsScreenPreview() {
+//    MadTheme {
+//        PlaygroundScreen()
+//    }
+//}
 
 /*@OptIn(ExperimentalAnimationApi::class)
 @Preview(showBackground = true)

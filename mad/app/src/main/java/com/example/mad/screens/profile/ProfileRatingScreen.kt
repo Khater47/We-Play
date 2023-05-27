@@ -31,6 +31,7 @@ import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
@@ -56,6 +57,9 @@ fun ProfileRatingScreen(
 //        navController.navigate(route)
     }
 
+    val loading = vm.loadingProgressBar.value
+
+
     Scaffold(
         topBar = { TopBarBackButton(R.string.topBarUserRating, ::goHome) },
     ) {
@@ -64,7 +68,9 @@ fun ProfileRatingScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            PlaygroundRating(vm,userId)
+            PlaygroundRating(vm,userId,navController)
+            CircularProgressBar(isDisplayed = loading)
+
         }
     }
 
@@ -73,7 +79,8 @@ fun ProfileRatingScreen(
 @Composable
 fun PlaygroundRating(
     vm: MainViewModel,
-    userId:String
+    userId:String,
+    navController: NavHostController,
 ) {
 
     val today = getToday()
@@ -81,6 +88,7 @@ fun PlaygroundRating(
     val reservations = remember{
         mutableStateOf<List<UserReservation>>(emptyList())
     }
+
 
     vm.getAllUserPastReservation(userId, today).observe(LocalLifecycleOwner.current){
         reservations.value=it.filterNotNull()
@@ -96,7 +104,7 @@ fun PlaygroundRating(
                         .weight(4f)
                 ) {
                     items(reservations.value) {item ->
-                        CardPlaygroundReservationPortrait(item)
+                        CardPlaygroundReservationPortrait(item,navController)
                     }
                 }
             }
@@ -111,7 +119,7 @@ fun PlaygroundRating(
                     items(reservations.value) { item ->
                         Row {
                             Column(Modifier.weight(1f)) {
-                                CardPlaygroundReservationLandscape(item)
+                                CardPlaygroundReservationLandscape(item, navController)
                             }
                             Column(
                                 Modifier.weight(1f),
@@ -138,7 +146,7 @@ fun PlaygroundRating(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundReservationLandscape(reservation:UserReservation) {
+fun CardPlaygroundReservationLandscape(reservation:UserReservation,navController: NavHostController) {
 
     val playgroundTitle = reservation.playground
     val playgroundSport = reservation.sport
@@ -146,6 +154,7 @@ fun CardPlaygroundReservationLandscape(reservation:UserReservation) {
     Card(
         onClick = {
             //ADD RATING
+                  navController.navigate(BottomBarScreen.AddRating.route)
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -164,7 +173,7 @@ fun CardPlaygroundReservationLandscape(reservation:UserReservation) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundReservationPortrait(reservation:UserReservation) {
+fun CardPlaygroundReservationPortrait(reservation:UserReservation,navController: NavHostController) {
 
     val playgroundTitle = reservation.playground
     val playgroundSport = reservation.sport
@@ -175,6 +184,7 @@ fun CardPlaygroundReservationPortrait(reservation:UserReservation) {
     Card(
         onClick = {
             //ADD RATING
+                  navController.navigate(BottomBarScreen.AddRating.route)
         },
         modifier = Modifier
             .fillMaxWidth()

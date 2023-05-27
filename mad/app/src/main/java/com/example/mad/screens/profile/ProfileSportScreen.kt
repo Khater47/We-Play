@@ -53,6 +53,7 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ButtonDialog
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.FloatingButtonAdd
 import com.example.mad.common.composable.FullDialogSport
 import com.example.mad.common.composable.IconButtonRating
@@ -235,6 +236,8 @@ fun ProfileSportScreen(
         FullDialogSport(openDialog,vm)
     }
 
+    val loading = vm.loadingProgressBar.value
+
 
     Scaffold(
         topBar = {
@@ -251,6 +254,8 @@ fun ProfileSportScreen(
                 vm,
                 profileSport
             )
+            CircularProgressBar(isDisplayed = loading)
+
         }
     }
 }

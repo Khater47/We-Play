@@ -23,6 +23,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.getIconPlayground
 import com.example.mad.common.getIconSport
 import com.example.mad.model.Playground
@@ -83,7 +86,7 @@ fun CardPlayground(playground: Playground){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundFullLocation(playground: Playground){
+fun CardPlaygroundFullLocation(playground: Playground,navController: NavHostController){
 
     val heightImage =
         if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -94,7 +97,9 @@ fun CardPlaygroundFullLocation(playground: Playground){
 
 
     Card(
-        onClick = { /*TODO*/ },
+        onClick = {
+                  navController.navigate(BottomBarScreen.Playground.route)
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp),

@@ -48,6 +48,8 @@ class MainViewModel : ViewModel() {
     private val auth: FirebaseAuth = Firebase.auth
     val currentUser = MutableStateFlow(auth.currentUser)
 
+
+
     //splashScreen
     init {
         viewModelScope.launch {
@@ -76,19 +78,11 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun login(email:String,password: String){
-        loadingProgressBar.value=true
-
-
-        loadingProgressBar.value=false
-
-    }
-
 
     fun onSignOutInClick() {
         loadingProgressBar.value=true
-        currentUser.value=null
         auth.signOut()
+        currentUser.value=null
         loadingProgressBar.value=false
     }
 
@@ -134,6 +128,7 @@ class MainViewModel : ViewModel() {
 
         return resultLiveData
     }
+
 
 
 

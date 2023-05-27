@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardReservation
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.DialogList
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
@@ -38,6 +39,10 @@ fun EditReservationScreen(
 //    vm : MainViewModel,
 //    reservationId : String?
 ) {
+
+//    val loading = vm.loadingProgressBar.value
+
+
     val configuration = LocalConfiguration.current
 
     fun goToPreviousPage() {
@@ -68,6 +73,8 @@ fun EditReservationScreen(
 //                    LandscapeEditReservation()
                 }
             }
+//            CircularProgressBar(isDisplayed = loading)
+
         }
 
     }

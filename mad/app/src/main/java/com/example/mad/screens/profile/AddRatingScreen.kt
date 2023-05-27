@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.IconButtonRating
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
@@ -52,6 +53,8 @@ fun AddRatingScreen(
     navController: NavHostController,
 //    vm: MainViewModel
 ) {
+
+//    val loading = vm.loadingProgressBar.value
 
 
     val openDialog = remember { mutableStateOf(false) }
@@ -135,6 +138,8 @@ fun AddRatingScreen(
                     RatingLandscape(p, quality, setQuality, facilities, setFacilities)
                 }
             }
+//            CircularProgressBar(isDisplayed = loading)
+
         }
     }
 

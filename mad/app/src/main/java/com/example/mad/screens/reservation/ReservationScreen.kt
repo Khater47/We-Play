@@ -5,6 +5,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -40,6 +41,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.IconButtonDelete
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
@@ -64,6 +66,7 @@ fun ReservationScreen(
     navController: NavHostController,
     vm: MainViewModel
 ) {
+    val loading = vm.loadingProgressBar.value
 
     val orientation = LocalConfiguration.current.orientation
 
@@ -80,7 +83,6 @@ fun ReservationScreen(
 //    }
 
 
-
     Scaffold(
         topBar = {
             TopBarBasic(
@@ -89,47 +91,52 @@ fun ReservationScreen(
         },
 //        floatingActionButton = { FloatingButtonAdd(::update) }
     ) {
-        Column(
+        Box(
             Modifier
                 .padding(it)
         ) {
-            when (orientation) {
-                Configuration.ORIENTATION_PORTRAIT -> {
+            Column {
+                when (orientation) {
+                    Configuration.ORIENTATION_PORTRAIT -> {
 
-                    Column(Modifier.weight(1.3f)) {
-                        CalendarCard(
-                            vm,
-                            reservations
-                        )
-                    }
-                    Column(Modifier.weight(1f)) {
-                        ReservationCard(reservations.value,navController,vm)
-                    }
-                }
-
-                else -> {
-                    Row(
-                        Modifier
-                            .fillMaxHeight()
-                    ) {
-                        Column(
-                            Modifier
-                                .weight(1f)
-                                .verticalScroll(rememberScrollState())
-                        ) {
-
+                        Column(Modifier.weight(1.3f)) {
                             CalendarCard(
                                 vm,
                                 reservations
                             )
                         }
                         Column(Modifier.weight(1f)) {
-
                             ReservationCard(reservations.value,navController,vm)
+                        }
+                    }
+
+                    else -> {
+                        Row(
+                            Modifier
+                                .fillMaxHeight()
+                        ) {
+                            Column(
+                                Modifier
+                                    .weight(1f)
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+
+                                CalendarCard(
+                                    vm,
+                                    reservations
+                                )
+                            }
+                            Column(Modifier.weight(1f)) {
+
+                                ReservationCard(reservations.value,navController,vm)
+                            }
                         }
                     }
                 }
             }
+            CircularProgressBar(isDisplayed = loading)
+
+
         }
     }
 
@@ -198,6 +205,7 @@ fun ReservationCard(
     navController: NavHostController,
     vm: MainViewModel,
 ) {
+
 
     val today = getToday()
 
@@ -289,7 +297,10 @@ fun ReservationCard(
         }
     }
     else {
-        Column(Modifier.fillMaxWidth().padding(10.dp),
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
             Text(text = "No reservations",style=MaterialTheme.typography.bodyMedium,fontSize=24.sp)

@@ -45,7 +45,6 @@ import com.example.mad.common.getSport
 import com.example.mad.model.Playground
 
 
-//TODO: change design of dialog list (m3)
 
 @Composable
 fun SearchPlaygroundScreen(
@@ -69,7 +68,7 @@ fun SearchPlaygroundScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            SearchPlaygroundContainer(vm)
+            SearchPlaygroundContainer(vm,navController)
         }
     }
 
@@ -77,7 +76,8 @@ fun SearchPlaygroundScreen(
 
 @Composable
 fun SearchPlaygroundContainer(
-    vm: MainViewModel
+    vm: MainViewModel,
+    navController: NavHostController
 ) {
 
     val (sport, setSport) = remember {
@@ -143,7 +143,7 @@ fun SearchPlaygroundContainer(
             Configuration.ORIENTATION_PORTRAIT->{
                 LazyColumn {
                     items(playgrounds.value) { item ->
-                        CardPlaygroundFullLocation(item)
+                        CardPlaygroundFullLocation(item,navController)
                     }
                 }
             }
@@ -153,7 +153,7 @@ fun SearchPlaygroundContainer(
                         item ->
                         Row {
                             Column(Modifier.weight(1f)) {
-                                CardPlaygroundLandscape(item)
+                                CardPlaygroundLandscape(item,navController)
                             }
                             Column(Modifier.weight(1f),
                                 verticalArrangement = Arrangement.Center,
@@ -190,13 +190,14 @@ fun SearchPlaygroundContainer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundLandscape(playground: Playground){
+fun CardPlaygroundLandscape(playground: Playground,navController: NavHostController){
     val playgroundTitle = playground.playground
     val playgroundSport = playground.sport
 
     Card(
         onClick = {
             //ADD RATING
+                  navController.navigate(BottomBarScreen.Playground.route)
         },
         modifier = Modifier
             .fillMaxWidth()

@@ -43,7 +43,7 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
             HomeScreen(navController)
         }
         composable(route = BottomBarScreen.Playground.route) {
-            PlaygroundScreen()
+            PlaygroundScreen(navController/*navController,vm*/)
         }
         composable(route = BottomBarScreen.Reservation.route) {
             ReservationScreen(navController,vm)
