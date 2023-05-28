@@ -1,6 +1,7 @@
 package com.example.mad.screens.rentField
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -77,7 +78,7 @@ fun SearchPlaygroundScreen(
 @Composable
 fun SearchPlaygroundContainer(
     vm: MainViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
 
     val (sport, setSport) = remember {
@@ -143,7 +144,7 @@ fun SearchPlaygroundContainer(
             Configuration.ORIENTATION_PORTRAIT->{
                 LazyColumn {
                     items(playgrounds.value) { item ->
-                        CardPlaygroundFullLocation(item,navController)
+                        CardPlaygroundFullLocation(item,navController,item.id)
                     }
                 }
             }
@@ -153,7 +154,7 @@ fun SearchPlaygroundContainer(
                         item ->
                         Row {
                             Column(Modifier.weight(1f)) {
-                                CardPlaygroundLandscape(item,navController)
+                                CardPlaygroundLandscape(item,navController,item.id)
                             }
                             Column(Modifier.weight(1f),
                                 verticalArrangement = Arrangement.Center,
@@ -190,14 +191,14 @@ fun SearchPlaygroundContainer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundLandscape(playground: Playground,navController: NavHostController){
+fun CardPlaygroundLandscape(playground: Playground,navController: NavHostController,playgroundId: String){
     val playgroundTitle = playground.playground
     val playgroundSport = playground.sport
 
     Card(
         onClick = {
             //ADD RATING
-                  navController.navigate(BottomBarScreen.Playground.route)
+                  navController.navigate(BottomBarScreen.Playground.route+"/$playgroundId")
         },
         modifier = Modifier
             .fillMaxWidth()

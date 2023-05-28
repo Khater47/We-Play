@@ -106,7 +106,7 @@ fun AddRatingScreen(
         openDialog.value = true
     }
 
-    val p = Playground("Campo Admonds", "Soccer", "Corso Einaudi 24,10129","Turin")
+    val p = Playground("0","","","","Campo Admonds", "Soccer", "Corso Einaudi 24,10129","Turin")
     val (quality, setQuality) = remember {
         mutableStateOf(0)
     }

@@ -6,12 +6,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mad.model.Comment
 import com.example.mad.model.Playground
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
+import com.example.mad.model.toComment
 import com.example.mad.model.toPlayground
 import com.example.mad.model.toPlaygroundRating
 import com.example.mad.model.toProfile
@@ -46,9 +48,10 @@ class MainViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
 
     private val auth: FirebaseAuth = Firebase.auth
-    val currentUser = MutableStateFlow(auth.currentUser)
+    private val _currentUser = MutableStateFlow(auth.currentUser)
+    val currentUser = _currentUser.value
 
-
+    private val user = MutableLiveData<Profile?>()
 
     //splashScreen
     init {
@@ -65,12 +68,12 @@ class MainViewModel : ViewModel() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 // Sign in success, update UI with the signed-in user's information
-                currentUser.value = task.result.user
+                _currentUser.value = task.result.user
 
             } else {
                 // If sign in fails, display a message to the user.
 //                Log.d("TAG_EXCEPTION",task.exception?.localizedMessage?:"Wrong credentials")
-                currentUser.value = null
+                _currentUser.value = null
             }
 
             loadingProgressBar.value=false
@@ -82,7 +85,7 @@ class MainViewModel : ViewModel() {
     fun onSignOutInClick() {
         loadingProgressBar.value=true
         auth.signOut()
-        currentUser.value=null
+        _currentUser.value=null
         loadingProgressBar.value=false
     }
 
@@ -113,20 +116,22 @@ class MainViewModel : ViewModel() {
 
         loadingProgressBar.value=true
 
-        val resultLiveData = MutableLiveData<Profile?>()
+//        Log.d("TAG",id)
 
         db.collection(USERS)
             .document(id)
             .get()
             .addOnSuccessListener {
-                    document -> resultLiveData.postValue(document.toProfile())
+                    document -> user.postValue(document.toProfile())
+//                user.value = document.toProfile()
+//                Log.d("TAG",document.get("email").toString())
             }
             .addOnFailureListener { exception ->
                 Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
             }
         loadingProgressBar.value=false
 
-        return resultLiveData
+        return user
     }
 
 
@@ -258,6 +263,34 @@ class MainViewModel : ViewModel() {
     //---------------------
     //Function Playground
     //---------------------
+
+    fun getPlaygroundsComments(playgroundId:String
+    ): LiveData<List<Comment?>> {
+        val resultLiveData = MutableLiveData<List<Comment?>>()
+        loadingProgressBar.value=true
+
+        db.collection(PLAYGROUNDS)
+            .document(playgroundId)
+            .collection(PLAYGROUND_RATING)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val comments =
+                        value?.documents?.map {
+                            it.toComment()
+                        } ?: emptyList()
+
+                    resultLiveData.postValue(comments)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+
+        loadingProgressBar.value=false
+
+        return resultLiveData
+
+    }
+
     fun getPlaygrounds(
     ): LiveData<List<Playground?>> {
 

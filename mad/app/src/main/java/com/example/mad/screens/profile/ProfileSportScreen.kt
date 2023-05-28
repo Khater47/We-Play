@@ -198,23 +198,14 @@ fun ProfileSportScreen(
     vm: MainViewModel
 ) {
 
-//    val sportsList = listOf<String>(
-//        "soccer","volleyball","cricket","basket","baseball"
-//    )
-
-//    val (selectedSport, setSelectedSport) = remember {
-//        mutableStateOf("")
-//    }
     val (isOpenDialog, openDialog) = remember {
         mutableStateOf(false)
     }
 
-
-
     val profileSport = remember {
         mutableStateOf<List<ProfileSport>>(emptyList())
     }
-    val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+    val userId = vm.currentUser?.email?:""
 
     vm.getAllUserProfileSport(userId).observe(LocalLifecycleOwner.current) {
         val sports = it.filterNotNull()
@@ -297,7 +288,7 @@ fun Achievements(
                         verticalArrangement = Arrangement.Center
                     ) {
                         IconButton(onClick = {
-                            val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+                            val userId = vm.currentUser?.email?:""
                             vm.deleteUserProfileSport(userId,item.sport)
                         }) {
                             Icon(Icons.Default.Delete,tint=MaterialTheme.colorScheme.error, contentDescription = "deleteButton")

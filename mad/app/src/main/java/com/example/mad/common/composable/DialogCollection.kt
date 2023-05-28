@@ -215,7 +215,7 @@ fun FullDialogSport(
                                     level = score.toLong(),
                                     trophies
                                 )
-                            val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+                            val userId = vm.currentUser?.email?:""
 
                             vm.insertUserProfileSport(userId, ps)
                             openDialog(false)

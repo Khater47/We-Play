@@ -86,7 +86,7 @@ fun CardPlayground(playground: Playground){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CardPlaygroundFullLocation(playground: Playground,navController: NavHostController){
+fun CardPlaygroundFullLocation(playground: Playground,navController: NavHostController,playgroundId:String){
 
     val heightImage =
         if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -98,7 +98,7 @@ fun CardPlaygroundFullLocation(playground: Playground,navController: NavHostCont
 
     Card(
         onClick = {
-                  navController.navigate(BottomBarScreen.Playground.route)
+                  navController.navigate(BottomBarScreen.Playground.route+"/$playgroundId")
         },
         modifier = Modifier
             .fillMaxWidth()

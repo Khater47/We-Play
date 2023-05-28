@@ -80,7 +80,7 @@ fun LoginScreen(
         }
     }
 
-    if(vm.currentUser.value?.uid!=null){
+    if(vm.currentUser?.uid!=null){
         navController.navigate(BottomBarScreen.Home.route)
     }
 

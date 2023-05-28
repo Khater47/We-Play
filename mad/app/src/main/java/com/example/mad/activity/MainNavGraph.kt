@@ -29,11 +29,11 @@ import com.google.accompanist.navigation.animation.composable
 @Composable
 fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
 
-    Log.d("TAG_MAIN_NAV_GRAPH USER",vm.currentUser.value?.uid?:"NULL")
 
-//    val startDestination = if(vm.currentUser.value?.uid!=null) BottomBarScreen.Home.route
-//    else BottomBarScreen.Login.route
-    val startDestination = BottomBarScreen.Home.route
+    val startDestination = if(vm.currentUser?.uid!=null) BottomBarScreen.Home.route
+    else BottomBarScreen.Login.route
+
+    Log.d("USERID",vm.currentUser?.email?:"")
 
     AnimatedNavHost(navController = navController,
         startDestination = startDestination,
@@ -42,8 +42,10 @@ fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
         composable(route=BottomBarScreen.Home.route){
             HomeScreen(navController)
         }
-        composable(route = BottomBarScreen.Playground.route) {
-            PlaygroundScreen(navController/*navController,vm*/)
+        composable(route = BottomBarScreen.Playground.route+"/{playgroundId}",
+        arguments = listOf(navArgument("playgroundId") { defaultValue = "0" })
+        ) {backStackEntry ->
+            PlaygroundScreen(vm,navController,backStackEntry.arguments?.getString("playgroundId")/*navController,vm*/)
         }
         composable(route = BottomBarScreen.Reservation.route) {
             ReservationScreen(navController,vm)

@@ -3,6 +3,7 @@ package com.example.mad.screens.profile
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -58,7 +59,9 @@ fun ProfileScreen(
 
     val orientation = LocalConfiguration.current.orientation
     val image = getImageFromInternalStorage(LocalContext.current)
-    val userId = vm.currentUser.value?.uid?:""
+    val userId = vm.currentUser?.email?:""
+
+    //TODO: FIX vm.getProfileById(userId), infinite call
 
     val user = remember {
         mutableStateOf(
@@ -74,19 +77,19 @@ fun ProfileScreen(
     }
 
 
-    vm.getProfileById(userId).observe(LocalLifecycleOwner.current){
-        if(it!=null){
-            user.value = mapOf(
-                "FullName" to it.fullName,
-                "Nickname" to it.nickname,
-                "Email" to it.email,
-                "PhoneNumber" to it.phone,
-                "Description" to it.description,
-            )
-        }
-    }
+//    vm.getProfileById(userId).observe(LocalLifecycleOwner.current){
+//        if(it!=null){
+//            user.value = mapOf(
+//                "FullName" to it.fullName,
+//                "Nickname" to it.nickname,
+//                "Email" to it.email,
+//                "PhoneNumber" to it.phone,
+//                "Description" to it.description,
+//            )
+//        }
+//    }
 
-    if(vm.currentUser.value?.uid==null){
+    if(vm.currentUser?.uid==null){
         navController.navigate(BottomBarScreen.Login.route)
     }
 
