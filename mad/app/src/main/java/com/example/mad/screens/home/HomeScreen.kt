@@ -137,8 +137,8 @@ fun CardContainerNavigationPage(
 
     val searchIcon = Icons.Default.Search
     val rateIcon = Icons.Default.ThumbUp
-    val idSearch = R.string.rateCard
-    val idRating = R.string.rentCard
+    val idSearch = R.string.rentCard
+    val idRating = R.string.rateCard
 
     Row {
         Column(

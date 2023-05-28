@@ -31,12 +31,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -79,27 +82,28 @@ fun ProfileSportScreen(
         mutableStateOf(false)
     }
 
-    val profileSport = remember {
-        mutableStateOf<List<ProfileSport>>(emptyList())
-    }
-    val userId = vm.currentUser?.email?:""
-
-    val allSport = getSport()
-//    val filteredSport = remember {
-//        mutableStateListOf<String>()
+//    val profileSport = remember {
+//        mutableStateOf<List<ProfileSport>>(emptyList())
 //    }
 
-    vm.getAllUserProfileSport(userId).observe(LocalLifecycleOwner.current) {
-        val sports = it.filterNotNull()
-        profileSport.value = sports
+    val profileSport = vm.userSports.observeAsState().value?.filterNotNull()?: emptyList()
 
+    val userId = vm.currentUser?.email?:""
 
-//        allSport.forEach { sport->
-//            if(!profileSport.value.map { pSport->pSport.sport }.contains(sport)){
-//                filteredSport.add(sport)
-//            }
-//        }
+    LaunchedEffect(key1 = null){
+        vm.getAllUserProfileSport(userId)
+    }
 
+    val addSports = remember {
+        mutableStateOf<List<String>>(emptyList())
+    }
+
+    if(profileSport.isNotEmpty()){
+        val allSport = getSport().toMutableList()
+
+        allSport.removeAll{it in profileSport.map { p -> p.sport }}
+
+        addSports.value = allSport
     }
 
     fun goHome() {
@@ -112,10 +116,8 @@ fun ProfileSportScreen(
     }
 
 
-
-
     if (isOpenDialog) {
-        FullDialogSport(openDialog,vm,allSport)
+        FullDialogSport(openDialog,vm,addSports.value)
     }
 
     val loading = vm.loadingProgressBar.value
@@ -145,12 +147,12 @@ fun ProfileSportScreen(
 @Composable
 fun Achievements(
     vm: MainViewModel,
-    profileSport: MutableState<List<ProfileSport>>
+    profileSport: List<ProfileSport>
 
 ) {
 
     LazyColumn(modifier = Modifier.padding(16.dp)) {
-        items(profileSport.value) { item ->
+        items(profileSport) { item ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()

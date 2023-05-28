@@ -54,7 +54,9 @@ class MainViewModel : ViewModel() {
     private val _currentUser = MutableStateFlow(auth.currentUser)
     val currentUser = _currentUser.value
 
-    private val user = MutableLiveData<Profile?>()
+    private val _user = MutableLiveData<Profile?>()
+    val user:LiveData<Profile?> = _user
+
 
     private val _playground = MutableLiveData<Playground?>()
     val playground:LiveData<Playground?> = _playground
@@ -67,6 +69,9 @@ class MainViewModel : ViewModel() {
 
     private val _playgrounds = MutableLiveData<List<Playground?>>()
     val playgrounds:LiveData<List<Playground?>> = _playgrounds
+
+    private val _userSports = MutableLiveData<List<ProfileSport?>>()
+    val userSports:LiveData<List<ProfileSport?>> = _userSports
 
     //splashScreen
     init {
@@ -127,26 +132,17 @@ class MainViewModel : ViewModel() {
             loadingProgressBar.value = false
         }
 
-    fun getProfileById(id: String): LiveData<Profile?> {
-
-        loadingProgressBar.value = true
-
-//        Log.d("TAG",id)
+    fun getProfileById(id: String) {
 
         db.collection(USERS)
             .document(id)
             .get()
             .addOnSuccessListener { document ->
-                user.postValue(document.toProfile())
-//                user.value = document.toProfile()
-//                Log.d("TAG",document.get("email").toString())
+                _user.postValue(document.toProfile())
             }
             .addOnFailureListener { exception ->
                 Log.d("TAG", "Error getting playground by id ${exception.localizedMessage}")
             }
-        loadingProgressBar.value = false
-
-        return user
     }
 
 
@@ -195,12 +191,7 @@ class MainViewModel : ViewModel() {
 
     fun getAllUserProfileSport(
         userId: String,
-    ): LiveData<List<ProfileSport?>> {
-
-
-        val resultLiveData = MutableLiveData<List<ProfileSport?>>()
-
-        loadingProgressBar.value = true
+    ) {
 
         db.collection(USERS)
             .document(userId)
@@ -213,13 +204,11 @@ class MainViewModel : ViewModel() {
                         } ?: emptyList()
 
 
-                    resultLiveData.postValue(profileSport)
+                    _userSports.postValue(profileSport)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
-        return resultLiveData
     }
 
 

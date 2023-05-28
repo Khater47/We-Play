@@ -1,6 +1,7 @@
 package com.example.mad.screens.profile
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -73,6 +74,7 @@ import com.example.mad.common.composable.TopBarComplete
 import com.example.mad.common.getIconUserInfo
 import com.example.mad.common.getImageFromInternalStorage
 import com.example.mad.common.getKeyboard
+import com.example.mad.common.invalidUserProfile
 import com.example.mad.common.openCamera
 import com.example.mad.common.openGallery
 import com.example.mad.common.rotateBitmap
@@ -99,7 +101,7 @@ vm:MainViewModel
 
     val orientation = LocalConfiguration.current.orientation
     val route = BottomBarScreen.Profile.route
-    val userId = "f9SYx0LJM3TSDxUFMcX6JEwcaxh1"
+    val userId = vm.currentUser?.email?:""
 
     val user = remember{
         mutableStateOf(
@@ -112,10 +114,19 @@ vm:MainViewModel
             )
         )
     }
+    val invalid = remember {
+        mutableStateOf<Boolean>(false)
+    }
 
     fun goToProfile() {
         navController.navigate(route)
     }
+
+    if(invalid.value){
+        Toast.makeText(LocalContext.current,"Invalid field",Toast.LENGTH_SHORT).show()
+        invalid.value=false
+    }
+
 
     fun saveProfile() {
         val p = Profile(
@@ -125,9 +136,13 @@ vm:MainViewModel
             phone=user.value.getOrDefault("PhoneNumber","3456789871"),
             email=user.value.getOrDefault("Email","mariorossi@gmail.com")
         )
-        Log.d("TAG",p.toString())
-        vm.insertUserProfile(userId,p)
-        navController.navigate(route)
+        if(!invalidUserProfile(p)){
+            vm.insertUserProfile(userId,p)
+            navController.navigate(route)
+        }
+        else {
+            invalid.value=true
+        }
     }
 
     Scaffold(
@@ -216,7 +231,7 @@ fun EditInfo(
 
 ) {
 
-
+    Log.d("TAG",text)
 
     val info = remember {
         mutableStateOf(user.value.getValue(text))

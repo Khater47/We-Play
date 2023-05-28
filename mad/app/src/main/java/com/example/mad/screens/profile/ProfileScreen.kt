@@ -28,6 +28,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -48,6 +50,7 @@ import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarProfile
 import com.example.mad.common.getImageFromInternalStorage
+import com.example.mad.model.Profile
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -61,33 +64,18 @@ fun ProfileScreen(
     val image = getImageFromInternalStorage(LocalContext.current)
     val userId = vm.currentUser?.email?:""
 
-    //TODO: FIX vm.getProfileById(userId), infinite call
+    val user = vm.user.observeAsState().value?: Profile(
+        "",
+        "",
+        "",
+        "",
+        ""
+    )
 
-    val user = remember {
-        mutableStateOf(
-            mapOf(
-                "FullName" to "",
-                "Nickname" to "",
-                "Email" to "",
-                "PhoneNumber" to "",
-                "Description" to ""
-            )
-        )
-
+    LaunchedEffect(key1 = userId){
+        vm.getProfileById(userId)
     }
 
-
-//    vm.getProfileById(userId).observe(LocalLifecycleOwner.current){
-//        if(it!=null){
-//            user.value = mapOf(
-//                "FullName" to it.fullName,
-//                "Nickname" to it.nickname,
-//                "Email" to it.email,
-//                "PhoneNumber" to it.phone,
-//                "Description" to it.description,
-//            )
-//        }
-//    }
 
     if(vm.currentUser?.uid==null){
         navController.navigate(BottomBarScreen.Login.route)
@@ -102,14 +90,14 @@ fun ProfileScreen(
                 Configuration.ORIENTATION_PORTRAIT -> {
                     PortraitProfile(
                         image,
-                        user.value
+                        user
                     )
                 }
 
                 else -> {
                     LandscapeProfile(
                         image,
-                        user.value
+                        user
                     )
                 }
             }
@@ -123,7 +111,7 @@ fun ProfileScreen(
 @Composable
 fun PortraitProfile(
     image: Bitmap,
-    user: Map<String, String>
+    user: Profile
 ) {
 
     Column {
@@ -134,7 +122,7 @@ fun PortraitProfile(
                 .weight(1.5f),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ImageContainer(image, user.getOrDefault("FullName", "Mario Rossi"))
+            ImageContainer(image, user.fullName)
         }
 
         Column(
@@ -176,7 +164,7 @@ fun ImageContainer(
 
 @Composable
 fun UserInfo(
-    user: Map<String, String>
+    user: Profile
 ) {
 
     val modifier = Modifier.padding(vertical = 20.dp)
@@ -197,17 +185,17 @@ fun UserInfo(
 
         Spacer(modifier = Modifier.padding(top = 20.dp))
 
-        TextIcon(text = user.getOrDefault("Email","mariorossi@gmail.com"), icon = Icons.Outlined.Email)
+        TextIcon(text = user.email, icon = Icons.Outlined.Email)
 
         Divider(modifier = modifier)
 
-        TextIcon(text = user.getOrDefault("Nickname","mario"), icon = Icons.Outlined.AlternateEmail)
+        TextIcon(text = user.nickname, icon = Icons.Outlined.AlternateEmail)
         Divider(modifier = modifier)
 
-        TextIcon(text = user.getOrDefault("PhoneNumber","3456789871"), icon = Icons.Outlined.Phone)
+        TextIcon(text = user.phone, icon = Icons.Outlined.Phone)
         Divider(modifier = modifier)
 
-        TextIcon(text = user.getOrDefault("Description","student"), icon = Icons.Outlined.Description)
+        TextIcon(text = user.description, icon = Icons.Outlined.Description)
 
         Spacer(modifier = Modifier.padding(bottom = 20.dp))
     }
@@ -237,7 +225,7 @@ fun TextIcon(text: String, icon: ImageVector) {
 @Composable
 fun LandscapeProfile(
     image: Bitmap,
-    user: Map<String, String>
+    user: Profile
 ) {
 
     Row {
@@ -250,7 +238,7 @@ fun LandscapeProfile(
             verticalArrangement = Arrangement.Center
 
         ) {
-            ImageContainer(image, user.getOrDefault("FullName", "Mario Rossi"))
+            ImageContainer(image, user.fullName)
         }
 
         Column(

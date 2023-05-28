@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.SportsVolleyball
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.mad.R
+import com.example.mad.model.Profile
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Locale
@@ -89,7 +90,7 @@ fun validationTextField(type:String,text:String):Boolean{
 
 fun getKeyboard(userInfo: String): KeyboardType {
     return when (userInfo.lowercase()) {
-        "phoneNumber" -> KeyboardType.Number
+        "phonenumber" -> KeyboardType.Number
         "email" -> KeyboardType.Email
         else -> KeyboardType.Text
     }
@@ -158,6 +159,25 @@ fun getTimeSlot():List<String>{
         "17:00-19:00",
         "19:00-21:00",
     )
+}
+
+fun invalidUserProfile(p:Profile):Boolean{
+    if(!Patterns.EMAIL_ADDRESS.matcher(p.email).matches()){
+        Log.d("TAG_EMAIL","INVALID EMAIL")
+        return true
+    }
+    if(!Patterns.PHONE.matcher(p.phone).matches()){
+        Log.d("TAG_PHONE","INVALID PHONE")
+        return true
+    }
+    if(p.fullName.isEmpty() || p.email.isEmpty() ||
+            p.phone.isEmpty() || p.description.isEmpty()
+        || p.nickname.isEmpty()){
+        Log.d("TAG_EMPTY","STRING EMPTY")
+        return true
+    }
+    return false
+
 }
 
 fun getImageFromInternalStorage(context: Context): Bitmap {
