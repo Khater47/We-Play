@@ -23,6 +23,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -57,6 +59,9 @@ fun SearchPlaygroundScreen(
         navController.navigate(BottomBarScreen.Home.route)
     }
 
+//    LaunchedEffect(key1 = null){
+//        vm.getPlaygrounds()
+//    }
 
 
     Scaffold(
@@ -89,42 +94,26 @@ fun SearchPlaygroundContainer(
         mutableStateOf("")
     }
 
-    val playgrounds = remember {
-        mutableStateOf<List<Playground>>(emptyList())
-    }
-
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val playgrounds = vm.playgrounds.observeAsState().value?.filterNotNull()?: emptyList()
 
     val orientation = LocalConfiguration.current.orientation
 
 
-    //Not filter
     if (sport.isEmpty() && location.isEmpty()) {
-        vm.getPlaygrounds().observe(lifecycleOwner) {
-            playgrounds.value = it.filterNotNull()
-        }
+        vm.getPlaygrounds()
     }
+
     //Filter by sport
     else if (sport.isNotBlank() && location.isEmpty()) {
-
-        vm.getPlaygroundsBySport(sport).observe(lifecycleOwner) {
-            playgrounds.value = it.filterNotNull()
-
-        }
+        vm.getPlaygroundsBySport(sport)
     }
     //Filter by location
     else if (sport.isEmpty() && location.isNotBlank()) {
-
-        vm.getPlaygroundsByLocation(location).observe(lifecycleOwner) {
-            playgrounds.value = it.filterNotNull()
-
-        }
+         vm.getPlaygroundsByLocation(location)
     }
     //Filter by sport and location
     else {
-        vm.getPlaygroundsByLocationAndSport(sport, location).observe(lifecycleOwner) {
-            playgrounds.value = it.filterNotNull()
-        }
+         vm.getPlaygroundsByLocationAndSport(sport, location)
     }
 
     val (isOpenSportDialog, openSportDialog) = remember {
@@ -138,19 +127,19 @@ fun SearchPlaygroundContainer(
     Column(Modifier.padding(horizontal = 10.dp)) {
         ButtonGroup(
             openLocationDialog,
-            openSportDialog
+            openSportDialog,
         )
         when(orientation){
             Configuration.ORIENTATION_PORTRAIT->{
                 LazyColumn {
-                    items(playgrounds.value) { item ->
+                    items(playgrounds) { item ->
                         CardPlaygroundFullLocation(item,navController,item.id)
                     }
                 }
             }
             else -> {
                 LazyColumn{
-                    items(playgrounds.value){
+                    items(playgrounds){
                         item ->
                         Row {
                             Column(Modifier.weight(1f)) {
@@ -169,10 +158,6 @@ fun SearchPlaygroundContainer(
             }
         }
     }
-
-
-
-
 
 
     val sportList = getSport()
@@ -218,7 +203,7 @@ fun CardPlaygroundLandscape(playground: Playground,navController: NavHostControl
 @Composable
 fun ButtonGroup(
     openLocationDialog: (Boolean) -> Unit,
-    openSportDialog: (Boolean) -> Unit
+    openSportDialog: (Boolean) -> Unit,
 ) {
 
     val orientation = LocalConfiguration.current.orientation

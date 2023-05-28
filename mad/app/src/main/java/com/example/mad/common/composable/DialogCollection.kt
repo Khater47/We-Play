@@ -147,6 +147,8 @@ fun DialogList(
 
 }
 
+
+
 @Composable
 fun FullDialogSport(
     openDialog: (Boolean) -> Unit,

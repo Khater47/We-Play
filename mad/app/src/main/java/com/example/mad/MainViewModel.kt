@@ -57,13 +57,16 @@ class MainViewModel : ViewModel() {
     private val user = MutableLiveData<Profile?>()
 
     private val _playground = MutableLiveData<Playground?>()
-    val playground = _playground
+    val playground:LiveData<Playground?> = _playground
 
     private val _comments = MutableLiveData<List<Comment?>>()
-    val comments = _comments
+    val comments:LiveData<List<Comment?>> = _comments
 
     private val _availableTimeSlot = MutableLiveData<Set<String>>()
     val availableTimeSlot = _availableTimeSlot
+
+    private val _playgrounds = MutableLiveData<List<Playground?>>()
+    val playgrounds:LiveData<List<Playground?>> = _playgrounds
 
     //splashScreen
     init {
@@ -297,10 +300,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun getPlaygrounds(
-    ): LiveData<List<Playground?>> {
+    ) {
 
-        val resultLiveData = MutableLiveData<List<Playground?>>()
-        loadingProgressBar.value = true
 
         db.collection(PLAYGROUNDS)
             .addSnapshotListener { value, error ->
@@ -309,23 +310,19 @@ class MainViewModel : ViewModel() {
                         value?.documents?.map {
                             it.toPlayground()
                         } ?: emptyList()
+                    _playgrounds.postValue(playground)
 
-                    resultLiveData.postValue(playground)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
 
-        return resultLiveData
     }
 
     fun getPlaygroundsBySport(
         sport: String
-    ): LiveData<List<Playground?>> {
+    ) {
 
-        val resultLiveData = MutableLiveData<List<Playground?>>()
-        loadingProgressBar.value = true
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("sport", sport)
@@ -335,22 +332,18 @@ class MainViewModel : ViewModel() {
                         value?.documents?.map {
                             it.toPlayground()
                         } ?: emptyList()
+                    _playgrounds.postValue(playground)
 
-                    resultLiveData.postValue(playground)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
-        return resultLiveData
     }
 
     fun getPlaygroundsByLocation(
         location: String
-    ): LiveData<List<Playground?>> {
+    ) {
 
-        val resultLiveData = MutableLiveData<List<Playground?>>()
-        loadingProgressBar.value = true
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("city", location)
@@ -361,22 +354,17 @@ class MainViewModel : ViewModel() {
                             it.toPlayground()
                         } ?: emptyList()
 
-                    resultLiveData.postValue(playground)
+                    _playgrounds.postValue(playground)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
 
-        return resultLiveData
     }
 
     fun getPlaygroundsByLocationAndSport(
         sport: String, location: String
-    ): LiveData<List<Playground?>> {
-
-        val resultLiveData = MutableLiveData<List<Playground?>>()
-        loadingProgressBar.value = true
+    ){
 
         db.collection(PLAYGROUNDS)
             .whereEqualTo("city", location)
@@ -388,13 +376,12 @@ class MainViewModel : ViewModel() {
                             it.toPlayground()
                         } ?: emptyList()
 
-                    resultLiveData.postValue(playground)
+                    _playgrounds.postValue(playground)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
-        return resultLiveData
+
     }
 
     fun getPlaygroundById(id: String) {
