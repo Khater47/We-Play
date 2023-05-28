@@ -1,7 +1,6 @@
 package com.example.mad
 
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.LiveData
@@ -72,6 +71,10 @@ class MainViewModel : ViewModel() {
 
     private val _userSports = MutableLiveData<List<ProfileSport?>>()
     val userSports:LiveData<List<ProfileSport?>> = _userSports
+
+    private val _userReservation = MutableLiveData<List<UserReservation?>>()
+    val userReservation:LiveData<List<UserReservation?>> = _userReservation
+
 
     //splashScreen
     init {
@@ -373,6 +376,20 @@ class MainViewModel : ViewModel() {
 
     }
 
+    fun getPlaygroundByAddressAndCity(address:String,city:String){
+        db.collection(PLAYGROUNDS)
+            .whereEqualTo("city", city)
+            .whereEqualTo("address", address)
+            .addSnapshotListener { value, error ->
+                if (error == null) {
+                    val playground = value?.documents?.firstOrNull()?.toPlayground()
+                    _playground.postValue(playground)
+                } else {
+                    Log.d("TAG", "ERROR")
+                }
+            }
+    }
+
     fun getPlaygroundById(id: String) {
 
         db.collection(PLAYGROUNDS)
@@ -422,10 +439,7 @@ class MainViewModel : ViewModel() {
     fun getAllUserPastReservation(
         userId: String,
         today: String
-    ): LiveData<List<UserReservation?>> {
-
-        val resultLiveData = MutableLiveData<List<UserReservation?>>()
-        loadingProgressBar.value = true
+    ){
 
         db.collection(USERS)
             .document(userId)
@@ -438,13 +452,12 @@ class MainViewModel : ViewModel() {
                             it.toUserReservation()
                         } ?: emptyList()
 
-                    resultLiveData.postValue(reservations)
+                    _userReservation.postValue(reservations)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
             }
-        loadingProgressBar.value = false
-        return resultLiveData
+
     }
 
 

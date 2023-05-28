@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.example.mad.MainViewModel
 import com.example.mad.screens.home.HomeScreen
@@ -27,56 +28,81 @@ import com.google.accompanist.navigation.animation.composable
 @OptIn(ExperimentalAnimationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun MainNavGraph(navController: NavHostController,vm:MainViewModel) {
+fun MainNavGraph(navController: NavHostController, vm: MainViewModel) {
 
 
-    val startDestination = if(vm.currentUser?.uid!=null) BottomBarScreen.Home.route
+    val startDestination = if (vm.currentUser?.uid != null) BottomBarScreen.Home.route
     else BottomBarScreen.Login.route
 
-    Log.d("USERID",vm.currentUser?.email?:"")
+    Log.d("USERID", vm.currentUser?.email ?: "")
 
-    AnimatedNavHost(navController = navController,
+    AnimatedNavHost(
+        navController = navController,
         startDestination = startDestination,
     ) {
 
-        composable(route=BottomBarScreen.Home.route){
+        composable(route = BottomBarScreen.Home.route) {
             HomeScreen(navController)
         }
-        composable(route = BottomBarScreen.Playground.route+"/{playgroundId}",
-        arguments = listOf(navArgument("playgroundId") { defaultValue = "0" })
-        ) {backStackEntry ->
-            PlaygroundScreen(vm,navController,backStackEntry.arguments?.getString("playgroundId")/*navController,vm*/)
+        composable(
+            route = BottomBarScreen.Playground.route + "/{playgroundId}",
+            arguments = listOf(navArgument("playgroundId") { defaultValue = "0" })
+        ) { backStackEntry ->
+            PlaygroundScreen(
+                vm,
+                navController,
+                backStackEntry.arguments?.getString("playgroundId")/*navController,vm*/
+            )
         }
         composable(route = BottomBarScreen.Reservation.route) {
-            ReservationScreen(navController,vm)
+            ReservationScreen(navController, vm)
         }
         composable(route = BottomBarScreen.ProfileSport.route) {
-            ProfileSportScreen(navController,vm)
+            ProfileSportScreen(navController, vm)
         }
         composable(
             route = BottomBarScreen.ProfileEdit.route,
         ) {
-            ProfileEditScreen(navController,vm)
+            ProfileEditScreen(navController, vm)
         }
-        composable(route=BottomBarScreen.ProfileRating.route){
-            ProfileRatingScreen(navController,vm)
+        composable(route = BottomBarScreen.ProfileRating.route) {
+            ProfileRatingScreen(navController, vm)
         }
         composable(route = BottomBarScreen.Profile.route) {
-            ProfileScreen(navController,vm/*navController, vm, */)
+            ProfileScreen(navController, vm)
         }
         composable(route = BottomBarScreen.SearchField.route) {
-            SearchPlaygroundScreen(navController,vm)
+            SearchPlaygroundScreen(navController, vm)
         }
-        composable(route = BottomBarScreen.AddRating.route) {
-            AddRatingScreen(navController/*navController,vm*/)
+        composable(
+            route = BottomBarScreen.AddRating.route + "/{city}/{address}",
+            arguments = listOf(
+                navArgument("city") {
+                    type = NavType.StringType
+                    defaultValue = "city"
+                    nullable = true
+                },
+                navArgument("address") {
+                    type = NavType.StringType
+                    defaultValue = "address"
+                    nullable = true
+                }
+            )
+        ) { backStackEntry ->
+            AddRatingScreen(
+                navController, vm, backStackEntry.arguments?.getString("city"),
+                backStackEntry.arguments?.getString("address")
+            )
         }
-        composable(route=BottomBarScreen.EditReservation.route,
-            arguments = listOf(navArgument("reservationId") { defaultValue = "0" })){
-               /* _ ->*/ EditReservationScreen(navController/*navController, vm, backStackEntry.arguments?.getString("reservationId")*/)
-        }
-        composable(route = BottomBarScreen.Login.route,
+        composable(route = BottomBarScreen.EditReservation.route,
+            arguments = listOf(navArgument("reservationId") { defaultValue = "0" })
         ) {
-            LoginScreen(vm,navController)
+            /* _ ->*/ EditReservationScreen(navController/*navController, vm, backStackEntry.arguments?.getString("reservationId")*/)
+        }
+        composable(
+            route = BottomBarScreen.Login.route,
+        ) {
+            LoginScreen(vm, navController)
         }
 
     }

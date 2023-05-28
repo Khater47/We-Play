@@ -24,7 +24,9 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -37,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CardPlayground
@@ -51,11 +54,12 @@ import com.example.mad.ui.theme.MadTheme
 @Composable
 fun AddRatingScreen(
     navController: NavHostController,
-//    vm: MainViewModel
-) {
+    vm: MainViewModel,
+    city:String?,
+    address:String?
+    ) {
 
 //    val loading = vm.loadingProgressBar.value
-
 
     val openDialog = remember { mutableStateOf(false) }
 
@@ -100,13 +104,27 @@ fun AddRatingScreen(
         navController.navigate(BottomBarScreen.ProfileRating.route)
     }
 
-
-
     fun openDialog() {
         openDialog.value = true
     }
 
-    val p = Playground("0","","","","Campo Admonds", "Soccer", "Corso Einaudi 24,10129","Turin")
+    val p = vm.playground.observeAsState().value?:Playground(
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+    )
+
+    LaunchedEffect(key1 = null){
+        if(!address.isNullOrEmpty() && !city.isNullOrEmpty())
+        vm.getPlaygroundByAddressAndCity(address,city)
+    }
+
+
     val (quality, setQuality) = remember {
         mutableStateOf(0)
     }
@@ -337,13 +355,13 @@ fun RatingTextSection(text : String) {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreviewAddRating() {
-    MadTheme {
-        AddRatingScreen(rememberNavController())
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun DefaultPreviewAddRating() {
+//    MadTheme {
+//        AddRatingScreen(rememberNavController())
+//    }
+//}
 
 //
 //@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")

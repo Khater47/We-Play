@@ -1,6 +1,7 @@
 package com.example.mad.screens.profile
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,7 +53,7 @@ fun ProfileRatingScreen(
         navController.navigate(BottomBarScreen.Home.route)
     }
 
-    val userId = "66bvbnu9zPP3SzKD6W15ax8Ouhv1"
+    val userId = vm.currentUser?.email?:""
 
     fun goToAddRating() {
 //        val route = "/addRating"
@@ -59,6 +62,10 @@ fun ProfileRatingScreen(
 
     val loading = vm.loadingProgressBar.value
 
+    LaunchedEffect(key1 = userId){
+        val today = getToday()
+        vm.getAllUserPastReservation(userId,today)
+    }
 
     Scaffold(
         topBar = { TopBarBackButton(R.string.topBarUserRating, ::goHome) },
@@ -68,7 +75,7 @@ fun ProfileRatingScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            PlaygroundRating(vm,userId,navController)
+            PlaygroundRating(vm,navController)
             CircularProgressBar(isDisplayed = loading)
 
         }
@@ -79,21 +86,12 @@ fun ProfileRatingScreen(
 @Composable
 fun PlaygroundRating(
     vm: MainViewModel,
-    userId:String,
     navController: NavHostController,
 ) {
 
     val today = getToday()
 
-    val reservations = remember{
-        mutableStateOf<List<UserReservation>>(emptyList())
-    }
-
-
-    vm.getAllUserPastReservation(userId, today).observe(LocalLifecycleOwner.current){
-        reservations.value=it.filterNotNull()
-    }
-
+    val reservations = vm.userReservation.observeAsState().value?.filterNotNull()?: emptyList()
 
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
@@ -103,7 +101,7 @@ fun PlaygroundRating(
                         .padding(16.dp)
                         .weight(4f)
                 ) {
-                    items(reservations.value) {item ->
+                    items(reservations) {item ->
                         CardPlaygroundReservationPortrait(item,navController)
                     }
                 }
@@ -116,7 +114,7 @@ fun PlaygroundRating(
                     modifier = Modifier
                         .padding(16.dp)
                 ) {
-                    items(reservations.value) { item ->
+                    items(reservations) { item ->
                         Row {
                             Column(Modifier.weight(1f)) {
                                 CardPlaygroundReservationLandscape(item, navController)
@@ -154,7 +152,7 @@ fun CardPlaygroundReservationLandscape(reservation:UserReservation,navController
     Card(
         onClick = {
             //ADD RATING
-                  navController.navigate(BottomBarScreen.AddRating.route)
+            navController.navigate(BottomBarScreen.AddRating.route+"/${reservation.city}/${reservation.address}")
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -184,7 +182,7 @@ fun CardPlaygroundReservationPortrait(reservation:UserReservation,navController:
     Card(
         onClick = {
             //ADD RATING
-                  navController.navigate(BottomBarScreen.AddRating.route)
+            navController.navigate(BottomBarScreen.AddRating.route+"/${reservation.city}/${reservation.address}")
         },
         modifier = Modifier
             .fillMaxWidth()
