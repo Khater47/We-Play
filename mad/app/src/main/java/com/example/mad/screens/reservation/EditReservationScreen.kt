@@ -115,8 +115,6 @@ fun PortraitEditReservation(
         email = "mariorossi@gmail.com",
         endTime = "13:00",
         equipment = false,
-        fullName = "Mario Rossi",
-        phone = "34567643243",
         playground = "Campo Admond",
         sport = "Soccer",
         startTime = "11:00",

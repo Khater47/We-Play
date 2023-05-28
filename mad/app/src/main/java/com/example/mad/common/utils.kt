@@ -63,6 +63,9 @@ fun getToday():String{
 //    return "$month"
 //}
 
+fun getTimeStamp():Long{
+    return Calendar.getInstance().timeInMillis
+}
 fun getIconUserInfo(userInfo: String): ImageVector {
     return when (userInfo.lowercase()) {
         "fullName" -> Icons.Default.Person

@@ -1,6 +1,7 @@
 package com.example.mad
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -526,7 +527,7 @@ class MainViewModel : ViewModel() {
         return resultLiveData
     }
 
-    fun insertUserReservation(userId: String, reservationId: String, reservation: UserReservation) =
+     fun insertUserReservation(userId: String, reservationId: String, reservation: UserReservation) =
         CoroutineScope(Dispatchers.IO).launch {
             loadingProgressBar.value=true
 
@@ -605,6 +606,7 @@ class MainViewModel : ViewModel() {
     fun insertReservation(reservationId: String, reservation: Reservation) =
         CoroutineScope(Dispatchers.IO).launch {
             loadingProgressBar.value=true
+
 
             db.collection(RESERVATION)
                 .document(reservationId)

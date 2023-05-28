@@ -33,6 +33,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -61,136 +62,12 @@ import com.example.mad.common.composable.Score
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TopBarBackButton
+import com.example.mad.common.getSport
 import com.example.mad.model.ProfileSport
 
 //TODO() Dialog add/edit sport
 
-@Composable
-fun SelectSportDropDownMenu(
-    sportsList: List<String>,
-    selectedSport: String,
-    setSelectedSport: (String) -> Unit
-) {
-    var expanded by remember {
-        mutableStateOf(false)
-    }
 
-    var textFieldSize by remember {
-        mutableStateOf(Size.Zero)
-    }
-
-    val icon = if (expanded) {
-        Icons.Default.KeyboardArrowUp
-    } else {
-        Icons.Default.KeyboardArrowDown
-    }
-
-    Column(modifier = Modifier.padding(20.dp)) {
-        OutlinedTextField(
-            value = selectedSport,
-            onValueChange = {
-                setSelectedSport(it)
-            }, modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates -> textFieldSize = coordinates.size.toSize() },
-            readOnly = true,
-            label = {
-                Text(text = "Select Sport")
-            },
-            trailingIcon = {
-                Icon(icon, contentDescription = "", Modifier.clickable { expanded = !expanded })
-            })
-
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
-        ) {
-            sportsList.forEach { label ->
-                DropdownMenuItem(onClick = {
-                    setSelectedSport(label)
-                    expanded = false
-                }) {
-                    Text(text = label.replaceFirstChar { it.uppercase() })
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun SportDialog(
-    openDialog: (Boolean) -> Unit,
-    sportsList: List<String>,
-    selectedSport: String,
-    setSelectedSport: (String) -> Unit,
-    level: Int,
-    trophies: Int,
-    setLevel: (Int) -> Unit,
-    setTrophies: (Int) -> Unit,
-) {
-
-    Dialog(onDismissRequest = { openDialog(false) }) {
-        Card(
-            shape = RoundedCornerShape(20.dp),
-            border = BorderStroke(1.dp, Color.LightGray),
-            colors = CardDefaults.cardColors()
-        ) {
-            Column(Modifier.clip(RoundedCornerShape(10.dp))) {
-
-                SelectSportDropDownMenu(sportsList, selectedSport, setSelectedSport)
-
-                SportStatDialog(level, trophies, setLevel, setTrophies)
-                
-                Spacer(modifier = Modifier.padding(vertical=10.dp))
-
-                ButtonDialog(cancel = { openDialog(false) }, confirm = {
-                    //viewModel.insertUserSport
-                    Log.d("TAG", "$selectedSport $level $trophies")
-                })
-            }
-        }
-
-    }
-
-}
-
-@Composable
-fun SportStatDialog(
-    level: Int,
-    trophies: Int,
-    setLevel: (Int) -> Unit,
-    setTrophies: (Int) -> Unit,
-) {
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-    verticalArrangement = Arrangement.Center,
-    horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Level", fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium)
-    }
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
-            IconButtonRating(level, setLevel)
-    }
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(text = "Trophies", fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium)
-    }
-}
 
 @Composable
 fun ProfileSportScreen(
@@ -207,9 +84,22 @@ fun ProfileSportScreen(
     }
     val userId = vm.currentUser?.email?:""
 
+    val allSport = getSport()
+//    val filteredSport = remember {
+//        mutableStateListOf<String>()
+//    }
+
     vm.getAllUserProfileSport(userId).observe(LocalLifecycleOwner.current) {
         val sports = it.filterNotNull()
         profileSport.value = sports
+
+
+//        allSport.forEach { sport->
+//            if(!profileSport.value.map { pSport->pSport.sport }.contains(sport)){
+//                filteredSport.add(sport)
+//            }
+//        }
+
     }
 
     fun goHome() {
@@ -223,8 +113,9 @@ fun ProfileSportScreen(
 
 
 
+
     if (isOpenDialog) {
-        FullDialogSport(openDialog,vm)
+        FullDialogSport(openDialog,vm,allSport)
     }
 
     val loading = vm.loadingProgressBar.value
@@ -251,7 +142,6 @@ fun ProfileSportScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Achievements(
     vm: MainViewModel,
