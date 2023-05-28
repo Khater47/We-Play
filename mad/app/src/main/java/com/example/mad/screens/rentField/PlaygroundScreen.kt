@@ -1,6 +1,7 @@
 package com.example.mad.screens.rentField
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -42,6 +43,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,10 +61,12 @@ import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.FullDialogPlayground
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.model.Comment
 import com.example.mad.model.Playground
+import kotlinx.coroutines.delay
 
 
 /*
@@ -78,73 +83,47 @@ fun PlaygroundScreen(
     playgroundId: String?
 ) {
 
-//    val loading = vm.loadingProgressBar.value
+    val loading = vm.loadingProgressBar.value
 
     val image = R.drawable.field
 
-    val p = remember {
-        mutableStateOf(
-            Playground(
-                id="",
-                phone="",
-                email="",
-                openHours="",
-                playground="",
-                sport="",
-                city="",
-                address=""
-            )
-        )
+    val playground = vm.playground.observeAsState().value ?: Playground(
+        id = "",
+        phone = "",
+        email = "",
+        openHours = "",
+        playground = "",
+        sport = "",
+        city = "",
+        address = ""
+    )
+    val comments = vm.comments.observeAsState().value?.filterNotNull() ?: emptyList()
+
+    LaunchedEffect(key1 = playgroundId) {
+//        vm.loadingProgressBar.value=true
+//        delay(3000)
+        vm.getPlaygroundById(playgroundId ?: "0")
+        vm.getPlaygroundsComments(playgroundId ?: "0")
+//        vm.loadingProgressBar.value=false
     }
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    vm.getPlaygroundById(playgroundId ?: "0").observe(lifecycleOwner) {
-
-        p.value = Playground(
-            id=playgroundId?:"",
-            phone=it?.phone ?: "",
-            email=it?.email ?: "",
-            openHours= it?.openHours ?: "",
-            playground=it?.playground ?: "",
-            sport=it?.sport ?: "",
-            city=it?.city ?: "",
-            address= it?.address ?: ""
-        )
-    }
-
-   val comments = remember {
-       mutableStateOf<List<Comment>>(
-           emptyList()
-       )
-   }
 
     val avg = remember {
-        mutableStateOf(0f)
+        mutableStateOf(0L)
     }
     val totalQuality = remember {
-        mutableStateOf(0f)
+        mutableStateOf(0L)
     }
     val totalFacilities = remember {
-        mutableStateOf(0f)
+        mutableStateOf(0L)
     }
 
-    vm.getPlaygroundsComments(playgroundId?:"0").observe(lifecycleOwner){
-
-
-        val list = it.filterNotNull()
-        var quality = 0f
-        var facilities = 0f
-        val count = list.size
-        comments.value = list
-        list.forEach {
-            comment ->
-            quality += comment.quality.toFloat()
-            facilities += comment.facilities.toFloat()
-        }
-        totalQuality.value = quality/count
-        totalFacilities.value = facilities/count
-        avg.value = (totalQuality.value+totalFacilities.value)/2
-
+    if (comments.isNotEmpty()) {
+        val q = comments.sumOf { it.quality } / comments.size
+        val f = comments.sumOf { it.facilities } / comments.size
+        totalQuality.value = q
+        totalFacilities.value = f
+        avg.value = (totalQuality.value + totalFacilities.value) / 2
+        Log.d("COMMENTS",comments.size.toString())
     }
 
     val showDialog = remember { mutableStateOf(false) }
@@ -193,20 +172,25 @@ fun PlaygroundScreen(
                     modifier = Modifier.padding(vertical = 5.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier
-                        .weight(4f)
-                        .padding(horizontal = 15.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(4f)
+                            .padding(horizontal = 15.dp)
+                    ) {
                         Text(
-                            text = p.value.playground,
+                            text = playground.playground,
                             style = MaterialTheme.typography.headlineMedium,
                         )
                     }
-                    Row(modifier = Modifier.weight(1f),
+                    Row(
+                        modifier = Modifier.weight(1f),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(imageVector = Icons.Default.StarRate, contentDescription = "",
-                        modifier=Modifier.padding(end=5.dp))
+                        Icon(
+                            imageVector = Icons.Default.StarRate, contentDescription = "",
+                            modifier = Modifier.padding(end = 5.dp)
+                        )
                         Text(
                             text = "${avg.value.toInt()}",
                         )
@@ -222,13 +206,13 @@ fun PlaygroundScreen(
                         .padding(vertical = 5.dp),
                 ) {
                     // Card content
-                    InfoLine(icon = Icons.Default.LocationOn, text = p.value.address)
+                    InfoLine(icon = Icons.Default.LocationOn, text = playground.address)
                     Divider(thickness = 1.dp)
-                    InfoLine(icon = Icons.Default.Call, text = p.value.phone)
+                    InfoLine(icon = Icons.Default.Call, text = playground.phone)
                     Divider(thickness = 1.dp)
-                    InfoLine(icon = Icons.Default.Mail, text = p.value.email)
+                    InfoLine(icon = Icons.Default.Mail, text = playground.email)
                     Divider(thickness = 1.dp)
-                    InfoLine(icon = Icons.Default.Schedule, text = p.value.openHours)
+                    InfoLine(icon = Icons.Default.Schedule, text = playground.openHours)
                 }
 
                 // Rating card
@@ -242,7 +226,7 @@ fun PlaygroundScreen(
                 }
 
                 // Users Comments
-                UserComments(comments.value)
+                UserComments(comments)
 
                 //Divider()
 
@@ -265,14 +249,14 @@ fun PlaygroundScreen(
                     }
 
 
-                    if(showDialog.value){
-                        FullDialogPlayground(openDialog = showDialog,playground=p.value,vm)
+                    if (showDialog.value) {
+                        FullDialogPlayground(openDialog = showDialog, playground, vm)
                     }
 
                 }
 
             }
-//            CircularProgressBar(isDisplayed = loading)
+            CircularProgressBar(isDisplayed = loading)
 
         }
     }
@@ -347,7 +331,7 @@ fun UserComments(comments: List<Comment>) {
                     },
                 verticalAlignment = Alignment.CenterVertically,
 
-            ) {
+                ) {
                 Text(
                     text = "Comments",
                     style = MaterialTheme.typography.bodyMedium,

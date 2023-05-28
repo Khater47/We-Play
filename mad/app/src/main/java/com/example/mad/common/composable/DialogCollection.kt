@@ -2,7 +2,6 @@ package com.example.mad.common.composable
 
 import android.graphics.Color
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -30,7 +27,6 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.ShoppingBag
-import androidx.compose.material.icons.filled.ShoppingBasket
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -43,32 +39,26 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.mad.MainViewModel
-import com.example.mad.common.getSport
-import com.example.mad.common.getTimeSlot
+import com.example.mad.common.getTimeStamp
 import com.example.mad.common.getToday
 import com.example.mad.model.Playground
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
-import com.example.mad.screens.reservation.ColorDayDecorator
-import com.example.mad.ui.theme.MadTheme
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
@@ -281,7 +271,7 @@ fun FullDialogSport(
                 )
             }
 
-            ListContainerDialog(data, state = selected)
+            ListContainerDialog(modifier=Modifier.fillMaxWidth(),data, state = selected)
 
             /*LEVEL*/
             Column(
@@ -319,11 +309,11 @@ fun FullDialogSport(
 
 @Composable
 fun ListContainerDialog(
+    modifier: Modifier = Modifier,
     data: List<String>,
     state: MutableState<Int>,
     text: String = "Select Sport",
     horizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally,
-    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
 
 
@@ -393,7 +383,7 @@ fun MedalItemDialog(
 fun FullDialogPlayground(
     openDialog: MutableState<Boolean>,
     playground: Playground,
-    vm:MainViewModel
+    vm:MainViewModel,
     ){
     val selectedDate = remember {
         mutableStateOf("")
@@ -408,9 +398,10 @@ fun FullDialogPlayground(
         mutableStateOf(false)
     }
 
+    //handle tabs
     val state = remember { mutableStateOf(0) }
 
-    val timeSlot = getTimeSlot()
+    val timeSlot = vm.availableTimeSlot.observeAsState().value?.toList()?: emptyList()
 
     val icons = listOf(
         Icons.Default.CalendarMonth,
@@ -485,19 +476,19 @@ fun FullDialogPlayground(
                         onClick = {
                             if(selectedDate.value!="" && selectedTimeSlot.value!=-1 && confirmEquipment.value){
                                 val email = vm.currentUser?.email?:""
-                                val startTime = timeSlot[selectedTimeSlot.value].substringBefore("/")
-                                val endTime = timeSlot[selectedTimeSlot.value].substringAfter("/")
+                                val startTime = timeSlot[selectedTimeSlot.value].substringBefore("-")
+                                val endTime = timeSlot[selectedTimeSlot.value].substringAfter("-")
 
                                 val r = Reservation(
                                     playground.address,
                                     playground.city,
                                     selectedDate.value,
                                     email,
-                                    startTime,
+                                    endTime,
                                     selectedEquipment.value,
                                     playground.playground,
                                     playground.sport,
-                                    endTime
+                                    startTime
                                 )
                                 val ur = UserReservation(
                                     playground.address,
@@ -510,8 +501,13 @@ fun FullDialogPlayground(
                                     startTime
                                 )
 
-                                Log.d("RESERVATION",r.toString())
-                                Log.d("RESERVATION",ur.toString())
+                                val timestamp = getTimeStamp().toString()
+                                if(email.isNotEmpty()){
+                                    Log.d("INSERT","START = $startTime\n ENDTIME = $endTime")
+                                    vm.insertReservation(timestamp,r)
+                                    vm.insertUserReservation(email,timestamp,ur)
+                                }
+
 
                                 openDialog.value=false
                             }
@@ -561,7 +557,7 @@ fun FullDialogPlayground(
 
                     when(state.value){
                         0 -> {
-                            DatePicker(selectedDate,state)
+                            DatePicker(selectedDate,state,vm,playground.address,playground.city)
                         }
                         1 -> {
                                 ListRadioButtonData(data = timeSlot, state = selectedTimeSlot,
@@ -703,10 +699,10 @@ fun ListRadioButtonData(
     }
 }
 
-class DisabledColorDecorator() : DayDecorator {
+class DisabledColorDecorator : DayDecorator {
     override fun decorate(dayView: DayView) {
         if (CalendarUtils.isPastDay(dayView.date)) {
-            val color: Int = android.graphics.Color.parseColor("#a9afb9")
+            val color: Int = Color.parseColor("#a9afb9")
             dayView.setBackgroundColor(color)
         }
 
@@ -728,7 +724,10 @@ class SelectedColorDecorator(private val dateText:String) : DayDecorator {
 @Composable
 fun DatePicker(
     selectedDate:MutableState<String>,
-    state: MutableState<Int>
+    state: MutableState<Int>,
+    vm:MainViewModel,
+    address:String,
+    city:String,
 ) {
     AndroidView(factory = { CustomCalendarView(it) }, update = {
 
@@ -750,7 +749,7 @@ fun DatePicker(
                 val dateText = date?.let { d -> df.format(d) } ?: today
 
                 if(dateText>=today){
-
+                    vm.getTimeSlotReservationByPlaygroundAndDate(dateText,address, city)
                     selectedDate.value=dateText
                     state.value=1
                 }

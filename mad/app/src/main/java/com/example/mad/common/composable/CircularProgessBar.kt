@@ -8,6 +8,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,7 +23,7 @@ fun CircularProgressBar(
             horizontalArrangement = Arrangement.Center,
         ){
             CircularProgressIndicator(
-                color=MaterialTheme.colorScheme.primary
+                color= Color.Black
             )
         }
     }
