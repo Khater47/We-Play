@@ -307,6 +307,169 @@ fun FullDialogSport(
 
 }
 
+@Composable
+fun FullDialogSportEdit(
+    openDialogEdit: (Boolean) -> Unit,
+    vm: MainViewModel,
+    sport:String,
+    level:Int,
+    trophies:Int
+
+) {
+
+    val (trophiesText, setTrophiesText) = remember {
+        mutableStateOf(trophies.toString())
+    }
+
+    val (score, setScore) = remember {
+        mutableStateOf(level)
+    }
+
+
+
+    val description = "Add or change your statistics for this sport, " +
+            "like level from 1 to 5 and the " +
+            "number of trophies that you have earn it"
+
+
+    Dialog(
+        onDismissRequest = {
+            openDialogEdit(false)
+        },
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(
+                    MaterialTheme.colorScheme.surface,
+                    RectangleShape
+                ),
+        ) {
+
+            /*HEADER DIALOG*/
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                    IconButton(onClick = {
+                        openDialogEdit(false)
+                    }, modifier = Modifier.fillMaxHeight()) {
+                        Icon(
+                            imageVector = Icons.Default.Clear, contentDescription = "close dialog",
+                            tint = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                Column(
+                    Modifier
+                        .weight(2f)
+                        .fillMaxHeight(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = {
+
+                            val trophies = if (trophiesText == "") 0L else trophiesText.toLong()
+
+                            val ps =
+                                ProfileSport(
+                                    sport = sport,
+                                    level = score.toLong(),
+                                    trophies
+                                )
+
+                            Log.d("ps", ps.toString())
+                            val userId = vm.currentUser?.email?:""
+
+                            vm.insertUserProfileSport(userId, ps)
+                            openDialogEdit(false)
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = RectangleShape,
+                        modifier = Modifier.fillMaxHeight()
+                    ) {
+                        Text(text = "Save")
+                    }
+                }
+            }
+
+            /*DESCRIPTION DIALOG TEXT*/
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp)
+            ) {
+                Text(
+                    description, fontSize = 15.sp, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+
+
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = sport, fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+            //ListContainerDialog(modifier=Modifier.fillMaxWidth(),data, state = selected)
+
+            /*LEVEL*/
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Level", fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                IconButtonRating(score, setScore)
+            }
+
+            MedalItemDialog(text = "Trophies", medal = trophiesText, setMedal = setTrophiesText)
+
+        }
+    }
+
+
+
+}
 
 
 @Composable
@@ -386,7 +549,7 @@ fun FullDialogPlayground(
     openDialog: MutableState<Boolean>,
     playground: Playground,
     vm:MainViewModel,
-    ){
+){
     val selectedDate = remember {
         mutableStateOf("")
     }
@@ -410,7 +573,7 @@ fun FullDialogPlayground(
         Icons.Default.AccessTime,
         Icons.Default.ShoppingBag,
         Icons.Default.EventAvailable
-        )
+    )
 
 
     Dialog(
@@ -562,16 +725,16 @@ fun FullDialogPlayground(
                             DatePicker(selectedDate,state,vm,playground.address,playground.city)
                         }
                         1 -> {
-                                ListRadioButtonData(data = timeSlot, state = selectedTimeSlot,
+                            ListRadioButtonData(data = timeSlot, state = selectedTimeSlot,
                                 modifier= Modifier
                                     .fillMaxWidth()
                                     .padding(15.dp))
 
-                                Button(onClick = {
-                                    if(selectedTimeSlot.value!=-1) state.value=2
-                                }) {
-                                    Text("Confirm")
-                                }
+                            Button(onClick = {
+                                if(selectedTimeSlot.value!=-1) state.value=2
+                            }) {
+                                Text("Confirm")
+                            }
                         }
                         2 -> {
                             Column(
@@ -587,7 +750,7 @@ fun FullDialogPlayground(
                                         .padding(vertical = 10.dp)
                                         .fillMaxWidth(),
                                     horizontalArrangement = Arrangement.Center,
-                                verticalAlignment = Alignment.CenterVertically){
+                                    verticalAlignment = Alignment.CenterVertically){
 
                                     Text(text = "Equipment",modifier=Modifier.padding(end=10.dp),
                                         fontSize = 18.sp,style=MaterialTheme.typography.bodyLarge)
@@ -601,13 +764,13 @@ fun FullDialogPlayground(
                                         .padding(vertical = 15.dp)
                                         .fillMaxWidth(),
                                     horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
+                                ) {
 
-                                        Button(onClick = { confirmEquipment.value=true
-                                            state.value=3
-                                        }) {
-                                            Text("Confirm",fontSize = 18.sp,style=MaterialTheme.typography.bodyLarge)
-                                        }
+                                    Button(onClick = { confirmEquipment.value=true
+                                        state.value=3
+                                    }) {
+                                        Text("Confirm",fontSize = 18.sp,style=MaterialTheme.typography.bodyLarge)
+                                    }
                                 }
                             }
 
@@ -615,8 +778,8 @@ fun FullDialogPlayground(
                         3 -> {
                             Column {
                                 Text(text = "Are you sure to rent the playground with this info",
-                                fontSize=20.sp,style=MaterialTheme.typography.bodyLarge,
-                                modifier=Modifier.padding(vertical=20.dp))
+                                    fontSize=20.sp,style=MaterialTheme.typography.bodyLarge,
+                                    modifier=Modifier.padding(vertical=20.dp))
 
 
                                 Text(text = playground.playground,
