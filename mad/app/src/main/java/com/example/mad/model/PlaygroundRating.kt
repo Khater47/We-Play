@@ -3,8 +3,8 @@ package com.example.mad.model
 import com.google.firebase.firestore.DocumentSnapshot
 
 class PlaygroundRating(
-    val quality:Float,
-    val facilities:Float,
+    val quality:Long,
+    val facilities:Long,
     val comment:String,
     val nickname:String
 ) {
@@ -18,8 +18,8 @@ class PlaygroundRating(
 fun DocumentSnapshot.toPlaygroundRating(): PlaygroundRating? {
     return try {
 
-        val quality:Float = get("quality") as Float
-        val facilities:Float = get("facilities") as Float
+        val quality:Long = get("quality") as Long
+        val facilities:Long = get("facilities") as Long
         val comment:String = get("comment") as String
         val nickname:String = get("nickname") as String
 

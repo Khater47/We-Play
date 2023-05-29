@@ -75,6 +75,9 @@ class MainViewModel : ViewModel() {
     private val _userReservation = MutableLiveData<List<UserReservation?>>()
     val userReservation:LiveData<List<UserReservation?>> = _userReservation
 
+    private val _ratedPlaygrounds = MutableLiveData<List<PlaygroundRating?>>()
+    val ratedPlaygrounds:LiveData<List<PlaygroundRating?>> = _ratedPlaygrounds
+
 
     //splashScreen
     init {
@@ -438,7 +441,8 @@ class MainViewModel : ViewModel() {
 
     fun getAllUserPastReservation(
         userId: String,
-        today: String
+        today: String,
+        listRatedPlayground:List<PlaygroundRating>
     ){
 
         db.collection(USERS)
@@ -452,7 +456,13 @@ class MainViewModel : ViewModel() {
                             it.toUserReservation()
                         } ?: emptyList()
 
-                    _userReservation.postValue(reservations)
+                    //remove duplicate reservation with the same playground (address,city)
+                    val newReservations = reservations
+                        .filterNotNull().groupBy { it.city+" "+it.address }
+                        .values.map { it.first() }
+
+
+                    _userReservation.postValue(newReservations)
                 } else {
                     Log.d("TAG", "ERROR")
                 }
@@ -460,6 +470,10 @@ class MainViewModel : ViewModel() {
 
     }
 
+//    fun getAllRatedPlaygroundByNickname(nickname:String,address: String,city: String){
+//        db.collection(PLAYGROUNDS)
+//
+//    }
 
     fun getAllUserReservationDatesInMonth(userId: String, month: String): LiveData<Set<String?>> {
 

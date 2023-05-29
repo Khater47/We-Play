@@ -71,7 +71,8 @@ import kotlinx.coroutines.delay
 
 /*
 TODO:
- time slot end, so we click a date => no time slot available => confirm button don't work, otherwise work
+    no time slot, show message in dialog
+    show insert message success
 */
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -88,7 +89,6 @@ fun PlaygroundScreen(
     val image = R.drawable.field
 
     val playground = vm.playground.observeAsState().value ?: Playground(
-        id = "",
         phone = "",
         email = "",
         openHours = "",

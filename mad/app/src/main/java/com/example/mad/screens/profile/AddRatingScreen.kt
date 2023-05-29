@@ -49,6 +49,9 @@ import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
 import com.example.mad.model.Playground
 import com.example.mad.ui.theme.MadTheme
+import androidx.compose.material3.AlertDialog
+import androidx.compose.runtime.MutableState
+import com.example.mad.model.PlaygroundRating
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,45 +63,20 @@ fun AddRatingScreen(
     ) {
 
 //    val loading = vm.loadingProgressBar.value
+    val userId = vm.currentUser?.email?:""
 
+    val (quality, setQuality) = remember {
+        mutableStateOf(0)
+    }
+    val comment = remember {
+        mutableStateOf("")
+    }
+
+    val (facilities, setFacilities) = remember {
+        mutableStateOf(0)
+    }
     val openDialog = remember { mutableStateOf(false) }
 
-    if (openDialog.value) {
-        androidx.compose.material3.AlertDialog(
-            onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onDismissRequest.
-                openDialog.value = false
-            }
-        ) {
-            Surface(
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight(),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-
-                    Text(text = "Are you sure you want to save?")
-                    Row(modifier = Modifier.fillMaxWidth()) {
-
-
-                        TextButton(onClick = { openDialog.value = false }) {
-                            Text(text = "Back")
-
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        TextButton(onClick = { saveData() })
-                        {
-                            Text(text = "Confirm")
-                        }
-                    }
-
-                }
-            }
-        }
-    }
 
     fun goToPreviousPage() {
         navController.navigate(BottomBarScreen.ProfileRating.route)
@@ -116,21 +94,73 @@ fun AddRatingScreen(
         "",
         "",
         "",
-        ""
     )
+    val user = vm.user.observeAsState().value
+
 
     LaunchedEffect(key1 = null){
-        if(!address.isNullOrEmpty() && !city.isNullOrEmpty())
-        vm.getPlaygroundByAddressAndCity(address,city)
+        if(!address.isNullOrEmpty() && !city.isNullOrEmpty()){
+            vm.getProfileById(userId)
+            vm.getPlaygroundByAddressAndCity(address,city)
+        }
     }
 
 
-    val (quality, setQuality) = remember {
-        mutableStateOf(0)
+
+    fun saveData() {
+        if(user!=null){
+            val rating = PlaygroundRating(
+                quality=quality.toLong(),
+                facilities=facilities.toLong(),
+                comment=comment.value,
+                nickname=user.nickname,
+            )
+            openDialog.value=false
+            vm.insertUserPlaygroundRating(p.address+" "+p.city,rating)
+            navController.navigate(BottomBarScreen.ProfileRating.route)
+        }
+
     }
-    val (facilities, setFacilities) = remember {
-        mutableStateOf(0)
+
+
+    if (openDialog.value) {
+        AlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or on the back
+                // button. If you want to disable that functionality, simply use an empty
+                // onDismissRequest.
+                openDialog.value = false
+            }
+        ) {
+            Surface(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                shape = MaterialTheme.shapes.large
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+
+                    Text(text = "Are you sure you want to save?",modifier=Modifier.padding(vertical=10.dp))
+                    Row(modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End) {
+
+
+                        TextButton(onClick = { openDialog.value = false },
+                        modifier=Modifier.padding(horizontal=10.dp)) {
+                            Text(text = "Back")
+                        }
+                        TextButton(onClick = { saveData() })
+                        {
+                            Text(text = "Confirm")
+                        }
+                    }
+
+                }
+            }
+        }
     }
+
 
     val orientation = LocalConfiguration.current.orientation
 
@@ -149,11 +179,11 @@ fun AddRatingScreen(
         ) {
             when (orientation) {
                 Configuration.ORIENTATION_PORTRAIT -> {
-                    RatingPortrait(p, quality, setQuality, facilities, setFacilities)
+                    RatingPortrait(p, quality, setQuality, facilities, setFacilities,comment)
                 }
 
                 else -> {
-                    RatingLandscape(p, quality, setQuality, facilities, setFacilities)
+                    RatingLandscape(p, quality, setQuality, facilities, setFacilities,comment)
                 }
             }
 //            CircularProgressBar(isDisplayed = loading)
@@ -163,9 +193,6 @@ fun AddRatingScreen(
 
 }
 
-fun saveData() {
-    Log.d("salvato", "SAAAAAAAAAAAA")
-}
 
 
 @Composable
@@ -175,6 +202,7 @@ fun RatingPortrait(
     setQuality: (Int) -> Unit,
     facilities: Int,
     setFacilities: (Int) -> Unit,
+    text:MutableState<String>
 ) {
 
 
@@ -203,7 +231,7 @@ fun RatingPortrait(
                 "Facilities"
             )
 
-            RatingTextSection(text = "")
+            RatingTextSection(text)
 
 
 
@@ -222,6 +250,7 @@ fun RatingLandscape(
     setQuality: (Int) -> Unit,
     facilities: Int,
     setFacilities: (Int) -> Unit,
+    text:MutableState<String>
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -253,7 +282,7 @@ fun RatingLandscape(
                 "Facilities"
             )
 
-            RatingTextSection(text = "")
+            RatingTextSection(text)
         }
 
     }
@@ -300,9 +329,11 @@ fun RatingRow(score: Int, setScore: (Int) -> Unit, text: String) {
 }
 
 @Composable
-fun RatingTextSection(text : String) {
+fun RatingTextSection(
+    text: MutableState<String>
+) {
 
-    var text by rememberSaveable { mutableStateOf("") }
+//    var text by rememberSaveable { mutableStateOf("") }
 
     when (LocalConfiguration.current.orientation) {
         Configuration.ORIENTATION_PORTRAIT -> {
@@ -313,8 +344,8 @@ fun RatingTextSection(text : String) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                OutlinedTextField(value = text,
-                    onValueChange = { text = it},
+                OutlinedTextField(value = text.value,
+                    onValueChange = { text.value = it},
                     label = {Text("Comment Section")},
 
                     modifier = Modifier
@@ -335,8 +366,8 @@ fun RatingTextSection(text : String) {
                 modifier = Modifier.padding(vertical = 5.dp)
             ) {
 
-                OutlinedTextField(value = text,
-                    onValueChange = { text = it},
+                OutlinedTextField(value = text.value,
+                    onValueChange = { text.value = it},
                     label = {Text("Comment Section")},
                     modifier = Modifier
                         .fillMaxWidth()

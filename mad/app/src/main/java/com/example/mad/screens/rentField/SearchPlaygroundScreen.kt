@@ -47,7 +47,10 @@ import com.example.mad.common.getLocation
 import com.example.mad.common.getSport
 import com.example.mad.model.Playground
 
+/*TODO:
+    restyle filter
 
+*/
 
 @Composable
 fun SearchPlaygroundScreen(
@@ -133,7 +136,7 @@ fun SearchPlaygroundContainer(
             Configuration.ORIENTATION_PORTRAIT->{
                 LazyColumn {
                     items(playgrounds) { item ->
-                        CardPlaygroundFullLocation(item,navController,item.id)
+                        CardPlaygroundFullLocation(item,navController,item.address+" "+item.city)
                     }
                 }
             }
@@ -143,7 +146,7 @@ fun SearchPlaygroundContainer(
                         item ->
                         Row {
                             Column(Modifier.weight(1f)) {
-                                CardPlaygroundLandscape(item,navController,item.id)
+                                CardPlaygroundLandscape(item,navController,item.address+" "+item.city)
                             }
                             Column(Modifier.weight(1f),
                                 verticalArrangement = Arrangement.Center,

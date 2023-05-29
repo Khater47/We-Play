@@ -41,6 +41,7 @@ import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
 import com.example.mad.common.getToday
+import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.UserReservation
 
 
@@ -64,7 +65,8 @@ fun ProfileRatingScreen(
 
     LaunchedEffect(key1 = userId){
         val today = getToday()
-        vm.getAllUserPastReservation(userId,today)
+        val listRated = listOf<PlaygroundRating>()
+        vm.getAllUserPastReservation(userId,today,listRated)
     }
 
     Scaffold(
