@@ -1,0 +1,81 @@
+<resources>
+    <string name="appName">Sport Application</string>
+
+    <!--Home Page-->
+    <string name="topBarHome">Home Page</string>
+    <string name="topBarPlayground">Playground</string>
+    <string name="rateCard">Rate Field</string>
+    <string name="rentCard">Rent Field</string>
+    <string name="sportCard">Edit your sport preferences</string>
+
+    <!--Add Rating-->
+    <string name="topBarAddRating">Rating Playground</string>
+
+    <!--User Sport -->
+    <string name="topBarUserSport">User Sport</string>
+
+    <!--User Rating -->
+    <string name="topBarUserRating">User Rating</string>
+
+    <!--Search Playground -->
+    <string name="topBarSearchPlayground">Select Playground</string>
+
+    <!--Edit Profile-->
+    <string name="topBarEditProfile">Edit Profile</string>
+    <string name="fullName">FullName</string>
+    <string name="email">Email</string>
+    <string name="nickname">Nickname</string>
+    <string name="phoneNumber">PhoneNumber</string>
+    <string name="description">Description</string>
+    <string name="password">Password</string>
+
+    <!--Edit Reservation-->
+    <string name="topBarEditReservation">Edit Reservation</string>
+
+    <!-- Reservation-->
+    <string name="topBarReservation">Reservation</string>
+
+    <!--User Profile-->
+    <string name="topBarUserProfile">User Profile</string>
+
+    <!--Login-->
+    <string name="login">Login</string>
+
+
+    <!--Rent Field-->
+    <string name="sport">Sport</string>
+    <string name="location">City</string>
+
+    <!--Playground-->
+    <string name="date">Date</string>
+    <string name="time">Time</string>
+
+    <!--Reservation-->
+    <string name="equipment">Equipment</string>
+
+    <!--User Profile Sport-->
+    <string name="selectSport">Select Sport</string>
+
+    <!--Dialog-->
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+
+    <!--Dialog Button-->
+    <string name="selectTimeSlot">Select Time Slot</string>
+
+    <!--Switch-->
+    <string name="switchLabel">Equipment</string>
+
+
+    <!--Quality & Facilities Playground-->
+    <string name="Quality">Quality</string>
+    <string name="Facilities">Facilities</string>
+
+    <!--Button Bar-->
+    <string name="Home">Home</string>
+    <string name="Reservation">Reservation</string>
+    <string name="Profile">Profile</string>
+
+
+</resources>
