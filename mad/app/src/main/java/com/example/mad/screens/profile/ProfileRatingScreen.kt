@@ -179,7 +179,8 @@ fun CardPlaygroundReservationLandscape(reservation:UserReservation, selectedRese
         shape = RoundedCornerShape(16.dp),
     ) {
         Column {
-            Row(Modifier.padding(10.dp)) {
+            Row(Modifier.padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(4f)) {
                     Text(playgroundTitle,style=MaterialTheme.typography.headlineSmall)
                 }

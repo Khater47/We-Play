@@ -30,7 +30,7 @@ class MainRepository {
 
     val currentUser = MutableStateFlow(auth.currentUser)
 
-    val userId = currentUser.asStateFlow().value?.email ?: ""
+    private val userId = currentUser.asStateFlow().value?.email ?: ""
 
     //LOGIN & LOGOUT
     suspend fun logIn(email: String, password: String): AuthResult {

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.LocationOn
@@ -177,118 +179,121 @@ fun FullDialogAddRating(
                 }
             }
 
-            Column {
-                /*RESERVATION INFO*/
-                Column(Modifier.padding(vertical = 30.dp)) {
-                    /*PLAYGROUND*/
-                    Column(Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)) {
-                        Text(
-                            text = reservation.playground,
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontSize = 20.sp,
+            Column(modifier=Modifier.verticalScroll(rememberScrollState())){
+                Column() {
+                    /*RESERVATION INFO*/
+                    Column(Modifier.padding(vertical = 30.dp)) {
+                        /*PLAYGROUND*/
+                        Column(Modifier.padding(start = 10.dp, end = 10.dp, bottom = 10.dp)) {
+                            Text(
+                                text = reservation.playground,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontSize = 20.sp,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 5.dp)
+                            )
+                        }
+
+                        Image(
+                            painter = painterResource(id = getIconPlayground(reservation.sport)),
+                            contentDescription = "Image",
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
+                                .height(150.dp)
                                 .fillMaxWidth()
-                                .padding(vertical = 5.dp)
                         )
+
+                        /*ADDRESS, CITY*/
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 10.dp, end = 15.dp)
+                        ) {
+                            TextIcon(
+                                text = reservation.address + " " + reservation.city,
+                                icon = Icons.Default.LocationOn
+                            )
+                        }
+
+                        /*SPORT*/
+                        Column(Modifier.padding(vertical = 20.dp)) {
+                            TextIcon(text = reservation.sport, icon = getIconSport(reservation.sport))
+                        }
+
                     }
 
-                    Image(
-                        painter = painterResource(id = getIconPlayground(reservation.sport)),
-                        contentDescription = "Image",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .height(150.dp)
-                            .fillMaxWidth()
-                    )
-
-                    /*ADDRESS, CITY*/
-                    Column(
+                    //QUALITY
+                    Row(
                         Modifier
                             .fillMaxWidth()
-                            .padding(top = 10.dp, end = 15.dp)
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        TextIcon(
-                            text = reservation.address + " " + reservation.city,
-                            icon = Icons.Default.LocationOn
-                        )
+
+                        Column(
+                            Modifier.weight(2f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Quality",
+                                fontSize = 22.sp,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Column(Modifier.weight(4f)) {
+                            IconButtonRating(score = quality, setScore = setQuality)
+                        }
                     }
 
-                    /*SPORT*/
-                    Column(Modifier.padding(vertical = 20.dp)) {
-                        TextIcon(text = reservation.sport, icon = getIconSport(reservation.sport))
+                    //FACILITIES
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+
+                        Column(
+                            Modifier.weight(2f),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = "Facilities",
+                                fontSize = 22.sp,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        Column(Modifier.weight(4f)) {
+                            IconButtonRating(score = facilities, setScore = setFacilities)
+                        }
+
                     }
 
                 }
 
-                //QUALITY
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(vertical = 5.dp)
                 ) {
 
-                    Column(
-                        Modifier.weight(2f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Quality",
-                            fontSize = 22.sp,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    Column(Modifier.weight(4f)) {
-                        IconButtonRating(score = quality, setScore = setQuality)
-                    }
-                }
+                    OutlinedTextField(
+                        value = text.value,
+                        onValueChange = { text.value = it },
+                        label = { Text("Comment Section") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .height(200.dp)
+                            .background(Color.White)
+                    )
 
-                //FACILITIES
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-
-                    Column(
-                        Modifier.weight(2f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Facilities",
-                            fontSize = 22.sp,
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    Column(Modifier.weight(4f)) {
-                        IconButtonRating(score = facilities, setScore = setFacilities)
-                    }
 
                 }
-
             }
 
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(vertical = 5.dp)
-            ) {
-
-                OutlinedTextField(
-                    value = text.value,
-                    onValueChange = { text.value = it },
-                    label = { Text("Comment Section") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .height(200.dp)
-                        .background(Color.White)
-                )
-
-
-            }
 
 
         }
