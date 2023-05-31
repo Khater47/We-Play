@@ -15,10 +15,43 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-//    primary = Purple80,
-//    secondary = PurpleGrey80,
-//    tertiary = Pink80
+
+
+
+private val LightColors = lightColorScheme(
+    primary = md_theme_light_primary,
+    onPrimary = md_theme_light_onPrimary,
+    primaryContainer = md_theme_light_primaryContainer,
+    onPrimaryContainer = md_theme_light_onPrimaryContainer,
+    secondary = md_theme_light_secondary,
+    onSecondary = md_theme_light_onSecondary,
+    secondaryContainer = md_theme_light_secondaryContainer,
+    onSecondaryContainer = md_theme_light_onSecondaryContainer,
+    tertiary = md_theme_light_tertiary,
+    onTertiary = md_theme_light_onTertiary,
+    tertiaryContainer = md_theme_light_tertiaryContainer,
+    onTertiaryContainer = md_theme_light_onTertiaryContainer,
+    error = md_theme_light_error,
+    errorContainer = md_theme_light_errorContainer,
+    onError = md_theme_light_onError,
+    onErrorContainer = md_theme_light_onErrorContainer,
+    background = md_theme_light_background,
+    onBackground = md_theme_light_onBackground,
+    surface = md_theme_light_surface,
+    onSurface = md_theme_light_onSurface,
+    surfaceVariant = md_theme_light_surfaceVariant,
+    onSurfaceVariant = md_theme_light_onSurfaceVariant,
+    outline = md_theme_light_outline,
+    inverseOnSurface = md_theme_light_inverseOnSurface,
+    inverseSurface = md_theme_light_inverseSurface,
+    inversePrimary = md_theme_light_inversePrimary,
+    surfaceTint = md_theme_light_surfaceTint,
+    outlineVariant = md_theme_light_outlineVariant,
+    scrim = md_theme_light_scrim,
+)
+
+
+private val DarkColors = darkColorScheme(
     primary = md_theme_dark_primary,
     onPrimary = md_theme_dark_onPrimary,
     primaryContainer = md_theme_dark_primaryContainer,
@@ -50,50 +83,6 @@ private val DarkColorScheme = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
-private val LightColorScheme = lightColorScheme(
-//    primary = Purple40,
-//    secondary = PurpleGrey40,
-//    tertiary = Pink40
-    primary = md_theme_light_primary,
-    onPrimary = md_theme_light_onPrimary,
-    primaryContainer = md_theme_light_primaryContainer,
-    onPrimaryContainer = md_theme_light_onPrimaryContainer,
-    secondary = md_theme_light_secondary,
-    onSecondary = md_theme_light_onSecondary,
-    secondaryContainer = md_theme_light_secondaryContainer,
-    onSecondaryContainer = md_theme_light_onSecondaryContainer,
-    tertiary = md_theme_light_tertiary,
-    onTertiary = md_theme_light_onTertiary,
-    tertiaryContainer = md_theme_light_tertiaryContainer,
-    onTertiaryContainer = md_theme_light_onTertiaryContainer,
-    error = md_theme_light_error,
-    errorContainer = md_theme_light_errorContainer,
-    onError = md_theme_light_onError,
-    onErrorContainer = md_theme_light_onErrorContainer,
-    background = md_theme_light_background,
-    onBackground = md_theme_light_onBackground,
-    surface = md_theme_light_surface,
-    onSurface = md_theme_light_onSurface,
-    surfaceVariant = md_theme_light_surfaceVariant,
-    onSurfaceVariant = md_theme_light_onSurfaceVariant,
-    outline = md_theme_light_outline,
-    inverseOnSurface = md_theme_light_inverseOnSurface,
-    inverseSurface = md_theme_light_inverseSurface,
-    inversePrimary = md_theme_light_inversePrimary,
-    surfaceTint = md_theme_light_surfaceTint,
-    outlineVariant = md_theme_light_outlineVariant,
-    scrim = md_theme_light_scrim,
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
-
 @Composable
 fun MadTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -101,15 +90,16 @@ fun MadTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
+    val colorScheme = if (darkTheme) DarkColors else LightColors
+//    val colorScheme = when {
+//        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+//            val context = LocalContext.current
+//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+//        }
+//
+//        darkTheme -> DarkColors
+//        else -> LightColors
+//    }
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="appName">Sport Application</string>
+    <string name="appName">We Play</string>
 
     <!--Home Page-->
     <string name="topBarHome">Home Page</string>
