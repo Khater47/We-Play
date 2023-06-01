@@ -83,6 +83,12 @@ sealed class BottomBarScreen(
         icon= Icons.Default.Sports
     )
 
+    object Notifications: BottomBarScreen(
+        route = "notifications",
+        title="Notifications",
+        icon= Icons.Default.Sports
+    )
+
 
 
 }

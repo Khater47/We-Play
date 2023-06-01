@@ -49,6 +49,33 @@ fun TopBarBasic(id: Int) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+fun TopBarAction(
+    id: Int,
+    icon: ImageVector,
+    action: () -> Unit
+) {
+
+    TopAppBar(
+        title = {
+            TextTopBar(id)
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        actions = {
+            IconButton(onClick = {
+                action()
+            }) {
+                Icon(icon, "actionIcon")
+            }
+
+        }
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
 fun TopBarProfile(
     vm:MainViewModel,
     navController: NavHostController,

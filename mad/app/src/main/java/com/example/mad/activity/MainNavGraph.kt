@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.example.mad.MainViewModel
 import com.example.mad.screens.home.HomeScreen
 import com.example.mad.screens.home.LoginScreen
+import com.example.mad.screens.home.NotificationScreen
 import com.example.mad.screens.home.RegistrationScreen
 import com.example.mad.screens.profile.ProfileEditScreen
 import com.example.mad.screens.profile.ProfileRatingScreen
@@ -50,7 +51,7 @@ fun MainNavGraph(navController: NavHostController, vm: MainViewModel) {
             PlaygroundScreen(
                 vm,
                 navController,
-                backStackEntry.arguments?.getString("playgroundId")/*navController,vm*/
+                backStackEntry.arguments?.getString("playgroundId")
             )
         }
         composable(route = BottomBarScreen.Reservation.route) {
@@ -78,6 +79,10 @@ fun MainNavGraph(navController: NavHostController, vm: MainViewModel) {
             route = BottomBarScreen.Login.route,
         ) {
             LoginScreen(vm, navController)
+        }
+
+        composable(route = BottomBarScreen.Notifications.route) {
+            NotificationScreen(navController)
         }
 
     }

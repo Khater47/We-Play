@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.SportsCricket
 import androidx.compose.material.icons.filled.ThumbUp
@@ -38,6 +39,7 @@ import androidx.navigation.NavHostController
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ImageCardHome
+import com.example.mad.common.composable.TopBarAction
 import com.example.mad.common.composable.TopBarBasic
 
 @Composable
@@ -46,8 +48,12 @@ navController: NavHostController,
 ) {
     val configuration = LocalConfiguration.current
 
+    fun navigate(){
+        navController.navigate(BottomBarScreen.Notifications.route)
+    }
+
     Scaffold(
-        topBar = { TopBarBasic(R.string.topBarHome) }
+        topBar = { TopBarAction(R.string.topBarHome,Icons.Default.Notifications,::navigate) }
     ) {
 
         Box(Modifier.padding(it)) {
