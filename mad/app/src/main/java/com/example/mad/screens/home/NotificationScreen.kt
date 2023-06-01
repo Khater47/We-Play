@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material.IconButton
@@ -26,6 +27,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,35 +36,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
-import com.example.mad.model.Notification
+import com.example.mad.model.Invitation
 import com.example.mad.screens.profile.TextIcon
 
 @Composable
 fun NotificationScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    vm:MainViewModel
 ) {
 
 //    val notifications = listOf<String>(
 //
 //    )
-    val notification = Notification(
-        "Via Antonio e Vittorio Alojzija, 27, 10148",
-        "Turin",
-        "22/04/2023",
-        "12:00",
-        false,
-        "Via Antonio e Vittorio Alojzija, 27, 10148 Turin",
-        "Campo Edmond",
-        "Soccer",
-        "10:00",
-        "Mario Rossi",
-        3,
-        3
-    )
+
+    val invitations = vm.invitation.observeAsState().value?: emptyList()
+
+    LaunchedEffect(key1 = null){
+        vm.getInvitations()
+    }
+
+    val loading = vm.loadingProgressBar.value
 
     fun navigate() {
         navController.navigate(BottomBarScreen.Home.route)
@@ -76,16 +76,17 @@ fun NotificationScreen(
                     .fillMaxWidth()
                     .padding(10.dp)
             ) {
-                items(10) {
-                    CardNotification(notification)
+                items(invitations) { item ->
+                    CardNotification(item)
                 }
             }
+            CircularProgressBar(isDisplayed = loading)
         }
     }
 }
 
 @Composable
-fun CardNotification(notification: Notification) {
+fun CardNotification(notification: Invitation) {
 
     val showStat = remember {
         mutableStateOf(false)
@@ -227,12 +228,8 @@ fun CardNotification(notification: Notification) {
 @Composable
 fun UserStat(level: Long, trophies: Long) {
 
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp)
-    ) {
-        Column(Modifier.weight(1f)) {
+        Column(Modifier
+            .padding(vertical = 10.dp)) {
             Row {
                 Column(Modifier.weight(1f)) {
                     Text(
@@ -240,17 +237,17 @@ fun UserStat(level: Long, trophies: Long) {
                         modifier = Modifier.padding(horizontal = 10.dp)
                     )
                 }
-                Column(Modifier.weight(1.5f)) {
+                Column(Modifier.weight(1f)) {
                     TextIcon(text = "$level/5", icon = Icons.Default.Star)
                 }
 
             }
         }
-        Column(Modifier.weight(1f),
+        Column(Modifier.padding(vertical = 10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center) {
             Row {
-                Column(Modifier.weight(1.5f)) {
+                Column(Modifier.weight(1f)) {
                     Text(
                         text = "Trophies",
                         fontSize = 18.sp,
@@ -265,6 +262,5 @@ fun UserStat(level: Long, trophies: Long) {
 
             }
         }
-    }
 }
 

@@ -1,29 +1,61 @@
 package com.example.mad.model
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 
-data class Notification(
-    val address:String,
-    val city:String,
-    val date:String,
-    val endTime:String,
-    val equipment:Boolean,
-    val id:String,
-    val playground:String,
-    val sport:String,
-    val startTime:String,
-    val fullName:String,
-    val level:Long,
-    val trophies:Long
+data class Invitation(
+    val address: String,
+    val city: String,
+    val date: String,
+    val endTime: String,
+    val equipment: Boolean,
+    val id: String,
+    val playground: String,
+    val sport: String,
+    val startTime: String,
+    val fullName: String,
+    val level: Long,
+    val trophies: Long
 ) {
     override fun toString(): String {
-        return "$id $address $city $date \n" +
+        return " $id $address $city $date \n" +
                 "$startTime-$endTime $equipment \n" +
                 "$playground $sport $fullName $level $trophies"
     }
 }
 
-fun DocumentSnapshot.toNotification(): Notification? {
+fun Invitation.toReservation(email: String): Reservation {
+    return Reservation(
+        address,
+        city,
+        date,
+        email,
+        endTime,
+        equipment,
+        id,
+        playground,
+        sport,
+        startTime
+    )
+
+}
+
+fun Invitation.toUserReservation(): UserReservation {
+    return UserReservation(
+        address,
+        city,
+        date,
+        endTime,
+        equipment,
+        id,
+        playground,
+        sport,
+        startTime
+    )
+
+}
+
+fun DocumentSnapshot.toInvitation(): Invitation? {
     return try {
 
         val address: String = get("address") as String
@@ -40,7 +72,7 @@ fun DocumentSnapshot.toNotification(): Notification? {
         val level: Long = get("level") as Long
         val trophies: Long = get("trophies") as Long
 
-        Notification(
+        Invitation(
             address,
             city,
             date,

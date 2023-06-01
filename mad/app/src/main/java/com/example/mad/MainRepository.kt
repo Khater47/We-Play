@@ -1,6 +1,7 @@
 package com.example.mad
 
 import android.util.Log
+import com.example.mad.model.Invitation
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
 import com.example.mad.model.ProfileRating
@@ -8,6 +9,7 @@ import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.model.toProfileRating
+import com.example.mad.model.toReservation
 import com.example.mad.model.toUserReservation
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -79,7 +81,55 @@ class MainRepository {
         return null
 
     }
+    
+    suspend fun getInvitations():QuerySnapshot? {
+        if (userId.isNotEmpty()) {
+           return db.collection(USERS)
+                .document(userId)
+                .collection(INVITATION).get().await()
+        }
+        return null
+    }
+    suspend fun deleteInvitation(timestamp: String) {
+        if (userId.isNotEmpty()) {
+            db.collection(USERS)
+                .document(userId)
+                .collection(INVITATION)
+                .document(timestamp)
+                .delete().await()
+        }
+    }
 
+    suspend fun acceptInvitation(timestamp: String, data: Invitation) {
+
+        val email = currentUser.value?.email
+
+        if (userId.isNotEmpty() && email != null) {
+
+            val r = data.toReservation(email)
+            val ur = data.toUserReservation()
+
+            //delete invitation 
+            db.collection(USERS)
+                .document(userId)
+                .collection(INVITATION)
+                .document(timestamp)
+                .delete().await()
+
+            //add reservation 
+            db.collection(RESERVATION)
+                .document(timestamp)
+                .set(r).await()
+
+            //add user reservation 
+            db.collection(USERS)
+                .document(userId)
+                .collection(RESERVATION)
+                .document(timestamp)
+                .set(ur).await()
+            
+        }
+    }
     //PLAYGROUND (GET ALL, SPORT, CITY, SPORT+CITY, ID)
 
     suspend fun getPlaygrounds(
@@ -132,7 +182,7 @@ class MainRepository {
         }
     }
 
-    suspend fun insertUserRegistrationProfile(profile:Profile){
+    suspend fun insertUserRegistrationProfile(profile: Profile) {
         db.collection(USERS)
             .document(userId)
             .set(profile)
@@ -153,7 +203,7 @@ class MainRepository {
 
     suspend fun getRatingsPlayground(
         id: String
-    ):QuerySnapshot {
+    ): QuerySnapshot {
 
         return db.collection(PLAYGROUNDS)
             .document(id)
@@ -163,7 +213,7 @@ class MainRepository {
     }
 
 
-    suspend fun insertUserRating(rating:ProfileRating){
+    suspend fun insertUserRating(rating: ProfileRating) {
         if (userId.isNotEmpty()) {
             db.collection(USERS)
                 .document(userId)
@@ -176,7 +226,7 @@ class MainRepository {
     }
 
 
-    suspend fun insertUserPlaygroundRating(id: String,playgroundRating: PlaygroundRating){
+    suspend fun insertUserPlaygroundRating(id: String, playgroundRating: PlaygroundRating) {
         db.collection(PLAYGROUNDS)
             .document(id)
             .collection(RATING)
@@ -185,11 +235,11 @@ class MainRepository {
             .await()
     }
 
-    suspend fun registration(email:String,password: String){
+    suspend fun registration(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
     }
 
-    suspend fun getPlaygroundComments(playgroundId:String):QuerySnapshot{
+    suspend fun getPlaygroundComments(playgroundId: String): QuerySnapshot {
         return db.collection(PLAYGROUNDS)
             .document(playgroundId)
             .collection(RATING)
@@ -198,9 +248,9 @@ class MainRepository {
 
     suspend fun getAllUserReservationByDate(
         date: String
-    ):QuerySnapshot?{
+    ): QuerySnapshot? {
         if (userId.isNotEmpty()) {
-          return  db.collection(USERS)
+            return db.collection(USERS)
                 .document(userId)
                 .collection(RESERVATION)
                 .whereEqualTo("date", date).get().await()
@@ -208,10 +258,11 @@ class MainRepository {
         return null
     }
 
-    suspend fun getUserToRatedPlayground(today:String):List<UserReservation> {
+    suspend fun getUserToRatedPlayground(today: String): List<UserReservation> {
         if (userId.isNotEmpty()) {
             val ratedPlaygrounds =
-                getUserRatedPlaygrounds()?.documents?.mapNotNull { it.toProfileRating() }?: emptyList()
+                getUserRatedPlaygrounds()?.documents?.mapNotNull { it.toProfileRating() }
+                    ?: emptyList()
             val pastReservation = getAllUserPastReservation(today)?.documents?.mapNotNull {
                 it.toUserReservation()
             } ?: emptyList()
@@ -244,9 +295,9 @@ class MainRepository {
 
     private suspend fun getAllUserPastReservation(
         today: String,
-    ):QuerySnapshot?{
+    ): QuerySnapshot? {
         if (userId.isNotEmpty()) {
-           return db.collection(USERS)
+            return db.collection(USERS)
                 .document(userId)
                 .collection(RESERVATION)
                 .whereLessThan("date", today).get().await()
@@ -254,7 +305,7 @@ class MainRepository {
         return null
     }
 
-    private suspend fun getUserRatedPlaygrounds():QuerySnapshot?{
+    private suspend fun getUserRatedPlaygrounds(): QuerySnapshot? {
         if (userId.isNotEmpty()) {
             return db.collection(USERS)
                 .document(userId)
@@ -264,7 +315,7 @@ class MainRepository {
     }
 
 
-    suspend fun getAllUserReservationDates():QuerySnapshot?{
+    suspend fun getAllUserReservationDates(): QuerySnapshot? {
         if (userId.isNotEmpty()) {
             return db.collection(USERS)
                 .document(userId)
@@ -273,7 +324,7 @@ class MainRepository {
         return null
     }
 
-    suspend fun getReservationById(reservationId: String):DocumentSnapshot? {
+    suspend fun getReservationById(reservationId: String): DocumentSnapshot? {
         if (userId.isNotEmpty()) {
             return db.collection(RESERVATION)
                 .document(reservationId)
@@ -283,7 +334,7 @@ class MainRepository {
 
     }
 
-        suspend fun insertUserReservation(reservationId: String, reservation: UserReservation) {
+    suspend fun insertUserReservation(reservationId: String, reservation: UserReservation) {
         if (userId.isNotEmpty()) {
             db.collection(USERS)
                 .document(userId)
@@ -292,7 +343,8 @@ class MainRepository {
                 .set(reservation).await()
         }
     }
-    suspend fun updateUserReservation(reservationId: String,data: HashMap<String, Any>){
+
+    suspend fun updateUserReservation(reservationId: String, data: HashMap<String, Any>) {
         db.collection(USERS)
             .document(userId)
             .collection(RESERVATION)
@@ -300,7 +352,7 @@ class MainRepository {
             .set(data, SetOptions.merge()).await()
     }
 
-    suspend fun deleteUserReservation(reservationId: String){
+    suspend fun deleteUserReservation(reservationId: String) {
         if (userId.isNotEmpty()) {
             db.collection(USERS)
                 .document(userId)
@@ -313,29 +365,33 @@ class MainRepository {
     }
 
 
-    suspend fun insertReservation(reservationId: String, reservation: Reservation){
+    suspend fun insertReservation(reservationId: String, reservation: Reservation) {
         db.collection(RESERVATION)
             .document(reservationId)
             .set(reservation).await()
     }
 
-    suspend fun deleteReservation(reservationId:String){
+    suspend fun deleteReservation(reservationId: String) {
         db.collection(RESERVATION)
             .document(reservationId)
             .delete().await()
     }
 
-    suspend fun getTimeSlotReservationByPlaygroundAndDate(date: String, address: String, city: String)
-    :QuerySnapshot {
+    suspend fun getTimeSlotReservationByPlaygroundAndDate(
+        date: String,
+        address: String,
+        city: String
+    )
+            : QuerySnapshot {
         return db.collection(RESERVATION).get().await()
     }
 
     suspend fun updateReservation(
         reservationId: String,
-        data:HashMap<String,Any>
-    ){
+        data: HashMap<String, Any>
+    ) {
 
-         db.collection(RESERVATION)
+        db.collection(RESERVATION)
             .document(reservationId)
             .set(data, SetOptions.merge()).await()
     }

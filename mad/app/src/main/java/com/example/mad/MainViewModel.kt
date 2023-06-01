@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mad.common.getTimeSlot
 import com.example.mad.model.Comment
+import com.example.mad.model.Invitation
 import com.example.mad.model.Playground
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
@@ -17,6 +18,7 @@ import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.model.toComment
+import com.example.mad.model.toInvitation
 import com.example.mad.model.toPlayground
 import com.example.mad.model.toProfile
 import com.example.mad.model.toProfileSport
@@ -33,6 +35,7 @@ const val RATING = "rating"
 const val USERS = "users"
 const val SPORT = "sport"
 const val RESERVATION = "reservation"
+const val INVITATION = "invitation"
 const val DELAY = 1000L
 
 
@@ -71,8 +74,8 @@ class MainViewModel : ViewModel() {
     private val _userReservation = MutableLiveData<List<UserReservation>>()
     val userReservation: LiveData<List<UserReservation>> = _userReservation
 
-    private val _profileRating = MutableLiveData<List<ProfileRating>>()
-    val profileRating: LiveData<List<ProfileRating>> = _profileRating
+//    private val _profileRating = MutableLiveData<List<ProfileRating>>()
+//    val profileRating: LiveData<List<ProfileRating>> = _profileRating
 
     private val _dates = MutableLiveData<List<String>>()
     val dates: LiveData<List<String>> = _dates
@@ -81,6 +84,8 @@ class MainViewModel : ViewModel() {
     private val _reservation = MutableLiveData<Reservation>()
     val reservation: LiveData<Reservation> = _reservation
 
+    private val _invitation = MutableLiveData<List<Invitation>>()
+    val invitation: LiveData<List<Invitation>> = _invitation
 
     //splashScreen
     init {
@@ -90,10 +95,52 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun deleteInvitation(timestamp: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repo.deleteInvitation(timestamp)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("TAG", e.localizedMessage ?: "")
+            }
+        }
+    }
+
+    fun getInvitations() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                loadingProgressBar.value=true
+                delay(DELAY)
+                val i = repo.getInvitations()?.documents?.mapNotNull {
+                    it.toInvitation()
+                } ?: emptyList()
+
+
+                _invitation.postValue(i)
+                loadingProgressBar.value=false
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("TAG", e.localizedMessage ?: "")
+            }
+        }
+    }
+
+    fun acceptInvitation(timestamp: String, notification: Invitation) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                repo.acceptInvitation(timestamp, notification)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("TAG", e.localizedMessage ?: "")
+            }
+        }
+    }
+
     fun registration(email: String, password: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                repo.registration(email,password)
+                repo.registration(email, password)
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("TAG", e.localizedMessage ?: "")

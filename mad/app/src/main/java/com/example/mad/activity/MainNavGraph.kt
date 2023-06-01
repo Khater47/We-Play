@@ -82,7 +82,7 @@ fun MainNavGraph(navController: NavHostController, vm: MainViewModel) {
         }
 
         composable(route = BottomBarScreen.Notifications.route) {
-            NotificationScreen(navController)
+            NotificationScreen(navController,vm)
         }
 
     }
