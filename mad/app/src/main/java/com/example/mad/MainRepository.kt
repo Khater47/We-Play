@@ -81,20 +81,31 @@ class MainRepository {
         return null
 
     }
-    
-    suspend fun getInvitations():QuerySnapshot? {
+
+    suspend fun getFriends(): QuerySnapshot? {
+
         if (userId.isNotEmpty()) {
            return db.collection(USERS)
                 .document(userId)
-                .collection(INVITATION).get().await()
+                .collection(FRIENDS)
+                .get().await()
         }
         return null
     }
+
+    suspend fun getInvitations(): QuerySnapshot? {
+
+        if (userId.isNotEmpty()) {
+            return db.collection(INVITATION)
+                .whereEqualTo("emailReceiver", userId)
+                .get().await()
+        }
+        return null
+    }
+
     suspend fun deleteInvitation(timestamp: String) {
         if (userId.isNotEmpty()) {
-            db.collection(USERS)
-                .document(userId)
-                .collection(INVITATION)
+            db.collection(INVITATION)
                 .document(timestamp)
                 .delete().await()
         }
@@ -106,20 +117,12 @@ class MainRepository {
 
         if (userId.isNotEmpty() && email != null) {
 
-            val r = data.toReservation(email)
             val ur = data.toUserReservation()
 
             //delete invitation 
-            db.collection(USERS)
-                .document(userId)
-                .collection(INVITATION)
+            db.collection(INVITATION)
                 .document(timestamp)
                 .delete().await()
-
-            //add reservation 
-            db.collection(RESERVATION)
-                .document(timestamp)
-                .set(r).await()
 
             //add user reservation 
             db.collection(USERS)
@@ -127,7 +130,7 @@ class MainRepository {
                 .collection(RESERVATION)
                 .document(timestamp)
                 .set(ur).await()
-            
+
         }
     }
     //PLAYGROUND (GET ALL, SPORT, CITY, SPORT+CITY, ID)

@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mad.common.getTimeSlot
 import com.example.mad.model.Comment
+import com.example.mad.model.Friend
 import com.example.mad.model.Invitation
 import com.example.mad.model.Playground
 import com.example.mad.model.PlaygroundRating
@@ -18,6 +19,7 @@ import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.model.toComment
+import com.example.mad.model.toFriend
 import com.example.mad.model.toInvitation
 import com.example.mad.model.toPlayground
 import com.example.mad.model.toProfile
@@ -37,6 +39,7 @@ const val SPORT = "sport"
 const val RESERVATION = "reservation"
 const val INVITATION = "invitation"
 const val DELAY = 1000L
+const val FRIENDS = "friends"
 
 
 class MainViewModel : ViewModel() {
@@ -80,6 +83,10 @@ class MainViewModel : ViewModel() {
     private val _dates = MutableLiveData<List<String>>()
     val dates: LiveData<List<String>> = _dates
 
+    private val _friends = MutableLiveData<List<Friend>>()
+    val friends: LiveData<List<Friend>> = _friends
+
+
     //one user reservation
     private val _reservation = MutableLiveData<Reservation>()
     val reservation: LiveData<Reservation> = _reservation
@@ -106,18 +113,34 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    fun getFriends() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val f = repo.getFriends()?.documents?.mapNotNull {
+                    it.toFriend()
+                }?: emptyList()
+                _friends.postValue(f)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("TAG", e.localizedMessage ?: "")
+            }
+        }
+    }
+
     fun getInvitations() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                loadingProgressBar.value=true
+                loadingProgressBar.value = true
                 delay(DELAY)
                 val i = repo.getInvitations()?.documents?.mapNotNull {
                     it.toInvitation()
                 } ?: emptyList()
 
+                Log.d("TAG", i.size.toString())
 
                 _invitation.postValue(i)
-                loadingProgressBar.value=false
+                loadingProgressBar.value = false
 
             } catch (e: Exception) {
                 e.printStackTrace()

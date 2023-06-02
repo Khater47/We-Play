@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -23,10 +24,15 @@ import androidx.compose.material.Switch
 import androidx.compose.material.TabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.EventAvailable
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ShoppingBag
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -38,6 +44,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +64,7 @@ import androidx.core.text.isDigitsOnly
 import com.example.mad.MainViewModel
 import com.example.mad.common.getTimeStamp
 import com.example.mad.common.getToday
+import com.example.mad.model.Friend
 import com.example.mad.model.Playground
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
@@ -70,6 +78,9 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+
+
+//ADD PAGE FOR HANDLING LIST OF FRIENDS
 
 
 @Composable
@@ -161,15 +172,18 @@ fun FullDialogSport(
                         onClick = {
 
                             val trophies = if (trophiesText.isEmpty()) 0L
-                            else if(trophiesText.isDigitsOnly()) trophiesText.toLong()
+                            else if (trophiesText.isDigitsOnly()) trophiesText.toLong()
                             else {
                                 -1L
                             }
 
-                            if(trophies==-1L){
-                                Toast.makeText(context,"Invalid trophies field",Toast.LENGTH_SHORT).show()
-                            }
-                            else {
+                            if (trophies == -1L) {
+                                Toast.makeText(
+                                    context,
+                                    "Invalid trophies field",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
                                 val ps =
                                     ProfileSport(
                                         sport = sport.ifEmpty { data[selected.value] },
@@ -245,7 +259,9 @@ fun FullDialogSport(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Level", fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium,
+                        text = "Level",
+                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
@@ -364,6 +380,14 @@ fun FullDialogPlayground(
         mutableStateOf(false)
     }
 
+    val friends = vm.friends.observeAsState().value ?: emptyList()
+
+    val profile = vm.profile.observeAsState().value
+
+    val confirmedFriends = remember {
+        mutableStateOf<List<String>>(emptyList())
+    }
+
     //handle tabs
     val state = remember { mutableStateOf(0) }
 
@@ -373,9 +397,14 @@ fun FullDialogPlayground(
         Icons.Default.CalendarMonth,
         Icons.Default.AccessTime,
         Icons.Default.ShoppingBag,
+        Icons.Default.Person,
         Icons.Default.EventAvailable
     )
 
+    LaunchedEffect(key1 = null) {
+        vm.getUserProfile()
+        vm.getFriends()
+    }
 
     Dialog(
         onDismissRequest = {
@@ -472,7 +501,6 @@ fun FullDialogPlayground(
                                 )
 
                                 if (email.isNotEmpty()) {
-                                    Log.d("INSERT", "START = $startTime\n ENDTIME = $endTime")
                                     vm.insertReservation(timestamp, r)
                                     vm.insertUserReservation(timestamp, ur)
                                 }
@@ -587,7 +615,9 @@ fun FullDialogPlayground(
 
                                     Button(onClick = {
                                         confirmEquipment.value = true
-                                        state.value = 3
+                                        if (friends.isNotEmpty())
+                                            state.value = 3
+                                        else state.value = 4
                                     }) {
                                         Text(
                                             "Confirm",
@@ -601,72 +631,19 @@ fun FullDialogPlayground(
                         }
 
                         3 -> {
-                            Column {
-                                Text(
-                                    text = "Are you sure to rent the playground with this info",
-                                    fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.padding(vertical = 20.dp)
-                                )
-
-
-                                Text(
-                                    text = playground.playground,
-                                    fontSize = 18.sp, style = MaterialTheme.typography.bodyLarge,
-                                    modifier = Modifier.padding(vertical = 10.dp)
-                                )
-
-                                Row(Modifier.padding(vertical = 10.dp)) {
-                                    Column(Modifier.weight(1f)) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                imageVector = Icons.Default.CalendarMonth,
-                                                contentDescription = "calendar"
-                                            )
-
-                                            Text(
-                                                text = selectedDate.value,
-                                                modifier = Modifier.padding(start = 10.dp),
-                                                fontSize = 18.sp,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-
-                                    }
-                                    Column(Modifier.weight(1f)) {
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(
-                                                imageVector = Icons.Default.AccessTime,
-                                                contentDescription = "time"
-                                            )
-
-                                            Text(
-                                                text = timeSlot[selectedTimeSlot.value],
-                                                modifier = Modifier.padding(start = 10.dp),
-                                                fontSize = 18.sp,
-                                                style = MaterialTheme.typography.bodyLarge
-                                            )
-                                        }
-
-                                    }
-
-                                }
-
-                                Row(Modifier.padding(vertical = 10.dp)) {
-                                    Text(
-                                        text = "Equipment ",
-                                        fontSize = 18.sp, style = MaterialTheme.typography.bodyLarge
-                                    )
-
-                                    Icon(
-                                        imageVector = Icons.Default.CheckCircle,
-                                        tint = if (selectedEquipment.value) androidx.compose.ui.graphics.Color.Green
-                                        else androidx.compose.ui.graphics.Color.Gray,
-                                        contentDescription = "calendar",
-                                        modifier = Modifier.padding(start = 10.dp)
-                                    )
-
-                                }
+                            if (friends.isNotEmpty()) {
+                                FriendsList(friends, confirmedFriends,state)
                             }
+                        }
+
+                        4 -> {
+                           SummaryReservation(
+                               playground = playground.playground , 
+                               date = selectedDate.value, 
+                               timeSlot = timeSlot[selectedTimeSlot.value], 
+                               equipment = selectedEquipment.value,
+                               confirmedFriends.value
+                           )
                         }
                     }
                 }
@@ -674,6 +651,252 @@ fun FullDialogPlayground(
 
         }
 
+    }
+
+
+}
+
+@Composable
+fun SummaryReservation(
+    playground:String,
+    date:String,
+    timeSlot:String,
+    equipment:Boolean,
+    friendList:List<String>
+){
+
+    val expanded = remember {
+        mutableStateOf(false)
+    }
+
+    Column {
+//        Text(
+//            text = "Are you sure to rent the playground with this info",
+//            fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
+//            modifier = Modifier.padding(vertical = 20.dp)
+//        )
+
+//        Divider(Modifier.padding(vertical=15.dp))
+
+        Text(
+            text = playground,
+            fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(vertical = 10.dp)
+        )
+
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarMonth,
+                        contentDescription = "calendar"
+                    )
+
+                    Text(
+                        text = date,
+                        modifier = Modifier.padding(start = 10.dp),
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+            }
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.AccessTime,
+                        contentDescription = "time"
+                    )
+
+                    Text(
+                        text = timeSlot,
+                        modifier = Modifier.padding(start = 10.dp),
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+            }
+
+        }
+
+        Row(Modifier.padding(vertical = 10.dp)) {
+            Text(
+                text = "Equipment ",
+                fontSize = 18.sp, style = MaterialTheme.typography.bodyLarge
+            )
+
+            Icon(
+                imageVector = Icons.Default.CheckCircle,
+                tint = if (equipment) androidx.compose.ui.graphics.Color.Green
+                else androidx.compose.ui.graphics.Color.Gray,
+                contentDescription = "calendar",
+                modifier = Modifier.padding(start = 10.dp)
+            )
+
+        }
+        if(friendList.isNotEmpty()){
+            Divider(Modifier.padding(vertical=15.dp))
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable { expanded.value = !expanded.value },
+            verticalAlignment = Alignment.CenterVertically){
+                Column(Modifier.weight(1f)) {
+                    Text(text = "Invited Friends",fontSize=20.sp,style=MaterialTheme.typography.bodyMedium)
+                }
+                Column(Modifier.weight(1f),
+                horizontalAlignment = Alignment.End) {
+                    IconButton(onClick = { expanded.value=!expanded.value }) {
+                        Icon(imageVector =
+                        if(!expanded.value) Icons.Default.KeyboardArrowDown
+                            else Icons.Default.KeyboardArrowUp, contentDescription = "friends")
+                    }
+                }
+
+            }
+            if(expanded.value)
+            LazyColumn(
+                Modifier
+                    .height(150.dp)
+                    .fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally){
+                items(friendList){
+                    item ->
+                    Text(
+                        text = item,
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier= Modifier
+                            .padding(vertical=10.dp)
+                    )
+                    Divider()
+
+                }
+            }
+        }
+        
+        
+    }
+}
+@Composable
+fun FriendsList(
+    friends: List<Friend>,
+    confirmedFriends: MutableState<List<String>>,
+    state: MutableState<Int>
+) {
+
+    val selectedFriends = remember {
+        mutableStateOf(friends.map { "" })
+    }
+
+    fun getListOfFriend(email: String, i: Int): List<String> {
+        val l = mutableListOf<String>()
+        selectedFriends.value.forEachIndexed { index, value ->
+            if (i == index)
+                l.add(email)
+            else
+                l.add(value)
+        }
+        return l.toList()
+    }
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 20.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Invite your friends",
+            fontSize = 20.sp,
+            style = MaterialTheme.typography.bodyMedium
+        )
+    }
+
+    Column {
+        LazyColumn(
+            Modifier
+                .height(150.dp)
+                .fillMaxWidth()
+                .padding(vertical = 15.dp)
+        ) {
+            itemsIndexed(friends) { index, item ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .clickable {
+                            if (selectedFriends.value[index] == item.email)
+                                selectedFriends.value = getListOfFriend("", index)
+                            else
+                                selectedFriends.value = getListOfFriend(item.email, index)
+                        }
+                ) {
+                    RadioButton(
+                        selected = selectedFriends.value[index] == item.email, onClick = {
+                            if (selectedFriends.value[index] == item.email)
+                                selectedFriends.value = getListOfFriend("", index)
+                            else
+                                selectedFriends.value = getListOfFriend(item.email, index)
+                        }, Modifier.padding(horizontal = 10.dp)
+                    )
+
+                    Text(
+                        text = item.fullName,
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        }
+    }
+
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 15.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Column(
+            Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = {
+                    state.value = 4
+                },
+                colors = ButtonDefaults.buttonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text(text = "Skip", fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+        Column(
+            Modifier.weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(onClick = {
+                confirmedFriends.value = selectedFriends.value
+                state.value = 4
+
+            }) {
+                Text(
+                    text = "Confirm",
+                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 
 

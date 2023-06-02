@@ -45,15 +45,14 @@ import com.example.mad.common.getIconSport
 import com.example.mad.model.Invitation
 import com.example.mad.screens.profile.TextIcon
 
+//GET REPOSITORY INVITATION IN A ROOT COLLECTION = INVITATIONS (NOT AS SUB COLLECTION OF USER)
+//ADD SUB COLLECTION OF FRIENDS FOR USER
+
 @Composable
 fun NotificationScreen(
     navController: NavHostController,
     vm:MainViewModel
 ) {
-
-//    val notifications = listOf<String>(
-//
-//    )
 
     val invitations = vm.invitation.observeAsState().value?: emptyList()
 
