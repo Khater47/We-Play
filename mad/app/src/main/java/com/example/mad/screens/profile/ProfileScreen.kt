@@ -49,7 +49,7 @@ import com.example.mad.common.getImageFromInternalStorage
 import com.example.mad.model.Profile
 
 /*
-TODO:
+TODO
     1) top bar title and icon in white
 */
 

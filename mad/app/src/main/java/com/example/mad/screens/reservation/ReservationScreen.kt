@@ -66,9 +66,9 @@ import java.util.Date
 import java.util.Locale
 
 /*
-TODO:
+TODO
  1) change color for confirmation for calendar
-     2) top bar title and icon in white
+ 2) top bar title and icon in white
 
 */
 

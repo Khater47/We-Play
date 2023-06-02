@@ -42,7 +42,8 @@ import com.example.mad.common.composable.ImageCardHome
 import com.example.mad.common.composable.TopBarAction
 import com.example.mad.common.composable.TopBarBasic
 
-/*TODO
+/*
+TODO
     1) card in portrait of same dimension like the first card (Edit preferences)
     2) replace notification icon and change color=white with badge component (material design 3)
     3) top bar title in white

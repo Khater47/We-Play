@@ -50,7 +50,8 @@ import com.example.mad.ui.theme.confirmation
 //GET REPOSITORY INVITATION IN A ROOT COLLECTION = INVITATIONS (NOT AS SUB COLLECTION OF USER)
 //ADD SUB COLLECTION OF FRIENDS FOR USER
 
-/*TODO
+/*
+TODO
      1) top bar title and arrow in white
      2) confirmation dialog
  */
