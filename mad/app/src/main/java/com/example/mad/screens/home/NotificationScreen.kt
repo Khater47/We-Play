@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -44,9 +45,15 @@ import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
 import com.example.mad.model.Invitation
 import com.example.mad.screens.profile.TextIcon
+import com.example.mad.ui.theme.confirmation
 
 //GET REPOSITORY INVITATION IN A ROOT COLLECTION = INVITATIONS (NOT AS SUB COLLECTION OF USER)
 //ADD SUB COLLECTION OF FRIENDS FOR USER
+
+/*TODO
+     1) top bar title and arrow in white
+     2) confirmation dialog
+ */
 
 @Composable
 fun NotificationScreen(
@@ -60,11 +67,13 @@ fun NotificationScreen(
         vm.getInvitations()
     }
 
+
     val loading = vm.loadingProgressBar.value
 
     fun navigate() {
         navController.navigate(BottomBarScreen.Home.route)
     }
+
 
     Scaffold(
         topBar = { TopBarBackButton(R.string.topBarNotifications, ::navigate) }
@@ -208,7 +217,12 @@ fun CardNotification(notification: Invitation) {
                         //vm.insertReservation()
                         //vm.insertUserReservation()
 
-                    }) {
+                    },
+                    colors=ButtonDefaults.buttonColors(
+                        containerColor = confirmation,
+                        contentColor = Color.White
+                    )
+                    ) {
                         Text(
                             text = "Accept",
                             fontSize = 18.sp,

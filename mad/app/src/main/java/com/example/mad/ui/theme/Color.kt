@@ -71,5 +71,6 @@ val Bronze = Color(0xFFCD7F32)
 val seed = Color(0xFFE73725)
 
 
+val confirmation = Color(0xFF198654)
 
 

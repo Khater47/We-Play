@@ -55,9 +55,7 @@ fun FullDialogEditReservation(
     changeUi:MutableState<Boolean>
 //    timeSlot:List<String>
 ) {
-    val descriptionText = "You can select another " +
-            "time slot if are available and you can also rent " +
-            "the equipment from the playground"
+
 
     val selectedTime = remember {
         mutableStateOf(0)
@@ -180,15 +178,7 @@ fun FullDialogEditReservation(
 
                 if(timeSlot.isNotEmpty()){
                     Column(Modifier.verticalScroll(rememberScrollState())) {
-                        /*DESCRIPTION TEXT*/
-                        Column(Modifier.padding(10.dp)) {
-                            Text(
-                                text = descriptionText,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontSize = 18.sp
-                            )
-                        }
-                        Divider(Modifier.padding(top=5.dp))
+
 
                         /*RESERVATION INFO*/
                         Column(Modifier.padding(vertical=30.dp)) {

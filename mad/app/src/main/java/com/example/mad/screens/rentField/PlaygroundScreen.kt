@@ -71,8 +71,10 @@ import kotlinx.coroutines.delay
 
 /*
 TODO:
-    no time slot, show message in dialog
-    show insert message success
+    1) choose image for playground
+    2) top bar title and icon in white
+    3) change color reserve playground (color=confirmation)
+
 */
 
 @RequiresApi(Build.VERSION_CODES.O)

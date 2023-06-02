@@ -77,7 +77,6 @@ fun ProfileRatingScreen(
 
     LaunchedEffect(key1 = changeUi.value){
         if(changeUi.value){
-            Log.d("TAG","PRINT")
             val today = getToday()
             vm.getUserToRatedPlayground(today)
             changeUi.value=false

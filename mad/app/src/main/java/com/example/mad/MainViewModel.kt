@@ -405,11 +405,11 @@ class MainViewModel : ViewModel() {
     fun getUserToRatedPlayground(today: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                loadingProgressBar.value = true
+//                loadingProgressBar.value = true
                 val list = repo.getUserToRatedPlayground(today)
-                delay(DELAY)
+//                Log.d("TAG",list.size.toString())
                 _userReservation.postValue(list)
-                loadingProgressBar.value = false
+//                loadingProgressBar.value = false
 
             } catch (e: Exception) {
                 e.printStackTrace()

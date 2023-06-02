@@ -55,6 +55,7 @@ import com.example.mad.common.getIconSport
 import com.example.mad.common.getToday
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
+import com.example.mad.ui.theme.confirmation
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
@@ -64,7 +65,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-//TODO: change color for calendar, in particular selected date
+/*
+TODO:
+ 1) change color for confirmation for calendar
+     2) top bar title and icon in white
+
+*/
+
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
@@ -396,7 +403,7 @@ fun ReservationCard(
                                 }) {
                                     Icon(
                                         Icons.Default.Edit,
-                                        tint = androidx.compose.ui.graphics.Color.Green,
+                                        tint = confirmation,
                                         contentDescription = "editButton"
                                     )
                                 }

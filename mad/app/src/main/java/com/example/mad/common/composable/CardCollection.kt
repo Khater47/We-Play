@@ -43,7 +43,7 @@ fun CardPlayground(playground: Playground){
 
 
     Card(
-        onClick = { /*TODO*/ },
+        onClick = {  },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp),
@@ -146,7 +146,7 @@ fun InfoSearchPlayground(location:String,sport:String){
 fun CardReservation(reservation: Reservation){
 
     Card(
-        onClick = { /*TODO*/ },
+        onClick = { },
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 10.dp),

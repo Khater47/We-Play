@@ -57,6 +57,10 @@ import com.example.mad.common.getLocation
 import com.example.mad.common.getSport
 import com.example.mad.model.Playground
 
+/*TODO
+    1) top bar title and icon in white
+ */
+
 
 @Composable
 fun SearchPlaygroundScreen(

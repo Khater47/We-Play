@@ -270,14 +270,14 @@ class MainRepository {
                 it.toUserReservation()
             } ?: emptyList()
 
-//            Log.d("TAG_RATED",ratedPlaygrounds.size.toString())//1
-//            Log.d("TAG_PAST_RESERVATION",pastReservation.size.toString())//2
+            Log.d("TAG_RATED",ratedPlaygrounds.size.toString())//1
+            Log.d("TAG_PAST_RESERVATION",pastReservation.size.toString())//2
 
             val newReservations = pastReservation
                 .groupBy { it.city + " " + it.address }
                 .values.map { it.first() }.toMutableList()
 
-//            Log.d("TAG_GROUP_BY",pastReservation.size.toString()) //2
+            Log.d("TAG_GROUP_BY",pastReservation.size.toString()) //2
 
 
             if (ratedPlaygrounds.isNotEmpty()) {
@@ -288,7 +288,7 @@ class MainRepository {
                             it.city in ratedPlaygrounds.map { rp -> rp.city }
                 }
             }
-//            Log.d("TAG_FINAL",newReservations.size.toString()) //1
+            Log.d("TAG_FINAL",newReservations.size.toString()) //1
 
 
             return newReservations.toList()

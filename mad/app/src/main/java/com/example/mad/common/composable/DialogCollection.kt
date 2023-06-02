@@ -79,6 +79,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
+/*
+TODO:
+    1) change in fullDialogPlayground the size of the confirm button in timeSlot tab and also the color
+    2) change in fullDialogPlayground in equipment tab the color of confirm button
+    3) change in fullDialogPlayground in person tab the color of confirm button
+
+*/
 
 //ADD PAGE FOR HANDLING LIST OF FRIENDS
 
@@ -105,7 +112,8 @@ fun FullDialogSport(
 
     val context = LocalContext.current
 
-    val description = "Add or Edit your sport stat"
+    val topBarText = if(sport.isEmpty()) "Add your sport stat"
+    else "Edit your sport stat"
 
     Dialog(
         onDismissRequest = {
@@ -156,7 +164,7 @@ fun FullDialogSport(
                 ) {
 
                     Text(
-                        text = "Set sport", color = MaterialTheme.colorScheme.onSurface,
+                        text = topBarText, color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.fillMaxWidth(),
                         fontSize = 20.sp, style = MaterialTheme.typography.bodyMedium
                     )
@@ -210,19 +218,7 @@ fun FullDialogSport(
             }
 
             Column(Modifier.verticalScroll(rememberScrollState())) {
-                /*DESCRIPTION DIALOG TEXT*/
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(30.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        description, fontSize = 22.sp, style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+
 
                 //LIST SPORT SELECTABLE -> ADD DIALOG
                 if (sport.isEmpty()) {
@@ -632,18 +628,18 @@ fun FullDialogPlayground(
 
                         3 -> {
                             if (friends.isNotEmpty()) {
-                                FriendsList(friends, confirmedFriends,state)
+                                FriendsList(friends, confirmedFriends, state)
                             }
                         }
 
                         4 -> {
-                           SummaryReservation(
-                               playground = playground.playground , 
-                               date = selectedDate.value, 
-                               timeSlot = timeSlot[selectedTimeSlot.value], 
-                               equipment = selectedEquipment.value,
-                               confirmedFriends.value
-                           )
+                            SummaryReservation(
+                                playground = playground.playground,
+                                date = selectedDate.value,
+                                timeSlot = timeSlot[selectedTimeSlot.value],
+                                equipment = selectedEquipment.value,
+                                confirmedFriends.value
+                            )
                         }
                     }
                 }
@@ -658,12 +654,12 @@ fun FullDialogPlayground(
 
 @Composable
 fun SummaryReservation(
-    playground:String,
-    date:String,
-    timeSlot:String,
-    equipment:Boolean,
-    friendList:List<String>
-){
+    playground: String,
+    date: String,
+    timeSlot: String,
+    equipment: Boolean,
+    friendList: List<String>
+) {
 
     val expanded = remember {
         mutableStateOf(false)
@@ -735,51 +731,62 @@ fun SummaryReservation(
             )
 
         }
-        if(friendList.isNotEmpty()){
-            Divider(Modifier.padding(vertical=15.dp))
+        if (friendList.isNotEmpty()) {
+            Divider(Modifier.padding(vertical = 15.dp))
             Row(
                 Modifier
                     .fillMaxWidth()
                     .clickable { expanded.value = !expanded.value },
-            verticalAlignment = Alignment.CenterVertically){
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Column(Modifier.weight(1f)) {
-                    Text(text = "Invited Friends",fontSize=20.sp,style=MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = "Invited Friends",
+                        fontSize = 20.sp,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
-                Column(Modifier.weight(1f),
-                horizontalAlignment = Alignment.End) {
-                    IconButton(onClick = { expanded.value=!expanded.value }) {
-                        Icon(imageVector =
-                        if(!expanded.value) Icons.Default.KeyboardArrowDown
-                            else Icons.Default.KeyboardArrowUp, contentDescription = "friends")
+                Column(
+                    Modifier.weight(1f),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    IconButton(onClick = { expanded.value = !expanded.value }) {
+                        Icon(
+                            imageVector =
+                            if (!expanded.value) Icons.Default.KeyboardArrowDown
+                            else Icons.Default.KeyboardArrowUp, contentDescription = "friends"
+                        )
                     }
                 }
 
             }
-            if(expanded.value)
-            LazyColumn(
-                Modifier
-                    .height(150.dp)
-                    .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally){
-                items(friendList){
-                    item ->
-                    Text(
-                        text = item,
-                        fontSize = 18.sp,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier= Modifier
-                            .padding(vertical=10.dp)
-                    )
-                    Divider()
+            if (expanded.value) {
+                LazyColumn(
+                    Modifier
+                        .height(150.dp)
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(friendList) { item ->
+                        Text(
+                            text = item,
+                            fontSize = 18.sp,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier
+                                .padding(vertical = 10.dp)
+                        )
+                        Divider()
 
+                    }
                 }
             }
         }
-        
-        
+
+
     }
 }
+
 @Composable
 fun FriendsList(
     friends: List<Friend>,

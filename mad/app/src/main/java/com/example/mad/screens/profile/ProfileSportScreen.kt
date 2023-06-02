@@ -43,8 +43,9 @@ import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getSport
 import com.example.mad.model.ProfileSport
+import com.example.mad.ui.theme.confirmation
 
-//TODO() Dialog add/edit sport
+//TODO() topbar title and icon in white
 
 @Composable
 fun ProfileSportScreen(
@@ -175,7 +176,7 @@ fun Achievements(
                             editSport.value=item.sport
                         }) {
                             Icon(Icons.Default.Edit,tint=
-                            Color.Green, contentDescription = "editButton")
+                            confirmation, contentDescription = "editButton")
                         }
 
                     }

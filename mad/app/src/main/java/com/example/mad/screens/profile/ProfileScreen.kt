@@ -48,6 +48,11 @@ import com.example.mad.common.composable.TopBarProfile
 import com.example.mad.common.getImageFromInternalStorage
 import com.example.mad.model.Profile
 
+/*
+TODO:
+    1) top bar title and icon in white
+*/
+
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileScreen(
