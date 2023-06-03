@@ -143,11 +143,20 @@ fun PlaygroundRating(
                                 verticalArrangement = Arrangement.Center,
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Column(Modifier.padding(10.dp)) {
-                                    InfoPlayground(item.city, item.sport )
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)) {
+                                    TextBasicIcon(text = item.address+" "+item.city, icon = Icons.Default.LocationOn)
+                                }
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(10.dp)) {
+                                    TextBasicIcon(text = item.sport, icon = getIconSport(item.sport))
                                 }
 
-                                Column(Modifier.padding(10.dp)) {
+                                Column(Modifier.padding(horizontal = 10.dp)) {
                                     InfoReservation(item.date, item.startTime+"-"+item.endTime )
                                 }
                             }
@@ -213,7 +222,7 @@ fun CardPlaygroundReservationPortrait(reservation:UserReservation, selectedReser
 
     val playgroundTitle = reservation.playground
     val playgroundSport = reservation.sport
-    val playgroundLocation = reservation.city
+    val playgroundLocation = reservation.address+" "+reservation.city
     val playgroundDate = reservation.date
     val playgroundTime = reservation.startTime+"-"+reservation.endTime
 
@@ -226,7 +235,8 @@ fun CardPlaygroundReservationPortrait(reservation:UserReservation, selectedReser
         shape = RoundedCornerShape(16.dp),
     ) {
         Column {
-            Row(Modifier.padding(10.dp)){
+            Row(Modifier.padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically){
                 Column(Modifier.weight(4f)) {
                     Text(playgroundTitle,style=MaterialTheme.typography.headlineSmall)
                 }
@@ -260,25 +270,36 @@ fun CardPlaygroundReservationPortrait(reservation:UserReservation, selectedReser
 @Composable
 fun InfoContainer(playgroundLocation: String, playgroundSport: String,playgroundDate:String,playgroundTime:String) {
 
-    InfoPlayground(playgroundLocation,playgroundSport)
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)) {
+        TextBasicIcon(text = playgroundLocation, icon = Icons.Default.LocationOn)
+    }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)) {
+        TextBasicIcon(text = playgroundSport, icon = getIconSport(playgroundSport))
+    }
     InfoReservation(playgroundDate,playgroundTime)
 }
 
-@Composable
-fun InfoPlayground(playgroundLocation: String, playgroundSport: String){
-    Row(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 10.dp)) {
-        Column(Modifier.weight(1f)) {
-            TextBasicIcon(playgroundLocation, Icons.Default.LocationOn)
-
-        }
-        Column(Modifier.weight(1f)) {
-            TextBasicIcon(playgroundSport, getIconSport(playgroundSport))
-
-        }
-    }
-}
+//@Composable
+//fun InfoPlayground(playgroundLocation: String, playgroundSport: String){
+//    Row(modifier = Modifier
+//        .fillMaxWidth()
+//        .padding(vertical = 10.dp)) {
+//        Column(Modifier.weight(1f)) {
+//            TextBasicIcon(playgroundLocation, Icons.Default.LocationOn)
+//
+//        }
+//        Column(Modifier.weight(1f)) {
+//            TextBasicIcon(playgroundSport, getIconSport(playgroundSport))
+//
+//        }
+//    }
+//}
 
 @Composable
 fun InfoReservation(playgroundDate:String,playgroundTime:String){

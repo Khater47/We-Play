@@ -52,7 +52,7 @@ fun TextBasicIcon(text:String,icon:ImageVector){
     Row(verticalAlignment = Alignment.CenterVertically,
     horizontalArrangement = Arrangement.Center){
         Icon(icon,contentDescription = "iconLabel",modifier=Modifier.padding(horizontal=10.dp))
-        Text(text,style=bodyMedium)
+        Text(text,style=bodyMedium,fontSize=18.sp)
     }
 }
 
