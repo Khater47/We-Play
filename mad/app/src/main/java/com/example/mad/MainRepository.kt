@@ -1,6 +1,7 @@
 package com.example.mad
 
 import android.util.Log
+import com.example.mad.common.getToday
 import com.example.mad.model.Invitation
 import com.example.mad.model.PlaygroundRating
 import com.example.mad.model.Profile
@@ -31,8 +32,7 @@ class MainRepository {
     private val db = FirebaseFirestore.getInstance()
 
     val currentUser = MutableStateFlow(auth.currentUser)
-
-    private val userId = currentUser.asStateFlow().value?.email ?: ""
+    
 
     //LOGIN & LOGOUT
     suspend fun logIn(email: String, password: String): AuthResult {
@@ -48,9 +48,11 @@ class MainRepository {
     //PROFILE SPORT (GET, ADD, DELETE)
 
     suspend fun insertUserSport(profileSport: ProfileSport) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(SPORT)
                 .document(profileSport.sport)
                 .set(profileSport).await()
@@ -59,10 +61,12 @@ class MainRepository {
     }
 
     suspend fun deleteUserSport(sport: String) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
 
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(SPORT)
                 .document(sport)
                 .delete()
@@ -70,10 +74,24 @@ class MainRepository {
         }
     }
 
-    suspend fun getUserSport(): QuerySnapshot? {
-        if (userId.isNotEmpty()) {
+    suspend fun getFriends():QuerySnapshot?{
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .whereNotEqualTo("email",email)
+                .get().await()
+        }
+
+        return null
+    }
+
+    suspend fun getUserSport(): QuerySnapshot? {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
+            return db.collection(USERS)
+                .document(email)
                 .collection(SPORT)
                 .get()
                 .await()
@@ -82,29 +100,48 @@ class MainRepository {
 
     }
 
-    suspend fun getFriends(): QuerySnapshot? {
+    suspend fun sendInvitation(invitation: Invitation) {
+        val email = currentUser.value?.email?:""
 
-        if (userId.isNotEmpty()) {
-           return db.collection(USERS)
-                .document(userId)
-                .collection(FRIENDS)
+        if(email.isNotEmpty()){
+            db.collection(INVITATION)
+                .document(invitation.id+" "+invitation.emailReceiver)
+                .set(invitation)
+                .await()
+        }
+    }
+
+    suspend fun getStatBySport(sport:String):DocumentSnapshot?{
+        val email = currentUser.value?.email?:""
+
+        if(email.isNotEmpty()){
+           return  db.collection(USERS)
+                .document(email)
+                .collection(SPORT)
+                .document(sport)
                 .get().await()
+
         }
         return null
     }
 
     suspend fun getInvitations(): QuerySnapshot? {
+        val email = currentUser.value?.email?:""
 
-        if (userId.isNotEmpty()) {
+        if (email.isNotEmpty()) {
+            val today = getToday()
             return db.collection(INVITATION)
-                .whereEqualTo("emailReceiver", userId)
+                .whereEqualTo("emailReceiver", email)
+                .whereGreaterThanOrEqualTo("date",today)
                 .get().await()
         }
         return null
     }
 
     suspend fun deleteInvitation(timestamp: String) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             db.collection(INVITATION)
                 .document(timestamp)
                 .delete().await()
@@ -112,10 +149,9 @@ class MainRepository {
     }
 
     suspend fun acceptInvitation(timestamp: String, data: Invitation) {
+        val email = currentUser.value?.email?:""
 
-        val email = currentUser.value?.email
-
-        if (userId.isNotEmpty() && email != null) {
+        if (email.isNotEmpty()) {
 
             val ur = data.toUserReservation()
 
@@ -126,7 +162,7 @@ class MainRepository {
 
             //add user reservation 
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION)
                 .document(timestamp)
                 .set(ur).await()
@@ -176,26 +212,32 @@ class MainRepository {
     //PROFILE, PROFILE EDIT
 
     suspend fun insertUserProfile(profile: Profile) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
 
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .set(profile)
                 .await()
         }
     }
 
     suspend fun insertUserRegistrationProfile(profile: Profile) {
+        val email = currentUser.value?.email?:""
+
         db.collection(USERS)
-            .document(userId)
+            .document(email)
             .set(profile)
             .await()
     }
 
     suspend fun getUserProfile(): DocumentSnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .get()
                 .await()
         }
@@ -217,9 +259,11 @@ class MainRepository {
 
 
     suspend fun insertUserRating(rating: ProfileRating) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RATING)
                 .document(rating.address + " " + rating.city)
                 .set(rating)
@@ -252,9 +296,11 @@ class MainRepository {
     suspend fun getAllUserReservationByDate(
         date: String
     ): QuerySnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION)
                 .whereEqualTo("date", date).get().await()
         }
@@ -262,7 +308,9 @@ class MainRepository {
     }
 
     suspend fun getUserToRatedPlayground(today: String): List<UserReservation> {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             val ratedPlaygrounds =
                 getUserRatedPlaygrounds()?.documents?.mapNotNull { it.toProfileRating() }
                     ?: emptyList()
@@ -299,9 +347,11 @@ class MainRepository {
     private suspend fun getAllUserPastReservation(
         today: String,
     ): QuerySnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION)
                 .whereLessThan("date", today).get().await()
         }
@@ -309,9 +359,11 @@ class MainRepository {
     }
 
     private suspend fun getUserRatedPlaygrounds(): QuerySnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RATING).get().await()
         }
         return null
@@ -319,16 +371,20 @@ class MainRepository {
 
 
     suspend fun getAllUserReservationDates(): QuerySnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION).get().await()
         }
         return null
     }
 
     suspend fun getReservationById(reservationId: String): DocumentSnapshot? {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             return db.collection(RESERVATION)
                 .document(reservationId)
                 .get().await()
@@ -338,9 +394,11 @@ class MainRepository {
     }
 
     suspend fun insertUserReservation(reservationId: String, reservation: UserReservation) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION)
                 .document(reservationId)
                 .set(reservation).await()
@@ -348,17 +406,21 @@ class MainRepository {
     }
 
     suspend fun updateUserReservation(reservationId: String, data: HashMap<String, Any>) {
+        val email = currentUser.value?.email?:""
+
         db.collection(USERS)
-            .document(userId)
+            .document(email)
             .collection(RESERVATION)
             .document(reservationId)
             .set(data, SetOptions.merge()).await()
     }
 
     suspend fun deleteUserReservation(reservationId: String) {
-        if (userId.isNotEmpty()) {
+        val email = currentUser.value?.email?:""
+
+        if (email.isNotEmpty()) {
             db.collection(USERS)
-                .document(userId)
+                .document(email)
                 .collection(RESERVATION)
                 .document(reservationId)
                 .delete().await()

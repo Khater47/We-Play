@@ -7,6 +7,8 @@ data class Invitation(
     val address: String,
     val city: String,
     val date: String,
+    val emailReceiver:String,
+    val emailSender:String,
     val endTime: String,
     val equipment: Boolean,
     val id: String,
@@ -18,18 +20,18 @@ data class Invitation(
     val trophies: Long
 ) {
     override fun toString(): String {
-        return " $id $address $city $date \n" +
+        return " $id $address $city $date $emailSender $emailReceiver\n" +
                 "$startTime-$endTime $equipment \n" +
                 "$playground $sport $fullName $level $trophies"
     }
 }
 
-fun Invitation.toReservation(email: String): Reservation {
+fun Invitation.toReservation(): Reservation {
     return Reservation(
         address,
         city,
         date,
-        email,
+        emailReceiver,
         endTime,
         equipment,
         id,
@@ -68,6 +70,10 @@ fun DocumentSnapshot.toInvitation(): Invitation? {
         val sport: String = get("sport") as String
         val startTime: String = get("startTime") as String
 
+        val emailReceiver: String = get("emailReceiver") as String
+        val emailSender: String = get("emailSender") as String
+
+
         val fullName: String = get("fullName") as String
         val level: Long = get("level") as Long
         val trophies: Long = get("trophies") as Long
@@ -76,6 +82,8 @@ fun DocumentSnapshot.toInvitation(): Invitation? {
             address,
             city,
             date,
+            emailReceiver,
+            emailSender,
             endTime,
             equipment,
             id,

@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.ImageCardHome
 import com.example.mad.common.composable.TopBarAction
 import com.example.mad.common.composable.TopBarActionBadge
@@ -61,8 +63,14 @@ navController: NavHostController,
 
     val invitations = vm.invitation.observeAsState().value?: emptyList()
 
+    val loading = vm.loadingProgressBar.value
+
     fun navigate(){
         navController.navigate(BottomBarScreen.Notifications.route)
+    }
+
+    LaunchedEffect(key1 = null){
+        vm.getInvitations()
     }
 
     Scaffold(
@@ -80,6 +88,8 @@ navController: NavHostController,
                     LandscapeHome(navController)
                 }
             }
+
+            CircularProgressBar(isDisplayed = loading)
         }
     }
 
@@ -103,16 +113,22 @@ fun PortraitHome(
         verticalArrangement = Arrangement.Center
         )
     {
-        Column(modifier = Modifier.weight(1f).padding(vertical = 20.dp)) {
+        Column(modifier = Modifier
+            .weight(1f)
+            .padding(vertical = 20.dp)) {
             CardUserPreferences(navController)
         }
 
-        Column(modifier = Modifier.weight(2f).padding(vertical = 20.dp)) {
+        Column(modifier = Modifier
+            .weight(2f)
+            .padding(vertical = 20.dp)) {
             CardNavigationPage(searchIcon, R.drawable.field, idSearch,
                 navController)
         }
 
-        Column(modifier = Modifier.weight(2f).padding(vertical = 20.dp)) {
+        Column(modifier = Modifier
+            .weight(2f)
+            .padding(vertical = 20.dp)) {
             CardNavigationPage(rateIcon, R.drawable.field_rating, idRating,
                 navController)
         }
@@ -276,13 +292,15 @@ fun CardNavigationPage(
         },
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         shape = RoundedCornerShape(16.dp),
-        colors=CardDefaults.cardColors(Color.White)
+        colors=CardDefaults.cardColors(Color.White),
         ) {
 
         Column {
             ImageCardHome(searchIcon, imageCard)
 //
             TextCard(id)
+//            Text(text = stringResource(id), style = MaterialTheme.typography.bodyMedium, fontSize = 25.sp)
+
 
         }
 
@@ -300,7 +318,6 @@ fun TextCard(id:Int) {
     Column(
         Modifier
             .padding(10.dp)
-
     ) {
         Text(text = text, style = MaterialTheme.typography.bodyMedium, fontSize = 25.sp)
     }

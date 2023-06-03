@@ -65,9 +65,11 @@ import com.example.mad.MainViewModel
 import com.example.mad.common.getTimeStamp
 import com.example.mad.common.getToday
 import com.example.mad.model.Friend
+import com.example.mad.model.Invitation
 import com.example.mad.model.Playground
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
+import com.example.mad.model.Stat
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.confirmation
 import com.stacktips.view.CalendarListener
@@ -375,8 +377,10 @@ fun FullDialogPlayground(
     val profile = vm.profile.observeAsState().value
 
     val confirmedFriends = remember {
-        mutableStateOf<List<String>>(emptyList())
+        mutableStateOf<List<Friend>>(emptyList())
     }
+
+    val stat = vm.statInvitation.value
 
     //handle tabs
     val state = remember { mutableStateOf(0) }
@@ -394,6 +398,7 @@ fun FullDialogPlayground(
     LaunchedEffect(key1 = null) {
         vm.getUserProfile()
         vm.getFriends()
+        vm.getStatBySport(playground.sport)
     }
 
     Dialog(
@@ -466,31 +471,56 @@ fun FullDialogPlayground(
                                 val endTime = timeSlot[selectedTimeSlot.value].substringAfter("-")
                                 val timestamp = getTimeStamp().toString()
 
-                                val r = Reservation(
-                                    playground.address,
-                                    playground.city,
-                                    selectedDate.value,
-                                    email,
-                                    endTime,
-                                    selectedEquipment.value,
-                                    timestamp,
-                                    playground.playground,
-                                    playground.sport,
-                                    startTime
-                                )
-                                val ur = UserReservation(
-                                    playground.address,
-                                    playground.city,
-                                    selectedDate.value,
-                                    endTime,
-                                    selectedEquipment.value,
-                                    timestamp,
-                                    playground.playground,
-                                    playground.sport,
-                                    startTime
-                                )
-
                                 if (email.isNotEmpty()) {
+
+                                    if(confirmedFriends.value.isNotEmpty() && profile!=null){
+
+                                        confirmedFriends.value.forEach {
+                                            val i = Invitation(
+                                                playground.address,
+                                                playground.city,
+                                                selectedDate.value,
+                                                it.email,
+                                                email,
+                                                endTime,
+                                                false,
+                                                timestamp,
+                                                playground.playground,
+                                                playground.sport,
+                                                startTime,
+                                                profile.fullName,
+                                                stat?.level?:0L,
+                                                stat?.trophies?:0L
+                                            )
+
+                                            vm.sendInvitation(i)
+
+                                        }
+                                    }
+                                    val r = Reservation(
+                                        playground.address,
+                                        playground.city,
+                                        selectedDate.value,
+                                        email,
+                                        endTime,
+                                        selectedEquipment.value,
+                                        timestamp,
+                                        playground.playground,
+                                        playground.sport,
+                                        startTime
+                                    )
+                                    val ur = UserReservation(
+                                        playground.address,
+                                        playground.city,
+                                        selectedDate.value,
+                                        endTime,
+                                        selectedEquipment.value,
+                                        timestamp,
+                                        playground.playground,
+                                        playground.sport,
+                                        startTime
+                                    )
+
                                     vm.insertReservation(timestamp, r)
                                     vm.insertUserReservation(timestamp, ur)
                                 }
@@ -530,6 +560,7 @@ fun FullDialogPlayground(
                                 if (index == 0 && selectedDate.value.isNotEmpty()) state.value = 0
                                 else if (index == 1 && selectedTimeSlot.value != -1) state.value = 1
                                 else if (index == 2 && confirmEquipment.value) state.value = 2
+                                else if (index == 3 ) state.value = 3
                             },
                             selected = (index == state.value)
                         ) {
@@ -637,7 +668,7 @@ fun FullDialogPlayground(
                                 date = selectedDate.value,
                                 timeSlot = timeSlot[selectedTimeSlot.value],
                                 equipment = selectedEquipment.value,
-                                confirmedFriends.value
+                                confirmedFriends.value.map { it.fullName },
                             )
                         }
                     }
@@ -657,21 +688,15 @@ fun SummaryReservation(
     date: String,
     timeSlot: String,
     equipment: Boolean,
-    friendList: List<String>
+    friendList: List<String>,
 ) {
 
     val expanded = remember {
         mutableStateOf(false)
     }
 
-    Column {
-//        Text(
-//            text = "Are you sure to rent the playground with this info",
-//            fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
-//            modifier = Modifier.padding(vertical = 20.dp)
-//        )
 
-//        Divider(Modifier.padding(vertical=15.dp))
+    Column {
 
         Text(
             text = playground,
@@ -764,8 +789,7 @@ fun SummaryReservation(
                     Modifier
                         .height(150.dp)
                         .fillMaxWidth(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    verticalArrangement = Arrangement.Center
                 ) {
                     items(friendList) { item ->
                         Text(
@@ -773,7 +797,7 @@ fun SummaryReservation(
                             fontSize = 18.sp,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier
-                                .padding(vertical = 10.dp)
+                                .padding(10.dp)
                         )
                         Divider()
 
@@ -789,19 +813,21 @@ fun SummaryReservation(
 @Composable
 fun FriendsList(
     friends: List<Friend>,
-    confirmedFriends: MutableState<List<String>>,
+    confirmedFriends: MutableState<List<Friend>>,
     state: MutableState<Int>
 ) {
 
+    val context = LocalContext.current
+
     val selectedFriends = remember {
-        mutableStateOf(friends.map { "" })
+        mutableStateOf(confirmedFriends.value.ifEmpty { friends.map { Friend("","","") } })
     }
 
-    fun getListOfFriend(email: String, i: Int): List<String> {
-        val l = mutableListOf<String>()
+    fun getListOfFriend(f: Friend, i: Int): List<Friend> {
+        val l = mutableListOf<Friend>()
         selectedFriends.value.forEachIndexed { index, value ->
             if (i == index)
-                l.add(email)
+                l.add(f)
             else
                 l.add(value)
         }
@@ -836,18 +862,18 @@ fun FriendsList(
                         .fillMaxWidth()
                         .height(50.dp)
                         .clickable {
-                            if (selectedFriends.value[index] == item.email)
-                                selectedFriends.value = getListOfFriend("", index)
+                            if (selectedFriends.value[index].email == item.email)
+                                selectedFriends.value = getListOfFriend(Friend("", "", ""), index)
                             else
-                                selectedFriends.value = getListOfFriend(item.email, index)
+                                selectedFriends.value = getListOfFriend(item, index)
                         }
                 ) {
                     RadioButton(
-                        selected = selectedFriends.value[index] == item.email, onClick = {
-                            if (selectedFriends.value[index] == item.email)
-                                selectedFriends.value = getListOfFriend("", index)
+                        selected = selectedFriends.value[index].email == item.email, onClick = {
+                            if (selectedFriends.value[index].email == item.email)
+                                selectedFriends.value = getListOfFriend(Friend("","",""), index)
                             else
-                                selectedFriends.value = getListOfFriend(item.email, index)
+                                selectedFriends.value = getListOfFriend(item, index)
                         }, Modifier.padding(horizontal = 10.dp)
                     )
 
@@ -892,8 +918,14 @@ fun FriendsList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(onClick = {
-                confirmedFriends.value = selectedFriends.value
-                state.value = 4
+                val condition = selectedFriends.value.filterNot { it.email.isEmpty() }.size==selectedFriends.value.size
+                if(condition){
+                    confirmedFriends.value = selectedFriends.value
+                    state.value = 4
+                }
+                else {
+                    Toast.makeText(context,"Please select a person",Toast.LENGTH_SHORT).show()
+                }
 
             }, colors = ButtonDefaults.buttonColors(containerColor = confirmation, contentColor = androidx.compose.ui.graphics.Color.White)) {
                 Text(
