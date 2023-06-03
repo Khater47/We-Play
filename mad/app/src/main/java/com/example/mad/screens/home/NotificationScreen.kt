@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,6 +45,7 @@ import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
 import com.example.mad.model.Invitation
+import com.example.mad.model.UserReservation
 import com.example.mad.screens.profile.TextIcon
 import com.example.mad.ui.theme.confirmation
 
@@ -58,13 +60,21 @@ TODO
 @Composable
 fun NotificationScreen(
     navController: NavHostController,
-    vm:MainViewModel
+    vm: MainViewModel
 ) {
 
-    val invitations = vm.invitation.observeAsState().value?: emptyList()
+    val invitations = vm.invitation.observeAsState().value ?: emptyList()
 
-    LaunchedEffect(key1 = null){
-        vm.getInvitations()
+    val changeUi = remember {
+        mutableStateOf(true)
+    }
+
+
+    LaunchedEffect(key1 = changeUi.value) {
+        if(changeUi.value){
+            vm.getInvitations()
+            changeUi.value=false
+        }
     }
 
 
@@ -85,7 +95,7 @@ fun NotificationScreen(
                     .padding(10.dp)
             ) {
                 items(invitations) { item ->
-                    CardNotification(item)
+                    CardNotification(item,vm,changeUi)
                 }
             }
             CircularProgressBar(isDisplayed = loading)
@@ -94,7 +104,11 @@ fun NotificationScreen(
 }
 
 @Composable
-fun CardNotification(notification: Invitation) {
+fun CardNotification(
+    notification: Invitation,
+    vm: MainViewModel,
+    changeUi: MutableState<Boolean>
+) {
 
     val showStat = remember {
         mutableStateOf(false)
@@ -107,14 +121,19 @@ fun CardNotification(notification: Invitation) {
         Column(Modifier.padding(horizontal = 10.dp)) {
 
             Text(
-                text = notification.playground, fontSize = 20.sp, style = MaterialTheme.typography.bodyLarge,
+                text = notification.playground,
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
             )
 
             Column(Modifier.padding(vertical = 10.dp)) {
-                TextIcon(text = notification.address+" "+notification.city, icon = Icons.Default.LocationOn)
+                TextIcon(
+                    text = notification.address + " " + notification.city,
+                    icon = Icons.Default.LocationOn
+                )
             }
             Column(Modifier.padding(vertical = 10.dp)) {
                 TextIcon(text = notification.sport, icon = getIconSport(notification.sport))
@@ -129,7 +148,10 @@ fun CardNotification(notification: Invitation) {
                     TextIcon(text = notification.date, icon = Icons.Default.CalendarMonth)
                 }
                 Column(Modifier.weight(1f)) {
-                    TextIcon(text = notification.startTime+"-"+notification.endTime, icon = Icons.Default.AccessTime)
+                    TextIcon(
+                        text = notification.startTime + "-" + notification.endTime,
+                        icon = Icons.Default.AccessTime
+                    )
                 }
             }
 
@@ -148,7 +170,11 @@ fun CardNotification(notification: Invitation) {
                         .weight(1f)
                         .fillMaxWidth()
                 ) {
-                    Text(text = notification.fullName, fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        text = notification.fullName,
+                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
                 }
                 Column(
                     Modifier
@@ -188,7 +214,9 @@ fun CardNotification(notification: Invitation) {
                 ) {
                     Button(
                         onClick = {
-                            //vm.deleteInvitation()
+                            val id = notification.id + " " + notification.emailReceiver
+                            vm.deleteInvitation(id)
+                            changeUi.value=true
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onPrimary,
@@ -212,16 +240,29 @@ fun CardNotification(notification: Invitation) {
                     verticalArrangement = Arrangement.Center
                 ) {
 
-                    Button(onClick = {
-                        //vm.deleteInvitation()
-                        //vm.insertReservation()
-                        //vm.insertUserReservation()
+                    Button(
+                        onClick = {
+                            val id = notification.id + " " + notification.emailReceiver
+                            val ur = UserReservation(
+                                notification.address,
+                                notification.city,
+                                notification.date,
+                                notification.endTime,
+                                false,
+                                notification.id,
+                                notification.playground,
+                                notification.sport,
+                                notification.startTime,
+                            )
+                            vm.deleteInvitation(id)
+                            vm.insertUserReservation(notification.id,ur)
+                            changeUi.value=true
 
-                    },
-                    colors=ButtonDefaults.buttonColors(
-                        containerColor = confirmation,
-                        contentColor = Color.White
-                    )
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = confirmation,
+                            contentColor = Color.White
+                        )
                     ) {
                         Text(
                             text = "Accept",
@@ -241,39 +282,43 @@ fun CardNotification(notification: Invitation) {
 @Composable
 fun UserStat(level: Long, trophies: Long) {
 
-        Column(Modifier
-            .padding(vertical = 10.dp)) {
-            Row {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        text = "Level", fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 10.dp)
-                    )
-                }
-                Column(Modifier.weight(1f)) {
-                    TextIcon(text = "$level/5", icon = Icons.Default.Star)
-                }
+    Column(
+        Modifier
+            .padding(vertical = 10.dp)
+    ) {
+        Row {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = "Level", fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
+            }
+            Column(Modifier.weight(1f)) {
+                TextIcon(text = "$level/5", icon = Icons.Default.Star)
+            }
+
+        }
+    }
+    Column(
+        Modifier.padding(vertical = 10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = "Trophies",
+                    fontSize = 18.sp,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                )
 
             }
-        }
-        Column(Modifier.padding(vertical = 10.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
-            Row {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        text = "Trophies",
-                        fontSize = 18.sp,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 10.dp)
-                    )
-
-                }
-                Column(Modifier.weight(1f)) {
-                    TextIcon(text = "$trophies", icon = Icons.Default.EmojiEvents)
-                }
-
+            Column(Modifier.weight(1f)) {
+                TextIcon(text = "$trophies", icon = Icons.Default.EmojiEvents)
             }
+
         }
+    }
 }
 
