@@ -52,7 +52,6 @@ import com.example.mad.ui.theme.confirmation
 
 /*
 TODO
-     1) top bar title and arrow in white
      2) confirmation dialog
  */
 

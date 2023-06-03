@@ -69,6 +69,7 @@ import com.example.mad.model.Playground
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
+import com.example.mad.ui.theme.confirmation
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
@@ -79,13 +80,6 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-/*
-TODO:
-    1) change in fullDialogPlayground the size of the confirm button in timeSlot tab and also the color
-    2) change in fullDialogPlayground in equipment tab the color of confirm button
-    3) change in fullDialogPlayground in person tab the color of confirm button
-
-*/
 
 //ADD PAGE FOR HANDLING LIST OF FRIENDS
 
@@ -212,7 +206,7 @@ fun FullDialogSport(
                         shape = RectangleShape,
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        Text(text = "Save")
+                        Text(text = "Save", color = confirmation)
                     }
                 }
             }
@@ -513,7 +507,7 @@ fun FullDialogPlayground(
                         shape = RectangleShape,
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        Text(text = "Save")
+                        Text(text = "Save", color = confirmation)
                     }
                 }
             }
@@ -566,8 +560,11 @@ fun FullDialogPlayground(
 
                             Button(onClick = {
                                 if (selectedTimeSlot.value != -1) state.value = 2
-                            }) {
-                                Text("Confirm")
+                            },
+                            colors = ButtonDefaults.buttonColors(containerColor = confirmation, contentColor = androidx.compose.ui.graphics.Color.White)
+                                ) {
+                                Text("Confirm",fontSize = 18.sp,
+                                    style = MaterialTheme.typography.bodyLarge)
                             }
                         }
 
@@ -614,7 +611,9 @@ fun FullDialogPlayground(
                                         if (friends.isNotEmpty())
                                             state.value = 3
                                         else state.value = 4
-                                    }) {
+                                    },
+                                        colors = ButtonDefaults.buttonColors(containerColor = confirmation, contentColor = androidx.compose.ui.graphics.Color.White)
+                                    ) {
                                         Text(
                                             "Confirm",
                                             fontSize = 18.sp,
@@ -896,7 +895,7 @@ fun FriendsList(
                 confirmedFriends.value = selectedFriends.value
                 state.value = 4
 
-            }) {
+            }, colors = ButtonDefaults.buttonColors(containerColor = confirmation, contentColor = androidx.compose.ui.graphics.Color.White)) {
                 Text(
                     text = "Confirm",
                     fontSize = 18.sp,

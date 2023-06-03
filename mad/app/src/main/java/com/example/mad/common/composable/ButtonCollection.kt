@@ -157,7 +157,7 @@ fun NavigationIconButtonTopBar(
     IconButton(onClick = {
         backAction()
     }) {
-        Icon(Icons.Filled.ArrowBack, "backIcon")
+        Icon(Icons.Filled.ArrowBack, "backIcon", tint = Color.White)
     }
 }
 
@@ -169,7 +169,7 @@ fun ActionButtonTopBar(
     IconButton(onClick = {
         action()
     }) {
-        Icon(icon, "actionIcon")
+        Icon(icon, "actionIcon", tint = Color.White)
     }
 }
 

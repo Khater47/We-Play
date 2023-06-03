@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -56,11 +57,8 @@ import com.example.mad.common.composable.TopBarComplete
 import com.example.mad.common.getLocation
 import com.example.mad.common.getSport
 import com.example.mad.model.Playground
+import com.example.mad.ui.theme.confirmation
 
-/*
-TODO
-    1) top bar title and icon in white
- */
 
 
 @Composable
@@ -300,7 +298,7 @@ fun DialogFilter(
 
                 Column(Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Select Sport", fontSize = 20.sp,
+                        text = "Filter By Sport", fontSize = 20.sp,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(15.dp)
                     )
@@ -315,7 +313,7 @@ fun DialogFilter(
 
                 Column(Modifier.fillMaxWidth()) {
                     Text(
-                        text = "Select Sport", fontSize = 20.sp,
+                        text = "Filter By City", fontSize = 20.sp,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(15.dp)
                     )
@@ -360,8 +358,8 @@ fun DialogFilter(
 
                         }, modifier = Modifier.padding(horizontal = 10.dp),
                         colors = ButtonDefaults.buttonColors(
-                            contentColor = MaterialTheme.colorScheme.primary,
-                            backgroundColor = MaterialTheme.colorScheme.surface
+                            contentColor = Color.White,
+                            backgroundColor = confirmation
                         )
                     ) {
                         Text(

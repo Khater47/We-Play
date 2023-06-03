@@ -39,7 +39,7 @@ fun MainNavGraph(navController: NavHostController, vm: MainViewModel) {
     ) {
 
         composable(route = BottomBarScreen.Home.route) {
-            HomeScreen(navController)
+            HomeScreen(vm, navController)
         }
         composable(route = BottomBarScreen.Registration.route) {
             RegistrationScreen(vm,navController)

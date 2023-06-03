@@ -45,8 +45,6 @@ import com.example.mad.common.getSport
 import com.example.mad.model.ProfileSport
 import com.example.mad.ui.theme.confirmation
 
-//TODO() topbar title and icon in white
-
 @Composable
 fun ProfileSportScreen(
     navController: NavHostController,

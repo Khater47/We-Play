@@ -66,14 +66,13 @@ import com.example.mad.common.composable.FullDialogPlayground
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.model.Comment
 import com.example.mad.model.Playground
+import com.example.mad.ui.theme.confirmation
 import kotlinx.coroutines.delay
 
 
 /*
 TODO:
     1) choose image for playground
-    2) top bar title and icon in white
-    3) change color reserve playground (color=confirmation)
 
 */
 
@@ -240,11 +239,11 @@ fun PlaygroundScreen(
                     //Custom date picker
                     OutlinedButton(
                         onClick = { showDialog.value = true },
-                        colors = ButtonDefaults.buttonColors(Color.Black)
+                        colors = ButtonDefaults.buttonColors(confirmation)
                     )
                     {
                         Text(
-                            "Reserve Playground",
+                            "Rent Playground",
                             style = MaterialTheme.typography.headlineSmall,
                             color = Color.White
                         )

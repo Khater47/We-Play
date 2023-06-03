@@ -41,6 +41,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,10 @@ import com.example.mad.common.getToday
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.confirmation
+import com.example.mad.ui.theme.md_theme_dark_onSecondary
+import com.example.mad.ui.theme.md_theme_light_onSecondary
+import com.example.mad.ui.theme.md_theme_light_primary
+import com.example.mad.ui.theme.md_theme_light_secondary
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
@@ -64,13 +69,6 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-
-/*
-TODO
- 1) change color for confirmation for calendar
- 2) top bar title and icon in white
-
-*/
 
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -444,7 +442,8 @@ class ColorDayDecorator(private val dates: List<String>) : DayDecorator {
         val formattedDate = date?.let { df.format(it) }
 
         if (dates.contains(formattedDate)) {
-            dayView.setBackgroundColor(Color.GREEN)
+            dayView.setBackgroundColor(md_theme_light_secondary.toArgb())
+            dayView.setTextColor(md_theme_light_onSecondary.toArgb())
         }
 
     }

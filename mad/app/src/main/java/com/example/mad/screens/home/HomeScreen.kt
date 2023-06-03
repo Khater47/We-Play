@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,34 +35,38 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.ImageCardHome
 import com.example.mad.common.composable.TopBarAction
+import com.example.mad.common.composable.TopBarActionBadge
 import com.example.mad.common.composable.TopBarBasic
 
 /*
 TODO
-    1) card in portrait of same dimension like the first card (Edit preferences)
-    2) replace notification icon and change color=white with badge component (material design 3)
-    3) top bar title in white
+    1) Check why the invitations size is not loaded when the app opens (Ask Giorgio)
  */
 
 @Composable
 fun HomeScreen(
+    vm: MainViewModel,
 navController: NavHostController,
 ) {
     val configuration = LocalConfiguration.current
+
+    val invitations = vm.invitation.observeAsState().value?: emptyList()
 
     fun navigate(){
         navController.navigate(BottomBarScreen.Notifications.route)
     }
 
     Scaffold(
-        topBar = { TopBarAction(R.string.topBarHome,Icons.Default.Notifications,::navigate) }
+        topBar = { TopBarActionBadge(R.string.topBarHome,Icons.Default.Notifications,::navigate, invitations.size) }
     ) {
 
         Box(Modifier.padding(it)) {
@@ -85,28 +91,32 @@ fun PortraitHome(
     navController: NavHostController,
 ){
 
-    Column {
-        Column(
-            Modifier
-                .padding(horizontal = 20.dp)
-                .weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
+    val searchIcon = Icons.Default.Search
+    val rateIcon = Icons.Default.ThumbUp
+    val idSearch = R.string.rentCard
+    val idRating = R.string.rateCard
+
+    Column (modifier = Modifier
+        .fillMaxWidth()
+        .padding(20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+        )
+    {
+        Column(modifier = Modifier.weight(1f).padding(vertical = 20.dp)) {
             CardUserPreferences(navController)
         }
 
-        Column(
-            Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .padding(16.dp)
-                .weight(2f)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.Center
-        ) {
-
-            CardContainerNavigationPage(navController)
+        Column(modifier = Modifier.weight(2f).padding(vertical = 20.dp)) {
+            CardNavigationPage(searchIcon, R.drawable.field, idSearch,
+                navController)
         }
+
+        Column(modifier = Modifier.weight(2f).padding(vertical = 20.dp)) {
+            CardNavigationPage(rateIcon, R.drawable.field_rating, idRating,
+                navController)
+        }
+
 
     }
 }
@@ -191,7 +201,7 @@ fun CardUserPreferences(
     val modifier = if(orientation==Configuration.ORIENTATION_PORTRAIT){
         Modifier
             .fillMaxWidth()
-            .height(100.dp)
+//            .height(100.dp)
     }
     else {
         Modifier
@@ -290,9 +300,9 @@ fun TextCard(id:Int) {
     Column(
         Modifier
             .padding(10.dp)
-            .fillMaxSize(),
+
     ) {
-        Text(text = text, style = MaterialTheme.typography.bodyMedium, fontSize = 20.sp)
+        Text(text = text, style = MaterialTheme.typography.bodyMedium, fontSize = 25.sp)
     }
 
 }
@@ -300,12 +310,10 @@ fun TextCard(id:Int) {
 //@Preview(showBackground = true)
 //@Composable
 //fun DefaultPreview() {
-//    MadTheme {
 //        HomeScreen()
-//    }
 //}
-////
-////
+//
+//
 //@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
 //@Composable
 //fun DefaultPreviewLandscape() {

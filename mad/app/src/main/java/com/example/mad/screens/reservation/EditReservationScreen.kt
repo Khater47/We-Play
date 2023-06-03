@@ -44,6 +44,7 @@ import com.example.mad.common.composable.ListRadioButtonData
 import com.example.mad.common.getIconSport
 import com.example.mad.model.Reservation
 import com.example.mad.screens.profile.TextIcon
+import com.example.mad.ui.theme.confirmation
 import kotlinx.coroutines.delay
 
 
@@ -171,7 +172,7 @@ fun FullDialogEditReservation(
                             shape = RectangleShape,
                             modifier = Modifier.fillMaxHeight()
                         ) {
-                            Text(text = "Save")
+                            Text(text = "Save", color = confirmation)
                         }
                     }
                 }

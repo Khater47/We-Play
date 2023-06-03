@@ -92,11 +92,6 @@ const val READ_EXT_STORAGE = android.Manifest.permission.READ_EXTERNAL_STORAGE
 const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 
 
-/*
-TODO:
-    1) top bar title and icon in white
-*/
-
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileEditScreen(

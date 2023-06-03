@@ -10,6 +10,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -66,7 +69,49 @@ fun TopBarAction(
             IconButton(onClick = {
                 action()
             }) {
-                Icon(icon, "actionIcon")
+                Icon(icon, "actionIcon", tint = Color.White)
+            }
+
+        }
+    )
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBarActionBadge(
+    id: Int,
+    icon: ImageVector,
+    action: () -> Unit,
+    counter: Int,
+) {
+
+    TopAppBar(
+        title = {
+            TextTopBar(id)
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        ),
+        actions = {
+            if(counter > 0){
+                IconButton(onClick = {
+                    action()
+                }) {
+                    BadgedBox(badge = {
+                        Badge(){
+                            Text(text = counter.toString())
+                        }
+                    }){
+                        Icon(icon, "actionIcon", tint = Color.White)
+                    }
+                }
+            }else{
+                IconButton(onClick = {
+                    action()
+                }) {
+                    Icon(icon, "actionIcon", tint = Color.White)
+                }
             }
 
         }
@@ -95,7 +140,7 @@ fun TopBarProfile(
             IconButton(onClick = {
                 expanded.value = true
             }) {
-                Icon(Icons.Default.MoreVert, "actionIcon")
+                Icon(Icons.Default.MoreVert, "actionIcon", tint = Color.White)
             }
 
             DropdownMenu(

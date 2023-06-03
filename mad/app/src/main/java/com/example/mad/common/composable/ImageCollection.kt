@@ -31,21 +31,20 @@ import com.example.mad.common.getIconPlayground
 fun ImageCardHome(icon: ImageVector, image: Int) {
 
     Box(
-        Modifier.height(104.dp)
     ) {
         Image(
             painter = painterResource(id = image),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(85.dp)
+                .height(170.dp)
                 .fillMaxWidth()
         )
         Box(
             Modifier
-                .width(60.dp)
-                .padding(start = 20.dp)
-                .height(40.dp)
+                .width(70.dp)
+                .padding(start = 20.dp, bottom = 20.dp)
+                .height(50.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(14, 36, 50))
                 .align(Alignment.BottomStart),
