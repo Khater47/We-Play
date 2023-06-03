@@ -49,7 +49,7 @@ import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.Gold
 
-
+//TODO: FIX USER RATING
 @Composable
 fun ProfileRatingScreen(
     navController: NavHostController,
@@ -77,8 +77,7 @@ fun ProfileRatingScreen(
 
     LaunchedEffect(key1 = changeUi.value){
         if(changeUi.value){
-            val today = getToday()
-            vm.getUserToRatedPlayground(today)
+            vm.getUserToRatedPlayground()
             changeUi.value=false
         }
 

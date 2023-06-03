@@ -23,6 +23,8 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 
 class MainRepository {
@@ -129,10 +131,8 @@ class MainRepository {
         val email = currentUser.value?.email?:""
 
         if (email.isNotEmpty()) {
-            val today = getToday()
             return db.collection(INVITATION)
                 .whereEqualTo("emailReceiver", email)
-                .whereGreaterThanOrEqualTo("date",today)
                 .get().await()
         }
         return null
@@ -307,26 +307,43 @@ class MainRepository {
         return null
     }
 
-    suspend fun getUserToRatedPlayground(today: String): List<UserReservation> {
+    suspend fun getUserToRatedPlayground(): List<UserReservation> {
         val email = currentUser.value?.email?:""
 
         if (email.isNotEmpty()) {
             val ratedPlaygrounds =
                 getUserRatedPlaygrounds()?.documents?.mapNotNull { it.toProfileRating() }
                     ?: emptyList()
-            val pastReservation = getAllUserPastReservation(today)?.documents?.mapNotNull {
-                it.toUserReservation()
-            } ?: emptyList()
 
-            Log.d("TAG_RATED",ratedPlaygrounds.size.toString())//1
-            Log.d("TAG_PAST_RESERVATION",pastReservation.size.toString())//2
+            val  userReservations =  getAllUserReservation()?.documents?.mapNotNull{
+                it.toUserReservation()
+            }?: emptyList()
+
+            val pastReservation = mutableListOf<UserReservation>()
+
+            if(userReservations.isNotEmpty()){
+                val todayString = getToday()
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val today = dateFormat.parse(todayString)
+                if (today != null) {
+
+                    userReservations.forEach {
+                        val d = dateFormat.parse(it.date)
+                        if(d!=null && d.before(today)){
+                            pastReservation.add(it)
+                        }
+                    }
+                }
+            }
+
+//            Log.d("TAG_RATED",ratedPlaygrounds.size.toString())//1
+//            Log.d("TAG_PAST_RESERVATION",pastReservation.size.toString())//2
 
             val newReservations = pastReservation
                 .groupBy { it.city + " " + it.address }
                 .values.map { it.first() }.toMutableList()
 
-            Log.d("TAG_GROUP_BY",pastReservation.size.toString()) //2
-
+//            Log.d("TAG_GROUP_BY",newReservations.size.toString()) //2
 
             if (ratedPlaygrounds.isNotEmpty()) {
                 ratedPlaygrounds.forEach { Log.d("TAG", it.toString()) }
@@ -336,16 +353,14 @@ class MainRepository {
                             it.city in ratedPlaygrounds.map { rp -> rp.city }
                 }
             }
-            Log.d("TAG_FINAL",newReservations.size.toString()) //1
-
+//            Log.d("TAG_FINAL",newReservations.size.toString()) //1
 
             return newReservations.toList()
         }
         return emptyList()
     }
 
-    private suspend fun getAllUserPastReservation(
-        today: String,
+    suspend fun getAllUserReservation(
     ): QuerySnapshot? {
         val email = currentUser.value?.email?:""
 
@@ -353,7 +368,7 @@ class MainRepository {
             return db.collection(USERS)
                 .document(email)
                 .collection(RESERVATION)
-                .whereLessThan("date", today).get().await()
+                .get().await()
         }
         return null
     }

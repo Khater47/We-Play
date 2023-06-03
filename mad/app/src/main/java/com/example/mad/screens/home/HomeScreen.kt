@@ -49,10 +49,6 @@ import com.example.mad.common.composable.TopBarAction
 import com.example.mad.common.composable.TopBarActionBadge
 import com.example.mad.common.composable.TopBarBasic
 
-/*
-TODO
-    1) Check why the invitations size is not loaded when the app opens (Ask Giorgio)
- */
 
 @Composable
 fun HomeScreen(

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mad.common.getTimeSlot
+import com.example.mad.common.getToday
 import com.example.mad.model.Comment
 import com.example.mad.model.Friend
 import com.example.mad.model.Invitation
@@ -33,6 +34,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.util.Locale
 
 const val PLAYGROUNDS = "playgrounds"
 const val RATING = "rating"
@@ -154,8 +158,24 @@ class MainViewModel : ViewModel() {
                     it.toInvitation()
                 } ?: emptyList()
 
+                val filterInvitations = mutableListOf<Invitation>()
 
-                _invitation.postValue(i)
+                if(i.isNotEmpty()){
+                    val todayString = getToday()
+                    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                    val today = dateFormat.parse(todayString)
+                    if (today != null) {
+
+                        i.forEach {
+                            val d = dateFormat.parse(it.date)
+                            if(d!=null && !d.before(today)){
+                                filterInvitations.add(it)
+                            }
+                        }
+                    }
+                }
+
+                _invitation.postValue(filterInvitations)
                 loadingProgressBar.value = false
 
             } catch (e: Exception) {
@@ -431,14 +451,16 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun getUserToRatedPlayground(today: String) {
+    fun getUserToRatedPlayground() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-//                loadingProgressBar.value = true
-                val list = repo.getUserToRatedPlayground(today)
-//                Log.d("TAG",list.size.toString())
+                loadingProgressBar.value = true
+                delay(DELAY)
+
+                val list = repo.getUserToRatedPlayground()
+
                 _userReservation.postValue(list)
-//                loadingProgressBar.value = false
+                loadingProgressBar.value = false
 
             } catch (e: Exception) {
                 e.printStackTrace()

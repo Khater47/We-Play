@@ -49,8 +49,6 @@ import com.example.mad.model.UserReservation
 import com.example.mad.screens.profile.TextIcon
 import com.example.mad.ui.theme.confirmation
 
-//GET REPOSITORY INVITATION IN A ROOT COLLECTION = INVITATIONS (NOT AS SUB COLLECTION OF USER)
-//ADD SUB COLLECTION OF FRIENDS FOR USER
 
 /*
 TODO
