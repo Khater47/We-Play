@@ -42,6 +42,7 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircularProgressBar
+import com.example.mad.common.composable.DeleteDialog
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
 import com.example.mad.model.Invitation
@@ -49,11 +50,6 @@ import com.example.mad.model.UserReservation
 import com.example.mad.screens.profile.TextIcon
 import com.example.mad.ui.theme.confirmation
 
-
-/*
-TODO
-     2) confirmation dialog
- */
 
 @Composable
 fun NotificationScreen(
@@ -66,6 +62,9 @@ fun NotificationScreen(
     val changeUi = remember {
         mutableStateOf(true)
     }
+    val selectedID = remember {
+        mutableStateOf<String>("")
+    }
 
 
     LaunchedEffect(key1 = changeUi.value) {
@@ -75,11 +74,25 @@ fun NotificationScreen(
         }
     }
 
-
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
     val loading = vm.loadingProgressBar.value
 
     fun navigate() {
         navController.navigate(BottomBarScreen.Home.route)
+    }
+
+    fun actionDialog(){
+        if(selectedID.value.isNotEmpty()){
+            vm.deleteInvitation(selectedID.value)
+            changeUi.value=true
+            openDialog.value=false
+        }
+    }
+
+    if(openDialog.value){
+        DeleteDialog("Decline Invitation",text= "are you sure to decline this invitation", openDialog,::actionDialog)
     }
 
 
@@ -93,7 +106,7 @@ fun NotificationScreen(
                     .padding(10.dp)
             ) {
                 items(invitations) { item ->
-                    CardNotification(item,vm,changeUi)
+                    CardNotification(item,vm,changeUi,openDialog,selectedID)
                 }
             }
             CircularProgressBar(isDisplayed = loading)
@@ -105,7 +118,9 @@ fun NotificationScreen(
 fun CardNotification(
     notification: Invitation,
     vm: MainViewModel,
-    changeUi: MutableState<Boolean>
+    changeUi: MutableState<Boolean>,
+    openDialog:MutableState<Boolean>,
+    selectedID:MutableState<String>
 ) {
 
     val showStat = remember {
@@ -212,9 +227,11 @@ fun CardNotification(
                 ) {
                     Button(
                         onClick = {
-                            val id = notification.id + " " + notification.emailReceiver
-                            vm.deleteInvitation(id)
-                            changeUi.value=true
+//                            val id = notification.id + " " + notification.emailReceiver
+//                            vm.deleteInvitation(id)
+//                            changeUi.value=true
+                            selectedID.value=notification.id + " " + notification.emailReceiver
+                            openDialog.value=true
                         },
                         colors = ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onPrimary,

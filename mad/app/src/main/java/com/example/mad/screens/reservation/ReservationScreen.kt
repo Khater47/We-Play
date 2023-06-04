@@ -48,6 +48,7 @@ import com.example.mad.DELAY
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.common.composable.CircularProgressBar
+import com.example.mad.common.composable.DeleteDialog
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBasic
@@ -55,6 +56,7 @@ import com.example.mad.common.getIconSport
 import com.example.mad.common.getToday
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
+import com.example.mad.model.toReservation
 import com.example.mad.ui.theme.confirmation
 import com.example.mad.ui.theme.md_theme_light_onSecondary
 import com.example.mad.ui.theme.md_theme_light_secondary
@@ -72,7 +74,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ReservationScreen(
-   vm: MainViewModel
+    vm: MainViewModel
 ) {
     val loading = vm.loadingProgressBar.value
 
@@ -83,16 +85,16 @@ fun ReservationScreen(
     }
 
     LaunchedEffect(key1 = changeUi.value) {
-        if(changeUi.value){
-            vm.loadingProgressBar.value=true
+        if (changeUi.value) {
+            vm.loadingProgressBar.value = true
             val today = getToday()
             val month = Calendar.getInstance().get(Calendar.MONTH) + 1
             val formattedMonth = if (month < 10) "0$month" else month.toString()
             delay(DELAY)
             vm.getDatesReservationByMonth(formattedMonth)
             vm.getAllUserReservationByDate(today)
-            vm.loadingProgressBar.value=false
-            changeUi.value=false
+            vm.loadingProgressBar.value = false
+            changeUi.value = false
         }
 
     }
@@ -116,7 +118,7 @@ fun ReservationScreen(
 
                         }
                         Column(Modifier.weight(1f)) {
-                            ReservationCard(/*navController,*/ vm,changeUi)
+                            ReservationCard(/*navController,*/ vm, changeUi)
                         }
                     }
 
@@ -135,7 +137,7 @@ fun ReservationScreen(
                             }
                             Column(Modifier.weight(1f)) {
 
-                                ReservationCard(vm,changeUi)
+                                ReservationCard(vm, changeUi)
                             }
                         }
                     }
@@ -231,10 +233,10 @@ fun CalendarCard(
 @Composable
 fun ReservationCard(
     vm: MainViewModel,
-    changeUi:MutableState<Boolean>
+    changeUi: MutableState<Boolean>
 ) {
 
-    val openDialog = remember{
+    val openDialog = remember {
         mutableStateOf(false)
     }
 
@@ -244,7 +246,10 @@ fun ReservationCard(
         mutableStateOf("")
     }
 
-//    val timeSlot = vm.availableTimeSlot.value?.toList() ?: emptyList()
+
+    val openDialogDelete = remember {
+        mutableStateOf(false)
+    }
 
 
     val selectedReservation = remember {
@@ -273,20 +278,36 @@ fun ReservationCard(
             openDialog,
             selectedReservation.value,
             vm,
-//            timeSlot
             changeUi
         )
     }
 
-    fun editReservation(item:UserReservation){
-        val email = vm.currentUser.value?.email?:""
+
+
+    fun actionDialog() {
+        if (selectedReservation.value.id != "") {
+            vm.deleteReservation(id.value)
+            vm.deleteUserReservation(id.value)
+            vm.getAllUserReservationByDate(selectedReservation.value.date)
+            openDialogDelete.value=false
+            changeUi.value=true
+        }
+    }
+
+    if (openDialogDelete.value) {
+        DeleteDialog(
+            "Delete Reservation",
+            text = "are you sure to delete this reservation",
+            openDialogDelete,
+            ::actionDialog
+        )
+    }
+
+    fun editReservation(item: UserReservation) {
+        val email = vm.currentUser.value?.email ?: ""
         if (item.date >= today) {
-//            vm.getTimeSlotReservationByPlaygroundAndDate(
-//                item.date,
-//                item.address,
-//                item.city
-//            )
-            selectedReservation.value= Reservation(
+
+            selectedReservation.value = Reservation(
                 item.address,
                 item.city,
                 item.date,
@@ -299,16 +320,14 @@ fun ReservationCard(
                 item.startTime
             )
             openDialog.value = true
-        }
-
-        else Toast.makeText(
+        } else Toast.makeText(
             context, "You can't edit past reservation", Toast.LENGTH_SHORT
         ).show()
     }
 
-    Box(){
+    Box() {
         if (reservations.isNotEmpty()) {
-            LazyColumn(modifier = Modifier.padding(horizontal=10.dp)) {
+            LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                 items(reservations) { item ->
                     Card(
                         colors = CardDefaults.cardColors(),
@@ -344,7 +363,10 @@ fun ReservationCard(
                                             .weight(1f)
                                             .padding(vertical = 8.dp)
                                     ) {
-                                        TextBasicIcon(text = item.city, icon = Icons.Default.LocationOn)
+                                        TextBasicIcon(
+                                            text = item.city,
+                                            icon = Icons.Default.LocationOn
+                                        )
                                     }
 
                                 }
@@ -382,9 +404,11 @@ fun ReservationCard(
                                 IconButton(onClick = {
                                     id.value = item.id
                                     if (id.value.isNotEmpty()) {
-                                        vm.deleteReservation(id.value)
-                                        vm.deleteUserReservation(id.value)
-                                        vm.getAllUserReservationByDate(item.date)
+                                        openDialogDelete.value=true
+//                                        vm.deleteReservation(id.value)
+//                                        vm.deleteUserReservation(id.value)
+//                                        vm.getAllUserReservationByDate(item.date)
+                                        selectedReservation.value = item.toReservation()
                                     }
                                 }) {
                                     Icon(
@@ -395,7 +419,7 @@ fun ReservationCard(
                                 }
 
                                 IconButton(onClick = {
-                                   editReservation(item)
+                                    editReservation(item)
                                 }) {
                                     Icon(
                                         Icons.Default.Edit,
@@ -409,9 +433,7 @@ fun ReservationCard(
                     }
                 }
             }
-        }
-
-        else {
+        } else {
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -427,7 +449,6 @@ fun ReservationCard(
             }
         }
     }
-
 
 
 }

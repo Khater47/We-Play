@@ -48,3 +48,19 @@ fun DocumentSnapshot.toUserReservation(): UserReservation? {
         null
     }
 }
+
+fun UserReservation.toReservation():Reservation{
+
+    return Reservation(
+        address,
+        city,
+        date,
+        "",
+        endTime,
+        equipment,
+        id,
+        playground,
+        sport,
+        startTime,
+    )
+}

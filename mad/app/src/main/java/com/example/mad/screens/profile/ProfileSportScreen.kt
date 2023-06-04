@@ -1,5 +1,6 @@
 package com.example.mad.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,7 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircularProgressBar
+import com.example.mad.common.composable.DeleteDialog
 import com.example.mad.common.composable.FloatingButtonAdd
 import com.example.mad.common.composable.FullDialogSport
 import com.example.mad.common.composable.Score
@@ -64,23 +66,16 @@ fun ProfileSportScreen(
         mutableStateOf(true)
     }
 
-    LaunchedEffect(key1 = changeUi.value){
-        if(changeUi.value){
-            vm.getUserSport()
-            changeUi.value=false
-        }
-    }
-
     val addSports = remember {
         mutableStateOf<List<String>>(emptyList())
     }
 
-    if(profileSport.isNotEmpty()){
-        val allSport = getSport().toMutableList()
+    LaunchedEffect(key1 = changeUi.value){
+        if(changeUi.value){
+            vm.getUserSport()
+            changeUi.value=false
 
-        allSport.removeAll{it in profileSport.map { p -> p.sport }}
-
-        addSports.value = allSport
+        }
     }
 
     fun goHome() {
@@ -95,6 +90,17 @@ fun ProfileSportScreen(
 
 
     if (isOpenDialog) {
+
+        if(editSport.value.isEmpty()){
+            val allSport = getSport().toMutableList()
+            if(profileSport.isNotEmpty())
+                allSport.removeAll{it in profileSport.map { p -> p.sport }}
+            addSports.value = allSport
+        }
+        else {
+            addSports.value = emptyList()
+        }
+
         FullDialogSport(openDialog,vm,addSports.value,changeUi,editSport.value)
     }
 
@@ -134,6 +140,26 @@ fun Achievements(
     editSport: MutableState<String>
 ) {
 
+    val openDialog = remember {
+        mutableStateOf(false)
+    }
+    val selectedSport = remember {
+        mutableStateOf("")
+    }
+    
+    fun actionDialog(){
+        if(selectedSport.value.isNotEmpty()){
+            vm.deleteUserSport(selectedSport.value)
+            changeUi.value=true
+            openDialog.value=false
+        }
+    }
+
+    if(openDialog.value){
+        DeleteDialog("Delete Sport",text= if(selectedSport.value.isEmpty()) "are you sure to delete this sport" else
+            "are you sure to delete ${selectedSport.value}", openDialog,::actionDialog)
+    }
+    
     LazyColumn(modifier = Modifier.padding(16.dp)) {
         items(profileSport) { item ->
             Card(
@@ -162,8 +188,8 @@ fun Achievements(
                         verticalArrangement = Arrangement.Center
                     ) {
                         IconButton(onClick = {
-                            vm.deleteUserSport(item.sport)
-                            changeUi.value=true
+                            selectedSport.value=item.sport
+                            openDialog.value=true
                         }) {
                             Icon(Icons.Default.Delete,tint=MaterialTheme.colorScheme.error, contentDescription = "deleteButton")
                         }

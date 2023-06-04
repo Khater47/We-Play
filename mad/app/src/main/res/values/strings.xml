@@ -7,7 +7,7 @@
     <string name="topBarPlayground">Playground</string>
     <string name="rateCard">Rate Field</string>
     <string name="rentCard">Rent Field</string>
-    <string name="sportCard">Sport insights</string>
+    <string name="sportCard">Favorite Sports</string>
 
     <!--Add Rating-->
     <string name="topBarAddRating">Rating Playground</string>
