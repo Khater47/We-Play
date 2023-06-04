@@ -398,6 +398,7 @@ fun FullDialogPlayground(
     openDialog: MutableState<Boolean>,
     playground: Playground,
     vm: MainViewModel,
+    showMessage:MutableState<String>
 ) {
     val selectedDate = remember {
         mutableStateOf("")
@@ -563,6 +564,7 @@ fun FullDialogPlayground(
 
                                     vm.insertReservation(timestamp, r)
                                     vm.insertUserReservation(timestamp, ur)
+                                    showMessage.value="Reservation added successfully"
                                 }
 
 

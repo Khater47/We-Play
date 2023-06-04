@@ -2,6 +2,7 @@ package com.example.mad.screens.rentField
 
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -54,6 +55,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -129,9 +131,15 @@ fun PlaygroundScreen(
     }
 
     val showDialog = remember { mutableStateOf(false) }
+    val showMessage = remember { mutableStateOf("") }
 
     fun goToPreviousPage() {
         navController.navigate(BottomBarScreen.SearchField.route)
+    }
+
+    if(showMessage.value.isNotEmpty()){
+        Toast.makeText(LocalContext.current,showMessage.value,Toast.LENGTH_SHORT).show()
+        showMessage.value=""
     }
 
     Scaffold(
@@ -253,7 +261,7 @@ fun PlaygroundScreen(
 
 
                     if (showDialog.value) {
-                        FullDialogPlayground(openDialog = showDialog, playground, vm)
+                        FullDialogPlayground(openDialog = showDialog, playground, vm,showMessage)
                     }
 
                 }

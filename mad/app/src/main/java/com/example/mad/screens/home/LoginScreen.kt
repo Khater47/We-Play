@@ -2,6 +2,7 @@ package com.example.mad.screens.home
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -53,29 +55,29 @@ fun LoginScreen(
 ) {
 
     val (email, setEmail) = remember {
-        //mariorossi@gmail.com
         mutableStateOf("mariorossi@gmail.com")
     }
     val (password, setPassword) = remember {
-        //password123
         mutableStateOf("password123")
     }
 
-    val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
+//    val snackBarHostState = remember { SnackbarHostState() }
+//    val scope = rememberCoroutineScope()
 
     val loading = vm.loadingProgressBar.value
+    val context = LocalContext.current
 
     fun login() {
         val emailValid = validationTextField("email", email)
         val passwordValid = validationTextField("password", password)
 
         if (!emailValid || !passwordValid) {
-            scope.launch {
-                snackBarHostState.showSnackbar(
-                    "Invalid email or password"
-                )
-            }
+//            scope.launch {
+//                snackBarHostState.showSnackbar(
+//                    "Invalid email or password"
+//                )
+//            }
+            Toast.makeText(context,"Invalid email or password",Toast.LENGTH_SHORT).show()
         } else {
             vm.logIn(email,password)
         }
@@ -86,7 +88,7 @@ fun LoginScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+//        snackbarHost = { SnackbarHost(snackBarHostState) },
     ) {
         Box(modifier = Modifier.padding(it)){
             Column {

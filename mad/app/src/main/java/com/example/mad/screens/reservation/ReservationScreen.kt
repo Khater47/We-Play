@@ -269,6 +269,10 @@ fun ReservationCard(
         )
     }
 
+    val showMessage = remember {
+        mutableStateOf("")
+    }
+
     val today = getToday()
 
     val context = LocalContext.current
@@ -278,10 +282,15 @@ fun ReservationCard(
             openDialog,
             selectedReservation.value,
             vm,
-            changeUi
+            changeUi,
+            showMessage
         )
     }
 
+    if(showMessage.value.isNotEmpty()){
+        Toast.makeText(context,showMessage.value,Toast.LENGTH_SHORT).show()
+        showMessage.value=""
+    }
 
 
     fun actionDialog() {

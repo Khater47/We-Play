@@ -53,8 +53,8 @@ fun FullDialogEditReservation(
     openDialog: MutableState<Boolean>,
     reservation: Reservation,
     vm: MainViewModel,
-    changeUi:MutableState<Boolean>
-//    timeSlot:List<String>
+    changeUi:MutableState<Boolean>,
+    showMessage:MutableState<String>
 ) {
 
 
@@ -82,6 +82,7 @@ fun FullDialogEditReservation(
             )
             vm.updateReservation(reservation.id, data)
             vm.updateUserReservation(reservation.id, data)
+            showMessage.value="Change reservation correctly"
         }
         changeUi.value=true
         openDialog.value = false

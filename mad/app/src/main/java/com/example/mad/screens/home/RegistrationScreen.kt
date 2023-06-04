@@ -78,9 +78,6 @@ fun RegistrationScreen(
         mutableStateOf("student")
     }
 
-    val snackBarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-
 //    val loading = vm.loadingProgressBar.value
 
 
@@ -105,9 +102,7 @@ fun RegistrationScreen(
 
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
-    ) {
+    Scaffold {
         Box(modifier = Modifier.padding(it)){
             Column() {
                 when (LocalConfiguration.current.orientation) {
