@@ -1,6 +1,7 @@
 package com.example.mad.common.composable
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -108,10 +109,12 @@ fun CardPlaygroundFullLocation(playground: Playground,navController: NavHostCont
         Column {
             Column(Modifier.padding(10.dp)) {
                 TextBasicHeadLine(text = playground.playground)
+
             }
 
             Image(
-                painter = painterResource(id = getIconPlayground(playground.sport)),
+
+                painter = painterResource(id = if (playground.playground == "Campo Admond") getIconPlayground(playground.playground) else getIconPlayground(playground.sport)),
                 contentDescription = "Image",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

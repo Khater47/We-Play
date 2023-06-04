@@ -67,6 +67,7 @@ import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.FullDialogPlayground
 import com.example.mad.common.composable.TopBarBackButton
+import com.example.mad.common.getIconPlayground
 import com.example.mad.model.Comment
 import com.example.mad.model.Playground
 import com.example.mad.ui.theme.confirmation
@@ -90,7 +91,6 @@ fun PlaygroundScreen(
 
     val loading = vm.loadingProgressBar.value
 
-    val image = R.drawable.field
 
     val playground = vm.playground.observeAsState().value ?: Playground(
         phone = "",
@@ -101,6 +101,8 @@ fun PlaygroundScreen(
         city = "",
         address = ""
     )
+    val image = if (playground.playground == "Campo Admond") getIconPlayground(playground.playground) else getIconPlayground(playground.sport)
+
     val comments = vm.comments.observeAsState().value?.filterNotNull() ?: emptyList()
 
     LaunchedEffect(key1 = playgroundId) {

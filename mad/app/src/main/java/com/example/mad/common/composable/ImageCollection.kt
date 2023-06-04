@@ -37,7 +37,7 @@ fun ImageCardHome(icon: ImageVector, image: Int) {
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .height(170.dp)
+                .height(100.dp)
                 .fillMaxWidth()
         )
         Box(

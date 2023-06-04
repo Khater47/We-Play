@@ -122,7 +122,9 @@ fun getKeyboard(userInfo: String): KeyboardType {
 }
 
 fun getIconPlayground(sport: String): Int {
+
     return when (sport.lowercase()) {
+        "campo admond" -> R.drawable.soccer_admond
         "soccer" -> R.drawable.soccer
         "baseball" -> R.drawable.baseball
         "basketball" -> R.drawable.basketball
@@ -131,6 +133,7 @@ fun getIconPlayground(sport: String): Int {
         "golf" -> R.drawable.golf
         "gymnastic" -> R.drawable.gymnastic
         "tennis" -> R.drawable.tennis
+
         else -> R.drawable.volleyball
 
     }
