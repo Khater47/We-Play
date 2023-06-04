@@ -56,6 +56,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.mad.DELAY
 import com.example.mad.MainViewModel
@@ -194,6 +195,7 @@ fun PlaygroundScreen(
                         )
                         Text(
                             text = "${avg.value.toInt()}",
+                            fontSize=18.sp
                         )
                     }
 
@@ -271,11 +273,12 @@ fun InfoLine(icon: ImageVector, text: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 7.dp)
+            .padding(horizontal = 12.dp, vertical = 7.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(imageVector = icon, contentDescription = "Location", modifier = Modifier.size(28.dp))
         Spacer(modifier = Modifier.padding(horizontal = 12.dp))
-        Text(text = text, style = MaterialTheme.typography.bodyMedium)
+        Text(text = text, style = MaterialTheme.typography.bodyMedium,fontSize=18.sp)
     }
 }
 
@@ -285,7 +288,8 @@ fun Rating(text: String, score: Int) {
 //        TextBasicHeadLine(text = text)
         Text(
             text = text, style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.weight(weight = 1f)
+            modifier = Modifier.weight(weight = 1f),
+            fontSize=18.sp
         )
         Spacer(modifier = Modifier.padding(horizontal = 20.dp))
         Row(modifier = Modifier.weight(2f)) {
@@ -336,6 +340,7 @@ fun UserComments(comments: List<Comment>) {
                 Text(
                     text = "Comments",
                     style = MaterialTheme.typography.bodyMedium,
+                    fontSize=18.sp,
                     modifier = Modifier.weight(2f)
                 )
                 Spacer(modifier = Modifier.padding(horizontal = 30.dp))

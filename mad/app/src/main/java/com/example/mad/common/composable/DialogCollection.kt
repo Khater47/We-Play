@@ -2,7 +2,9 @@ package com.example.mad.common.composable
 
 import android.graphics.Color
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -783,19 +785,22 @@ fun SummaryReservation(
             if (expanded.value) {
                 LazyColumn(
                     Modifier
-                        .height(150.dp)
+                        .height(100.dp)
                         .fillMaxWidth(),
                     verticalArrangement = Arrangement.Center
                 ) {
                     items(friendList) { item ->
-                        Text(
-                            text = item,
-                            fontSize = 18.sp,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier
-                                .padding(10.dp)
-                        )
-                        Divider()
+                        if(item.isNotEmpty()){
+                            Text(
+                                text = item,
+                                fontSize = 18.sp,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                            )
+                            Divider()
+                        }
+
 
                     }
                 }
@@ -914,7 +919,7 @@ fun FriendsList(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Button(onClick = {
-                val condition = selectedFriends.value.filterNot { it.email.isEmpty() }.size==selectedFriends.value.size
+                val condition = selectedFriends.value.filterNot { it.email.isEmpty() }.isNotEmpty()
                 if(condition){
                     confirmedFriends.value = selectedFriends.value
                     state.value = 4
