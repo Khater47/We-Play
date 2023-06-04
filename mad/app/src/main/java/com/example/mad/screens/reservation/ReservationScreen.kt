@@ -2,9 +2,7 @@ package com.example.mad.screens.reservation
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +28,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,8 +44,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.mad.DELAY
 import com.example.mad.MainViewModel
 import com.example.mad.R
+import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBasic
@@ -57,14 +56,13 @@ import com.example.mad.common.getToday
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.confirmation
-import com.example.mad.ui.theme.md_theme_dark_onSecondary
 import com.example.mad.ui.theme.md_theme_light_onSecondary
-import com.example.mad.ui.theme.md_theme_light_primary
 import com.example.mad.ui.theme.md_theme_light_secondary
 import com.stacktips.view.CalendarListener
 import com.stacktips.view.CustomCalendarView
 import com.stacktips.view.DayDecorator
 import com.stacktips.view.DayView
+import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -76,7 +74,7 @@ import java.util.Locale
 fun ReservationScreen(
    vm: MainViewModel
 ) {
-//    val loading = vm.loadingProgressBar.value
+    val loading = vm.loadingProgressBar.value
 
     val orientation = LocalConfiguration.current.orientation
 
@@ -86,14 +84,14 @@ fun ReservationScreen(
 
     LaunchedEffect(key1 = changeUi.value) {
         if(changeUi.value){
-            //        vm.loadingProgressBar.value=true
+            vm.loadingProgressBar.value=true
             val today = getToday()
             val month = Calendar.getInstance().get(Calendar.MONTH) + 1
             val formattedMonth = if (month < 10) "0$month" else month.toString()
-//        delay(2000L)
+            delay(DELAY)
             vm.getDatesReservationByMonth(formattedMonth)
             vm.getAllUserReservationByDate(today)
-            //        vm.loadingProgressBar.value=false
+            vm.loadingProgressBar.value=false
             changeUi.value=false
         }
 
@@ -143,7 +141,7 @@ fun ReservationScreen(
                     }
                 }
             }
-//            CircularProgressBar(isDisplayed = loading)
+            CircularProgressBar(isDisplayed = loading)
         }
     }
 
@@ -310,7 +308,7 @@ fun ReservationCard(
 
     Box(){
         if (reservations.isNotEmpty()) {
-            LazyColumn(modifier = Modifier.padding(horizontal=16.dp)) {
+            LazyColumn(modifier = Modifier.padding(horizontal=10.dp)) {
                 items(reservations) { item ->
                     Card(
                         colors = CardDefaults.cardColors(),
@@ -318,7 +316,7 @@ fun ReservationCard(
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(10.dp)
+                            .padding(5.dp)
                     ) {
 
                         Row {

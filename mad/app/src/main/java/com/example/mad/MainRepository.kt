@@ -10,7 +10,6 @@ import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.model.toProfileRating
-import com.example.mad.model.toReservation
 import com.example.mad.model.toUserReservation
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.tasks.await
 import java.text.SimpleDateFormat
 import java.util.Locale

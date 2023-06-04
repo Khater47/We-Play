@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Locale
 
 const val PLAYGROUNDS = "playgrounds"
@@ -370,8 +369,11 @@ class MainViewModel : ViewModel() {
     fun getUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                loadingProgressBar.value=true
+                delay(DELAY)
                 val p = repo.getUserProfile()?.toProfile()
                 _profile.postValue(p)
+                loadingProgressBar.value=false
 
             } catch (e: Exception) {
                 e.printStackTrace()

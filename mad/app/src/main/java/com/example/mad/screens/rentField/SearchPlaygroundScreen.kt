@@ -338,7 +338,8 @@ fun DialogFilter(
                         colors = ButtonDefaults.buttonColors(
                             contentColor = MaterialTheme.colorScheme.primary,
                             backgroundColor = MaterialTheme.colorScheme.surface
-                        )
+                        ),
+                        elevation = ButtonDefaults.elevation(0.dp)
                     ) {
                         Text(
                             text = "Cancel", fontSize = 18.sp,
@@ -360,7 +361,8 @@ fun DialogFilter(
                         colors = ButtonDefaults.buttonColors(
                             contentColor = Color.White,
                             backgroundColor = confirmation
-                        )
+                        ),
+                        elevation = ButtonDefaults.elevation(0.dp)
                     ) {
                         Text(
                             text = "Save", fontSize = 18.sp,

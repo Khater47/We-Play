@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -48,7 +49,7 @@ fun formatDate(day: Int, month: Int, year: Int): String {
     return "$d/$m/$year"
 }
 
-fun getToday():String{
+fun getToday(): String {
     val calendar = Calendar.getInstance(Locale.ITALY)
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
@@ -64,9 +65,10 @@ fun getToday():String{
 //    return "$month"
 //}
 
-fun getTimeStamp():Long{
+fun getTimeStamp(): Long {
     return Calendar.getInstance().timeInMillis
 }
+
 fun getIconUserInfo(userInfo: String): ImageVector {
     return when (userInfo.lowercase()) {
         "fullName" -> Icons.Default.Person
@@ -79,24 +81,35 @@ fun getIconUserInfo(userInfo: String): ImageVector {
     }
 }
 
-fun validationTextField(type:String,text:String):Boolean{
-    return when(type.lowercase()){
-        "email" -> { Patterns.EMAIL_ADDRESS.matcher(text).matches() }
-        "password"->{ text.isNotEmpty() }
-        "phone" -> { Patterns.PHONE.matcher(text).matches()}
-        else -> { text.isNotEmpty() }
+fun validationTextField(type: String, text: String): Boolean {
+    return when (type.lowercase()) {
+        "email" -> {
+            Patterns.EMAIL_ADDRESS.matcher(text).matches()
+        }
+
+        "password" -> {
+            text.isNotEmpty()
+        }
+
+        "phone" -> {
+            Patterns.PHONE.matcher(text).matches()
+        }
+
+        else -> {
+            text.isNotEmpty()
+        }
     }
 }
 
-fun validationRegistration(profile:Profile,password:String):Boolean{
-    if(validationTextField("email",profile.email)
-        && validationTextField("password",password)
-        && validationTextField("phone",profile.phone)
-        && validationTextField("text",profile.description)
-        && validationTextField("text",profile.fullName)
-        && validationTextField("text",profile.nickname)
+fun validationRegistration(profile: Profile, password: String): Boolean {
+    if (validationTextField("email", profile.email)
+        && validationTextField("password", password)
+        && validationTextField("phone", profile.phone)
+        && validationTextField("text", profile.description)
+        && validationTextField("text", profile.fullName)
+        && validationTextField("text", profile.nickname)
     )
-       return true
+        return true
     return false
 }
 
@@ -138,7 +151,7 @@ fun getIconSport(sportText: String): ImageVector {
     }
 }
 
-fun getSport():List<String>{
+fun getSport(): List<String> {
 
     return listOf(
         "Soccer",
@@ -150,11 +163,11 @@ fun getSport():List<String>{
         "Golf",
         "Gymnastic",
         "Tennis"
-        )
+    )
 
 }
 
-fun getLocation():List<String>{
+fun getLocation(): List<String> {
     return listOf(
         "Turin",
         "Milan",
@@ -162,7 +175,8 @@ fun getLocation():List<String>{
         "Venice",
     )
 }
-fun getTimeSlot():List<String>{
+
+fun getTimeSlot(): List<String> {
     return listOf(
         "09:00-11:00",
         "11:00-13:00",
@@ -173,19 +187,20 @@ fun getTimeSlot():List<String>{
     )
 }
 
-fun invalidUserProfile(p:Profile):Boolean{
-    if(!Patterns.EMAIL_ADDRESS.matcher(p.email).matches()){
-        Log.d("TAG_EMAIL","INVALID EMAIL")
+fun invalidUserProfile(p: Profile): Boolean {
+    if (!Patterns.EMAIL_ADDRESS.matcher(p.email).matches()) {
+        Log.d("TAG_EMAIL", "INVALID EMAIL")
         return true
     }
-    if(!Patterns.PHONE.matcher(p.phone).matches()){
-        Log.d("TAG_PHONE","INVALID PHONE")
+    if (!Patterns.PHONE.matcher(p.phone).matches()) {
+        Log.d("TAG_PHONE", "INVALID PHONE")
         return true
     }
-    if(p.fullName.isEmpty() || p.email.isEmpty() ||
-            p.phone.isEmpty() || p.description.isEmpty()
-        || p.nickname.isEmpty()){
-        Log.d("TAG_EMPTY","STRING EMPTY")
+    if (p.fullName.isEmpty() || p.email.isEmpty() ||
+        p.phone.isEmpty() || p.description.isEmpty()
+        || p.nickname.isEmpty()
+    ) {
+        Log.d("TAG_EMPTY", "STRING EMPTY")
         return true
     }
     return false
@@ -289,12 +304,24 @@ fun openCamera(
     val values = ContentValues()
     values.put(MediaStore.Images.Media.TITLE, "New Picture")
     values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
-    val imageUri =
-        context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
-    val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-    cameraActivityResultLauncher.launch(cameraIntent)
-    return imageUri
+
+
+    return if(context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
+        val imageUri =
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        cameraActivityResultLauncher.launch(cameraIntent)
+        imageUri
+    }
+
+    else {
+        null
+    }
+
+
+
 }
 
 fun openGallery(

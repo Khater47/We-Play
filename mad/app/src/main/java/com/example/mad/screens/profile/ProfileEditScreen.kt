@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +38,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -67,9 +69,6 @@ import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
 import com.example.mad.common.composable.CircleImage
-import com.example.mad.common.composable.ConfirmAlertButton
-import com.example.mad.common.composable.DismissAlertButton
-import com.example.mad.common.composable.TextBasicHeadLine
 import com.example.mad.common.composable.TopBarComplete
 import com.example.mad.common.getIconUserInfo
 import com.example.mad.common.getImageFromInternalStorage
@@ -81,6 +80,7 @@ import com.example.mad.common.rotateBitmap
 import com.example.mad.common.saveImageUriOnInternalStorage
 import com.example.mad.common.uriToBitmap
 import com.example.mad.model.Profile
+import com.example.mad.ui.theme.confirmation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -95,14 +95,14 @@ const val READ_MEDIA_IMAGES = android.Manifest.permission.READ_MEDIA_IMAGES
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ProfileEditScreen(
-navController: NavHostController,
-vm:MainViewModel
+    navController: NavHostController,
+    vm: MainViewModel
 ) {
 
     val orientation = LocalConfiguration.current.orientation
     val route = BottomBarScreen.Profile.route
 
-    val user = rememberSaveable{
+    val user = rememberSaveable {
         mutableStateOf(
             mapOf(
                 "FullName" to "",
@@ -114,33 +114,32 @@ vm:MainViewModel
         )
     }
     val invalid = remember {
-        mutableStateOf<Boolean>(false)
+        mutableStateOf(false)
     }
 
     fun goToProfile() {
         navController.navigate(route)
     }
 
-    if(invalid.value){
-        Toast.makeText(LocalContext.current,"Invalid field",Toast.LENGTH_SHORT).show()
-        invalid.value=false
+    if (invalid.value) {
+        Toast.makeText(LocalContext.current, "Invalid field", Toast.LENGTH_SHORT).show()
+        invalid.value = false
     }
 
 
     fun saveProfile() {
         val p = Profile(
-            description=user.value.getOrDefault("Description","student"),
-            fullName=user.value.getOrDefault("FullName","Mario Rossi") ,
-            nickname =user.value.getOrDefault("Nickname","mario") ,
-            phone=user.value.getOrDefault("PhoneNumber","3456789871"),
-            email=user.value.getOrDefault("Email","mariorossi@gmail.com")
+            description = user.value.getOrDefault("Description", "student"),
+            fullName = user.value.getOrDefault("FullName", "Mario Rossi"),
+            nickname = user.value.getOrDefault("Nickname", "mario"),
+            phone = user.value.getOrDefault("PhoneNumber", "3456789871"),
+            email = user.value.getOrDefault("Email", "mariorossi@gmail.com")
         )
-        if(!invalidUserProfile(p)){
+        if (!invalidUserProfile(p)) {
             vm.insertUserProfile(p)
             navController.navigate(route)
-        }
-        else {
-            invalid.value=true
+        } else {
+            invalid.value = true
         }
     }
 
@@ -173,7 +172,7 @@ vm:MainViewModel
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun PortraitEditProfile(
-    user: MutableState<Map<String,String>>
+    user: MutableState<Map<String, String>>
 
 ) {
     Column(
@@ -203,7 +202,7 @@ fun PortraitEditProfile(
 
 @Composable
 fun EditUserInfo(
-    user: MutableState<Map<String,String>>
+    user: MutableState<Map<String, String>>
 
 ) {
     val userInfo = listOf(
@@ -216,7 +215,7 @@ fun EditUserInfo(
 
     LazyColumn {
         items(userInfo, itemContent = { item ->
-            EditInfo(item, getIconUserInfo(item) ,user)
+            EditInfo(item, getIconUserInfo(item), user)
         })
     }
 
@@ -226,15 +225,13 @@ fun EditUserInfo(
 fun EditInfo(
     text: String,
     icon: ImageVector,
-    user: MutableState<Map<String,String>>
+    user: MutableState<Map<String, String>>
 
 ) {
 
-    Log.d("TAG",text)
 
     val info = remember {
         mutableStateOf(user.value.getValue(text))
-//        mutableStateOf("")
     }
 
     Row(
@@ -257,15 +254,14 @@ fun EditInfo(
             value = info.value,
             onValueChange = {
                 info.value = it
-                val p:Map<String,String> = mapOf(
-                    "FullName" to if(text!="FullName") user.value.getValue("FullName") else it,
-                    "Nickname" to if(text!="Nickname") user.value.getValue("Nickname") else it,
-                    "Email" to if(text!="Email") user.value.getValue("Email") else it,
-                    "PhoneNumber" to if(text!="PhoneNumber") user.value.getValue("PhoneNumber") else it,
-                    "Description" to if(text!="Description") user.value.getValue("Description") else it,
+                val p: Map<String, String> = mapOf(
+                    "FullName" to if (text != "FullName") user.value.getValue("FullName") else it,
+                    "Nickname" to if (text != "Nickname") user.value.getValue("Nickname") else it,
+                    "Email" to if (text != "Email") user.value.getValue("Email") else it,
+                    "PhoneNumber" to if (text != "PhoneNumber") user.value.getValue("PhoneNumber") else it,
+                    "Description" to if (text != "Description") user.value.getValue("Description") else it,
                 )
                 user.value = p
-//                userObject.value.putString(text, it)
             },
             label = { Text(text = text) },
             keyboardOptions = KeyboardOptions(
@@ -409,7 +405,13 @@ fun EditImageProfile() {
                         if (cameraGranted) {
 
                             showMenu = false
-                            imageUri = openCamera(context, cameraLauncher) as Uri
+
+                            val result = openCamera(context, cameraLauncher)
+                            if(result!=null)
+                                imageUri = result
+                            else
+                                Toast.makeText(context,"You must grant the permission for gallery",Toast.LENGTH_LONG).show()
+
 
                         } else {
                             Toast.makeText(
@@ -434,7 +436,7 @@ fun EditImageProfile() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun LandscapeEditProfile(
-    user: MutableState<Map<String,String>>
+    user: MutableState<Map<String, String>>
 
 ) {
 
@@ -476,26 +478,41 @@ fun DialogPermission(text: String) {
     var showRational by remember {
         mutableStateOf(true)
     }
-    fun confirm(){
-        showRational = false
-        context.startActivity(
-            Intent(
-                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.fromParts("package", context.packageName, null)
-            )
+
+    if(showRational){
+        AlertDialog(onDismissRequest = { showRational = false },
+            modifier = Modifier.fillMaxWidth(),
+            title = { Text("Permission", fontSize = 24.sp) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showRational = false
+                        context.startActivity(
+                            Intent(
+                                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                                Uri.fromParts("package", context.packageName, null)
+                            )
+                        )
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = confirmation)
+                ) {
+                    Text(text = "Grant", fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showRational = false }, colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
+                ) {
+                    Text(text = "Cancel", fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            text = { Text(text = text, fontSize = 18.sp, style = MaterialTheme.typography.bodyMedium) }
         )
     }
 
-    fun dismiss(){
-        showRational = false
-    }
-
-    AlertDialog(onDismissRequest = { dismiss() },
-        title = { Text("Permission Dialog", fontSize = 24.sp) },
-        confirmButton = { ConfirmAlertButton(::confirm)},
-        dismissButton = { DismissAlertButton(::dismiss)},
-        text = { TextBasicHeadLine(text) }
-    )
 
 }
 
@@ -548,9 +565,9 @@ fun MultiplePermissions() {
     })
 
     val deniedPermission =
-        permissionStates.permissions.map { it.status.shouldShowRationale }.contains(true)
+        permissionStates.permissions.map { it.status.shouldShowRationale }.contains(false)
 
-    if (deniedPermission) {
+    if (!deniedPermission) {
         DialogPermission(
             text = "Camera and External storage permission " +
                     "is needed for change user profile image." +
@@ -561,20 +578,3 @@ fun MultiplePermissions() {
 }
 
 
-//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//@Preview(showBackground = true)
-//@Composable
-//fun DefaultPreviewProfileEdit() {
-//    MadTheme {
-//        ProfileEditScreen()
-//    }
-//}
-//
-//@RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//@Preview(showBackground = true,showSystemUi = true, device="spec:width=411dp,height=891dp,orientation=landscape")
-//@Composable
-//fun DefaultPreviewProfileEditLandscape() {
-//    MadTheme {
-//        ProfileEditScreen()
-//    }
-//}

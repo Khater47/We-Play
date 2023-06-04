@@ -31,20 +31,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.mad.MainViewModel
 import com.example.mad.R
 import com.example.mad.activity.BottomBarScreen
-import com.example.mad.common.composable.CircularProgressBar
 import com.example.mad.common.composable.PasswordTextField
 import com.example.mad.common.composable.TextBasicTitle
 import com.example.mad.common.composable.TextFieldDefaultIcon
 import com.example.mad.common.validationRegistration
-import com.example.mad.common.validationTextField
 import com.example.mad.model.Profile
-import com.example.mad.ui.theme.MadTheme
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable

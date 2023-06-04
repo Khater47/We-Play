@@ -1,7 +1,6 @@
 package com.example.mad.common.composable
 
 import android.graphics.Color
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,8 +23,6 @@ import androidx.compose.material.Switch
 import androidx.compose.material.TabRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
@@ -69,7 +66,6 @@ import com.example.mad.model.Invitation
 import com.example.mad.model.Playground
 import com.example.mad.model.ProfileSport
 import com.example.mad.model.Reservation
-import com.example.mad.model.Stat
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.confirmation
 import com.stacktips.view.CalendarListener

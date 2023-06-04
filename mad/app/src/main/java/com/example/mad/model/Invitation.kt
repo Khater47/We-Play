@@ -1,6 +1,5 @@
 package com.example.mad.model
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 
 data class Invitation(

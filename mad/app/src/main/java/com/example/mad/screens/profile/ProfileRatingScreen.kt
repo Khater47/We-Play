@@ -1,7 +1,6 @@
 package com.example.mad.screens.profile
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,12 +43,10 @@ import com.example.mad.common.composable.DefaultImage
 import com.example.mad.common.composable.TextBasicIcon
 import com.example.mad.common.composable.TopBarBackButton
 import com.example.mad.common.getIconSport
-import com.example.mad.common.getToday
 import com.example.mad.model.Reservation
 import com.example.mad.model.UserReservation
 import com.example.mad.ui.theme.Gold
 
-//TODO: FIX USER RATING
 @Composable
 fun ProfileRatingScreen(
     navController: NavHostController,
