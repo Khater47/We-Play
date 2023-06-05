@@ -308,8 +308,19 @@ fun openCamera(
     values.put(MediaStore.Images.Media.TITLE, "New Picture")
     values.put(MediaStore.Images.Media.DESCRIPTION, "From the Camera")
 
+    return if(context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
+        && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
+    {
+        val imageUri =
+            context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
-    return if(context.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+        cameraActivityResultLauncher.launch(cameraIntent)
+        imageUri
+    }
+    else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+    {
         val imageUri =
             context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
 
