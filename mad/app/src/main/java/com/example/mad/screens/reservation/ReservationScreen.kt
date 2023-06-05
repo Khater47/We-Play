@@ -314,7 +314,11 @@ fun ReservationCard(
 
     fun editReservation(item: UserReservation) {
         val email = vm.currentUser.value?.email ?: ""
-        if (item.date >= today) {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val todayString = dateFormat.parse(today)
+        val d = dateFormat.parse(item.date)
+
+        if (todayString!=null && todayString.before(d)) {
 
             selectedReservation.value = Reservation(
                 item.address,
