@@ -78,7 +78,6 @@ fun RegistrationScreen(
         mutableStateOf("student")
     }
 
-//    val loading = vm.loadingProgressBar.value
 
 
     fun registration(){

@@ -222,10 +222,9 @@ class MainRepository {
     }
 
     suspend fun insertUserRegistrationProfile(profile: Profile) {
-        val email = currentUser.value?.email?:""
 
         db.collection(USERS)
-            .document(email)
+            .document(profile.email)
             .set(profile)
             .await()
     }
