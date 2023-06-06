@@ -318,7 +318,7 @@ fun ReservationCard(
         val todayString = dateFormat.parse(today)
         val d = dateFormat.parse(item.date)
 
-        if (todayString!=null && todayString.before(d)) {
+        if (d!=null && !d.before(todayString)) {
 
             selectedReservation.value = Reservation(
                 item.address,
